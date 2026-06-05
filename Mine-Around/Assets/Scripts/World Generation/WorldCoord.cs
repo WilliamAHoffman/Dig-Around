@@ -5,6 +5,7 @@ public class WorldCoord
     public Vector3 globalPosition;
     public Vector2Int chunkPosition;
     public Vector2Int localPosition;
+    public Vector2Int blockLocation;
 
     public WorldCoord(Vector3 position, int chunkSize)
     {
@@ -12,6 +13,8 @@ public class WorldCoord
 
         int x = Mathf.FloorToInt(position.x);
         int y = Mathf.FloorToInt(position.y);
+
+        blockLocation = new Vector2Int(x,y);
 
         int chunkX = Mathf.FloorToInt((float)x / chunkSize);
         int chunkY = Mathf.FloorToInt((float)y / chunkSize);

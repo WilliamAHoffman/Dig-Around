@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-/*
+
 public class ChunkManager : MonoBehaviour
 {
     public int seed;
@@ -14,7 +14,7 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private Tilemap walls;
     [SerializeField] private Tilemap floors;
 
-    [SerializeField] private ChunkGenerator generator;
+    [SerializeField] private WorldGenerator generator;
 
     public static ChunkManager Instance { get; private set; }
 
@@ -39,7 +39,7 @@ public class ChunkManager : MonoBehaviour
         if (chunks.ContainsKey(chunkLocation))
             return;
 
-        Chunk chunk = generator.FillChunk(chunkLocation);
+        Chunk chunk = generator.GenerateChunk(chunkLocation, chunkSize);
         chunks.Add(chunkLocation, chunk);
     }
 
@@ -64,11 +64,11 @@ public class ChunkManager : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, chunkSize);
 
-                IndexWallTile wallData = chunk.GetIndexWallTile(localPos);
-                IndexFloorTile floorData = chunk.GetIndexFloorTile(localPos);
+                WorldWallTile worldWall = chunk.GetWorldWallTile(localPos);
+                WorldFloorTile worldFloor = chunk.GetWorldFloorTile(localPos);
 
-                RuleTile nextWallTile = worldWallTiles[wallData.tileID].tile;
-                RuleTile nextFloorTile = worldFloorTiles[floorData.tileID].tile;
+                RuleTile nextWallTile = WorldManager.Instance.GetWallData(worldWall.nameID).tile;
+                RuleTile nextFloorTile = WorldManager.Instance.GetWallData(worldFloor.nameID).tile;
 
                 positions[i] = (Vector3Int)worldPos;
                 wallTiles[i] = nextWallTile;
@@ -114,44 +114,22 @@ public class ChunkManager : MonoBehaviour
         floors.SetTiles(positions, floorTiles);
     }
 
-    public IndexWallTile GetIndexWallTileAtLocation(Vector2 location)
+    public WorldWallTile GetWorldWallTileAtLocation(Vector2 location)
     {
 
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(location, chunkSize);
 
-        return chunks[chunkCoord].GetIndexWallTile(localPos);
+        return chunks[chunkCoord].GetWorldWallTile(localPos);
     }
 
-    public IndexFloorTile GetIndexFloorTileAtLocation(Vector2 location)
+    public WorldFloorTile GetWorldFloorTileAtLocation(Vector2 location)
     {
 
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(location, chunkSize);
 
-        return chunks[chunkCoord].GetIndexFloorTile(localPos);
-    }
-
-    public IndexWallTile GetIndexWallTile(int index)
-    {
-        if (index < 0 || index >= worldWallTiles.Count)
-        {
-            Debug.LogError("Not a valid tile index");
-            return default;
-        }
-
-        return new IndexWallTile(index, worldWallTiles[index].maxHealth, 1);
-    }
-
-    public IndexFloorTile GetIndexFloorTile(int index)
-    {
-        if (index < 0 || index >= worldFloorTiles.Count)
-        {
-            Debug.LogError("Not a valid tile index");
-            return default;
-        }
-
-        return new IndexFloorTile(index);
+        return chunks[chunkCoord].GetWorldFloorTile(localPos);
     }
 
     public void UnloadAllChunks()
@@ -180,5 +158,3 @@ public class ChunkManager : MonoBehaviour
         return chunks.ContainsKey(chunkCoord);
     }
 }
-
-*/

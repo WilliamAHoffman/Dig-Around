@@ -86,4 +86,34 @@ public class WorldManager : MonoBehaviour
         Debug.LogWarning($"No FloorData found with nameID: {nameID}");
         return null;
     }
+
+    public WorldWallTile GetWorldWall(string nameID)
+    {
+        if (wallDataByID == null)
+            BuildTileDataLookups();
+
+        if (string.IsNullOrWhiteSpace(nameID))
+            return null;
+
+        if (wallDataByID.TryGetValue(nameID, out WallData wallData))
+            return new WorldWallTile(nameID, wallData.maxHealth);
+
+        Debug.LogWarning($"No WallData found with nameID: {nameID}", this);
+        return null;
+    }
+
+    public WorldFloorTile GetWorldFloor(string nameID)
+    {
+        if (floorDataByID == null)
+            BuildTileDataLookups();
+
+        if (string.IsNullOrWhiteSpace(nameID))
+            return null;
+
+        if (floorDataByID.TryGetValue(nameID, out FloorData floorData))
+            return new WorldFloorTile(nameID, floorData.maxHealth);
+
+        Debug.LogWarning($"No FloorData found with nameID: {nameID}", this);
+        return null;
+    }
 }

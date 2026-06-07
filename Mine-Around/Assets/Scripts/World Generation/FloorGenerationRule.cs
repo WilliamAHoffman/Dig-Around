@@ -1,9 +1,9 @@
 using UnityEngine;
 
 [System.Serializable]
-public class WallGenerationRule
+public class FloorGenerationRule
 {
-    public WorldWallTile wallData;
+    public WorldFloorTile floorData;
 
     [Range(0f, 1f)]
     public float minNoiseValue;

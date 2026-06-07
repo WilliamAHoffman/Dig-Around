@@ -1,20 +1,18 @@
 [System.Serializable]
-public struct WorldWallTile
+public class WorldWallTile
 {
     public string nameID;
     public int health;
-    public string floorBelow;
 
-    public WorldWallTile(string nameID, int health, string floorBelow)
+    public WorldWallTile(string nameID, int health)
     {
         this.nameID = nameID;
         this.health = health;
-        this.floorBelow = floorBelow;
     }
 }
 
 [System.Serializable]
-public struct WorldFloorTile
+public class WorldFloorTile
 {
     public string nameID;
     public int health;

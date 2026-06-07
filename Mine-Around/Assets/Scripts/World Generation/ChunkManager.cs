@@ -30,8 +30,7 @@ public class ChunkManager : MonoBehaviour
 
     public void CreateChunk(Vector2Int chunkLocation)
     {
-        if (chunks.ContainsKey(chunkLocation))
-            return;
+        if (chunks.ContainsKey(chunkLocation)) return;
 
         Chunk chunk = generator.GenerateChunk(chunkLocation, chunkSize);
         chunks.Add(chunkLocation, chunk);
@@ -39,8 +38,7 @@ public class ChunkManager : MonoBehaviour
 
     public void LoadChunk(Vector2Int chunkLocation)
     {
-        if (!chunks.ContainsKey(chunkLocation))
-            CreateChunk(chunkLocation);
+        if (!chunks.ContainsKey(chunkLocation)) CreateChunk(chunkLocation);
 
         Chunk chunk = chunks[chunkLocation];
 

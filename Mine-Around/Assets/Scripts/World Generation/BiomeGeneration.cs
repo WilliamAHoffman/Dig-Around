@@ -5,13 +5,14 @@ using UnityEngine;
 public class BiomeGeneration : ScriptableObject
 {
     public List<FeatureGenerator> features;
-    /*
-    public Chunk GenerateBiome(Chunk chunk)
+
+    public Chunk GenerateBiome(Chunk chunk, Vector2Int chunkLocation, int seed)
     {
         foreach(FeatureGenerator feature in features)
         {
-            feature.GenerateChunkFeatures()
+            chunk = feature.GenerateChunkFeatures(seed, chunkLocation, chunk);
         }
+
+        return chunk;
     }
-    */
 }

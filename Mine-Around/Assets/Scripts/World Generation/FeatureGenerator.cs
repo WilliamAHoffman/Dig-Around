@@ -1,39 +1,40 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 [CreateAssetMenu(fileName = "FeatureGenerator", menuName = "Scriptable Objects/FeatureGenerator")]
 public class FeatureGenerator : ScriptableObject
 {
     public List<GenerationRule> floorRules;
-    public List<GenerationRule> WallRules;
-    private Noise noise;
-    public Chunk GenerateChunkFeatures(int chunkSize, int seed, Vector2Int location)
+    public List<GenerationRule> wallRules;
+    public NoiseSettings noiseSettings;
+    public Chunk GenerateChunkFeatures(int seed, Vector2Int location, Chunk chunk)
     {
-        if(noise == null)
+        for(int x = 0; x < chunk.chunkSize; x++)
         {
-            noise = new Noise(seed);
-        }
-        Chunk chunk = new Chunk(chunkSize);
-        for(int x = 0; x < chunkSize; x++)
-        {
-            for(int y = 0; y < chunkSize; y++)
+            for(int y = 0; y < chunk.chunkSize; y++)
             {
-                chunk.SetWorldFloorTile(new Vector2Int(x,y), WorldManager.Instance.GetWorldFloor("air"));
-                chunk.SetWorldWallTile(new Vector2Int(x,y), WorldManager.Instance.GetWorldWall("air"));
+                Vector2Int blockLocation = new Vector2Int(x + location.x, y + location.y);
+                Vector2Int localPos = new Vector2Int(x, y);
+                float noiseSample = Noise.SampleNoise(x,y,noiseSettings,seed);
+                chunk.SetWorldWallTile(new Vector2Int(x,y), WorldManager.Instance.GetWorldWall(FindNextTile(chunk.GetWorldWallTile(localPos).nameID, wallRules, noiseSample)));
+
+                chunk.SetWorldFloorTile(new Vector2Int(x,y), WorldManager.Instance.GetWorldFloor(FindNextTile(chunk.GetWorldFloorTile(localPos).nameID, floorRules, noiseSample)));
             }
         }
-
         return chunk;
     }
-    /*
-    private FindNextTile(Vector2Int blockLocation)
+
+    private string FindNextTile(string replacing, List<GenerationRule> rules, float noiseSample)
     {
-        float noiseSample = noise.SampleNoise(blockLocation.x, blockLocation.y);
-        foreach(WallGenerationRule rule in wallRules)
+        foreach(GenerationRule rule in rules)
         {
-            if()
+            if(rule.Matches(noiseSample) && rule.Replaces(replacing))
+            {
+                return rule.tileID;
+            }
         }
+        return replacing;
     }
-    */
 }
 

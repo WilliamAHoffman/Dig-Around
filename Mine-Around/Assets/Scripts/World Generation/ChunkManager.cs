@@ -5,7 +5,6 @@ using UnityEngine.Tilemaps;
 
 public class ChunkManager : MonoBehaviour
 {
-    public int seed;
     [SerializeField] private bool randomSeed;
     public int chunkSize = 16;
     [SerializeField] private int maxChunkRange = 4;
@@ -27,11 +26,6 @@ public class ChunkManager : MonoBehaviour
         }
 
         Instance = this;
-
-        if (randomSeed)
-        {
-            seed = Random.Range(int.MinValue, int.MaxValue);
-        }
     }
 
     public void CreateChunk(Vector2Int chunkLocation)

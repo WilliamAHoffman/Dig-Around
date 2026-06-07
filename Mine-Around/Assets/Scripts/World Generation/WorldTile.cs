@@ -1,7 +1,13 @@
-[System.Serializable]
-public class WorldWallTile
+using UnityEngine;
+
+public class WorldTile : ScriptableObject
 {
     public string nameID;
+}
+
+[CreateAssetMenu(fileName = "WorldWallTile", menuName = "Scriptable Objects/WorldWallTile")]
+public class WorldWallTile : WorldTile
+{
     public int health;
 
     public WorldWallTile(string nameID, int health)
@@ -11,10 +17,9 @@ public class WorldWallTile
     }
 }
 
-[System.Serializable]
-public class WorldFloorTile
+[CreateAssetMenu(fileName = "WorldFloorTile", menuName = "Scriptable Objects/WorldFloorTile")]
+public class WorldFloorTile : WorldTile
 {
-    public string nameID;
     public int health;
     public WorldFloorTile(string nameID, int health)
     {

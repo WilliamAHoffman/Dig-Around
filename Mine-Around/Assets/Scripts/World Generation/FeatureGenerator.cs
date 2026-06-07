@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class FeatureGenerator : MonoBehaviour
+[CreateAssetMenu(fileName = "FeatureGenerator", menuName = "Scriptable Objects/FeatureGenerator")]
+public class FeatureGenerator : ScriptableObject
 {
-    public NoiseSettings noiseSettings;
-    public List<WallGenerationRule> wallRules;
-    public List<FloorGenerationRule> floorRules;
+    public List<GenerationRule> floorRules;
+    public List<GenerationRule> WallRules;
     private Noise noise;
-    public Chunk GenerateChunkFeatures(int chunkSize, int seed)
+    public Chunk GenerateChunkFeatures(int chunkSize, int seed, Vector2Int location)
     {
         if(noise == null)
         {
@@ -26,5 +25,15 @@ public class FeatureGenerator : MonoBehaviour
 
         return chunk;
     }
+    /*
+    private FindNextTile(Vector2Int blockLocation)
+    {
+        float noiseSample = noise.SampleNoise(blockLocation.x, blockLocation.y);
+        foreach(WallGenerationRule rule in wallRules)
+        {
+            if()
+        }
+    }
+    */
 }
 

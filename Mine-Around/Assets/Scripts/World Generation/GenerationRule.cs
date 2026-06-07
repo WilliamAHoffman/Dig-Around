@@ -1,9 +1,9 @@
 using UnityEngine;
 
-[System.Serializable]
-public class FloorGenerationRule
+[CreateAssetMenu(fileName = "GenerationRule", menuName = "Scriptable Objects/GenerationRule")]
+public class GenerationRule : ScriptableObject
 {
-    public WorldFloorTile floorData;
+    public WorldTile wallData;
 
     [Range(0f, 1f)]
     public float minNoiseValue;

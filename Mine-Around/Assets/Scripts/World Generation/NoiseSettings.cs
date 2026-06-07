@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[System.Serializable]
-public class NoiseSettings
+[CreateAssetMenu(fileName = "NoiseSettings", menuName = "Scriptable Objects/NoiseSettings")]
+public class NoiseSettings : ScriptableObject
 {
     public int octaves;
     public float persistence;

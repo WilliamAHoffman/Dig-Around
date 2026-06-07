@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[System.Serializable]
-public class WallData
+[CreateAssetMenu(fileName = "WallData", menuName = "Scriptable Objects/WallData")]
+public class WallData : ScriptableObject
 {
     public RuleTile tile;
     public string displayName;
@@ -9,8 +9,8 @@ public class WallData
     public int maxHealth;
     public bool invincible;
 }
-[System.Serializable]
-public class FloorData
+[CreateAssetMenu(fileName = "FloorData", menuName = "Scriptable Objects/FloorData")]
+public class FloorData : ScriptableObject
 {
     public RuleTile tile;
     public string displayName;

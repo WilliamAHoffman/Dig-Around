@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+/*
 public class ChunkManager : MonoBehaviour
 {
     [SerializeField] private bool randomSeed;
@@ -150,3 +150,4 @@ public class ChunkManager : MonoBehaviour
         return chunks.ContainsKey(chunkCoord);
     }
 }
+*/

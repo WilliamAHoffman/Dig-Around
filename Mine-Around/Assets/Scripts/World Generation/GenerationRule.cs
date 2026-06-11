@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GenerationRule", menuName = "Scriptable Objects/GenerationRule")]
-public class GenerationRule : ScriptableObject
+public class GenerationRule : ObjectID
 {
+    public override ObjectIDType Type => ObjectIDType.GenerationRule;
     public string tileID;
-
     public List<string> replaces;
 
     [Range(0f, 1f)]

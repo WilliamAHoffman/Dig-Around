@@ -1,20 +1,18 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "WallData", menuName = "Scriptable Objects/WallData")]
-public class WallData : ScriptableObject
+public class WallData : ObjectID
 {
+    public override ObjectIDType Type => ObjectIDType.Wall;
     public RuleTile tile;
-    public string displayName;
-    public string nameID;
     public int maxHealth;
     public bool invincible;
 }
 [CreateAssetMenu(fileName = "FloorData", menuName = "Scriptable Objects/FloorData")]
-public class FloorData : ScriptableObject
+public class FloorData : ObjectID
 {
+    public override ObjectIDType Type => ObjectIDType.Floor;
     public RuleTile tile;
-    public string displayName;
-    public string nameID;
     public int maxHealth;
     public bool invincible;
 }

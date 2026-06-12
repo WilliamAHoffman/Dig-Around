@@ -3,16 +3,16 @@ using UnityEngine;
 public class Chunk
 {
     public readonly int chunkSize;
-    public WorldWallTile[,] WorldWallTiles;
-    public WorldFloorTile[,] WorldFloorTiles;
+    public WorldTile[,] WorldWallTiles;
+    public WorldTile[,] WorldFloorTiles;
     public bool loaded;
 
     public Chunk(int size)
     {
         chunkSize = size;
 
-        WorldWallTiles = new WorldWallTile[size, size];
-        WorldFloorTiles = new WorldFloorTile[size, size];
+        WorldWallTiles = new WorldTile[size, size];
+        WorldFloorTiles = new WorldTile[size, size];
 
         loaded = false;
     }
@@ -23,28 +23,28 @@ public class Chunk
                tileLocation.y >= 0 && tileLocation.y < chunkSize;
     }
 
-    public WorldWallTile GetWorldWallTile(Vector2Int tileLocation)
+    public WorldTile GetWorldWallTile(Vector2Int tileLocation)
     {
         if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
 
         return WorldWallTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldWallTile(Vector2Int tileLocation, WorldWallTile tile)
+    public void SetWorldWallTile(Vector2Int tileLocation, WorldTile tile)
     {
         if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
 
         WorldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
-    public WorldFloorTile GetWorldFloorTile(Vector2Int tileLocation)
+    public WorldTile GetWorldFloorTile(Vector2Int tileLocation)
     {
         if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
 
         return WorldFloorTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldFloorTile(Vector2Int tileLocation, WorldFloorTile tile)
+    public void SetWorldFloorTile(Vector2Int tileLocation, WorldTile tile)
     {
         if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
 

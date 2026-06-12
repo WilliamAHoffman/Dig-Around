@@ -3,17 +3,15 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
-    public int seed;
-    public bool randomSeed;
-    List<string> biomes;
-    FastNoiseLite biomeNoise;
-    void Start()
+    [SerializeField] List<Biome> biomes;
+    [SerializeField] List<float> biomeRanges;
+    private FastNoiseLite biomeNoise;
+    [SerializeField] NoiseSettings noiseSettings;
+    public void SetNoise(int newSeed)
     {
-        if (randomSeed)
-        {
-            seed = Random.Range(int.MinValue, int.MaxValue);
-        }
+        biomeNoise = noiseSettings.GetNoise(newSeed);
     }
+
     public Chunk GenerateChunk(Vector2Int chunkLocation, int chunkSize)
     {
         Chunk chunk = new Chunk(chunkSize);
@@ -25,10 +23,10 @@ public class WorldGenerator : MonoBehaviour
                 Vector2Int worldPos = localPos + chunkLocation * chunkSize;
                 string biomeID = ChooseBiome(x, y);
                 Biome biome = WorldDataRegistry.Instance.GetBiomeData(biomeID);
-                string worldWall = biome.GenerateWallTile(WorldDataRegistry.Instance.GetDefaultID(), worldPos, seed);
-                string worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetDefaultID(), worldPos, seed);
-                WorldWallTile nextWallTile = WorldDataRegistry.Instance.GetWorldWall(worldWall);
-                WorldFloorTile nextFloorTile = WorldDataRegistry.Instance.GetWorldFloor(worldFloor);
+                string worldWall = biome.GenerateWallTile(WorldDataRegistry.Instance.GetAirTile().nameID, worldPos);
+                string worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetAirTile().nameID, worldPos);
+                WorldTile nextWallTile = WorldDataRegistry.Instance.GetWorldTile(worldWall);
+                WorldTile nextFloorTile = WorldDataRegistry.Instance.GetWorldTile(worldFloor);
                 chunk.SetWorldWallTile(localPos, nextWallTile);
                 chunk.SetWorldFloorTile(localPos, nextFloorTile);
             }
@@ -39,15 +37,13 @@ public class WorldGenerator : MonoBehaviour
     private string ChooseBiome(int x, int y)
     {
         float noiseSample = biomeNoise.GetNoise(x, y);
-        foreach(string biome in biomes)
+        for(int i = 0; i < biomeRanges.Count; i++)
         {
-            Biome biomeData = WorldDataRegistry.Instance.GetBiomeData(biome);
-
-            if(biomeData.Matches(noiseSample))
+            if(noiseSample - biomeRanges[i] <= 0)
             {
-                return biomeData.nameID;
+                return biomes[i].nameID;
             }
         }
-        return WorldDataRegistry.Instance.GetDefaultID();
+        return WorldDataRegistry.Instance.GetEmptyBiome().nameID;
     }
 }

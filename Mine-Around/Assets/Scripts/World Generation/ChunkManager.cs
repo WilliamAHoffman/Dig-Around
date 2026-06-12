@@ -27,6 +27,18 @@ public class ChunkManager : MonoBehaviour
         Instance = this;
     }
 
+    public void CreateRadiusAt(Vector2Int chunkLocation)
+    {
+        for(int x = -maxChunkRange; x < maxChunkRange; x++)
+        {
+            for(int y = -maxChunkRange; y < maxChunkRange; y++)
+            {
+                Vector2Int loadingPos = new Vector2Int(x, y);
+                LoadChunk(chunkLocation + loadingPos);
+            }
+        }
+    }
+
     public void CreateChunk(Vector2Int chunkLocation)
     {
         if (chunks.ContainsKey(chunkLocation)) return;
@@ -58,8 +70,8 @@ public class ChunkManager : MonoBehaviour
                 string worldWall = chunk.GetWorldWallTile(localPos).nameID;
                 string worldFloor = chunk.GetWorldFloorTile(localPos).nameID;
 
-                RuleTile nextWallTile = WorldDataRegistry.Instance.GetWallData(worldWall).tile;
-                RuleTile nextFloorTile = WorldDataRegistry.Instance.GetWallData(worldFloor).tile;
+                Tile nextWallTile = WorldDataRegistry.Instance.GetTileData(worldWall).tile;
+                Tile nextFloorTile = WorldDataRegistry.Instance.GetTileData(worldFloor).tile;
 
                 positions[i] = (Vector3Int)worldPos;
                 wallTiles[i] = nextWallTile;
@@ -105,7 +117,7 @@ public class ChunkManager : MonoBehaviour
         floors.SetTiles(positions, floorTiles);
     }
 
-    public WorldWallTile GetWorldWallTileAtLocation(Vector2 location)
+    public WorldTile GetWorldWallTileAtLocation(Vector2 location)
     {
 
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
@@ -114,7 +126,7 @@ public class ChunkManager : MonoBehaviour
         return chunks[chunkCoord].GetWorldWallTile(localPos);
     }
 
-    public WorldFloorTile GetWorldFloorTileAtLocation(Vector2 location)
+    public WorldTile GetWorldFloorTileAtLocation(Vector2 location)
     {
 
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);

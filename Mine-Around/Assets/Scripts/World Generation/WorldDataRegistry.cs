@@ -8,22 +8,19 @@ public class WorldDataRegistry : MonoBehaviour
     public static WorldDataRegistry Instance { get; private set; }
 
     [Header("Tile Data")]
-    [SerializeField] private List<WallData> wallDataList;
-    [SerializeField] private List<FloorData> floorDataList;
+    [SerializeField] private List<TileData> TileDataList;
+    [SerializeField] private TileData empty_tile;
 
-    private Dictionary<string, WallData> wallDataByID;
-    private Dictionary<string, FloorData> floorDataByID;
+    private Dictionary<string, TileData> tileDataByID;
 
     [Header("Biome Data")]
     [SerializeField] private List<Biome> biomeDataList;
+    [SerializeField] private Biome empty_biome;
     private Dictionary<string, Biome> biomeDataByID;
 
     [Header("Feature Data")]
     [SerializeField] private List<Feature> featureDataList;
     private Dictionary<string, Feature> featureDataByID;
-
-    [Header("Fallback IDs")]
-    [SerializeField] private string defaultID = "empty";
 
     private void Awake()
     {
@@ -35,10 +32,17 @@ public class WorldDataRegistry : MonoBehaviour
 
         Instance = this;
 
-        wallDataByID = BuildDataLookup(wallDataList);
-        floorDataByID = BuildDataLookup(floorDataList);
+        tileDataByID = BuildDataLookup(TileDataList);
         biomeDataByID = BuildDataLookup(biomeDataList);
         featureDataByID = BuildDataLookup(featureDataList);
+    }
+
+    public void SetFeatureNoise(int seed)
+    {
+        foreach(Feature feature in featureDataList)
+        {
+            feature.SetNoise(seed);
+        }
     }
 
     private Dictionary<string, T> BuildDataLookup<T>(List<T> datas) where T : ObjectID
@@ -62,24 +66,12 @@ public class WorldDataRegistry : MonoBehaviour
         return dataByID;
     }
 
-    public WallData GetWallData(string nameID)
+    public TileData GetTileData(string nameID)
     {
         if (string.IsNullOrWhiteSpace(nameID))
             return null;
 
-        if (wallDataByID.TryGetValue(nameID, out WallData wallData))
-            return wallData;
-
-        Debug.LogWarning($"No WallData found with nameID: {nameID}", this);
-        return null;
-    }
-
-    public FloorData GetFloorData(string nameID)
-    {
-        if (string.IsNullOrWhiteSpace(nameID))
-            return null;
-
-        if (floorDataByID.TryGetValue(nameID, out FloorData floorData))
+        if (tileDataByID.TryGetValue(nameID, out TileData floorData))
             return floorData;
 
         Debug.LogWarning($"No FloorData found with nameID: {nameID}", this);
@@ -110,22 +102,19 @@ public class WorldDataRegistry : MonoBehaviour
         return null;
     }
 
-    public string GetDefaultID()
+    public WorldTile GetAirTile()
     {
-        return defaultID;
+        return empty_tile.WorldTile();
+    }
+    public Biome GetEmptyBiome()
+    {
+        return empty_biome;
     }
 
-    public WorldWallTile GetWorldWall(string nameID)
+    public WorldTile GetWorldTile(string nameID)
     {
-        WallData wallData = GetWallData(nameID);
+        TileData wallData = GetTileData(nameID);
 
-        return new WorldWallTile(wallData.nameID, wallData.maxHealth);
-    }
-
-    public WorldFloorTile GetWorldFloor(string nameID)
-    {
-        FloorData floorData = GetFloorData(nameID);
-
-        return new WorldFloorTile(floorData.nameID, floorData.maxHealth);
+        return wallData.WorldTile();
     }
 }

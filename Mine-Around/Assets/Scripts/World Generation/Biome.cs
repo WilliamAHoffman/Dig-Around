@@ -8,18 +8,7 @@ public class Biome : ObjectID
     public List<Feature> wallFeatures;
     public List<Feature> floorFeatures;
 
-    [Range(0f, 1f)]
-    public float minNoiseValue;
-
-    [Range(0f, 1f)]
-    public float maxNoiseValue = 1f;
-
-    public bool Matches(float noiseValue)
-    {
-        return noiseValue >= minNoiseValue && noiseValue <= maxNoiseValue;
-    }
-
-    private string GenerateTile(string replacing, List<Feature> features, Vector2Int location, int seed)
+    private string GenerateTile(string replacing, List<Feature> features, Vector2Int location)
     {
         string newTile = replacing;
 
@@ -31,19 +20,19 @@ public class Biome : ObjectID
             if (feature == null)
                 continue;
 
-            newTile = feature.GenerateTile(newTile, location, seed);
+            newTile = feature.GenerateTile(newTile, location);
         }
 
         return newTile;
     }
 
-    public string GenerateFloorTile(string replacing, Vector2Int location, int seed)
+    public string GenerateFloorTile(string replacing, Vector2Int location)
     {
-        return GenerateTile(replacing, floorFeatures, location, seed);
+        return GenerateTile(replacing, floorFeatures, location);
     }
 
-    public string GenerateWallTile(string replacing, Vector2Int location, int seed)
+    public string GenerateWallTile(string replacing, Vector2Int location)
     {
-        return GenerateTile(replacing, wallFeatures, location, seed);
+        return GenerateTile(replacing, wallFeatures, location);
     }
 }

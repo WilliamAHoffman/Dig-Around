@@ -2,8 +2,7 @@ using UnityEngine;
 
 public enum ObjectIDType
 {
-    Wall,
-    Floor,
+    Tile,
     Feature,
     Biome,
     GenerationRule

@@ -5,16 +5,23 @@ using UnityEngine;
 public class Feature : ObjectID
 {
     public override ObjectIDType Type => ObjectIDType.Feature;
-    public List<GenerationRule> rules;
-    public FastNoiseLite featureNoise;
-    public string GenerateTile(string replacing, Vector2Int location, int seed)
+    public List<TileData> tiles;
+    public List<float> tileRanges;
+    private FastNoiseLite featureNoise;
+    public NoiseSettings noiseSettings;
+
+    public void SetNoise(int seed)
+    {
+        featureNoise = noiseSettings.GetNoise(seed);
+    }
+    public string GenerateTile(string replacing, Vector2Int location)
     {
         float noiseSample = featureNoise.GetNoise(location.x, location.y);
-        foreach(GenerationRule rule in rules)
+        for(int i = 0; i < tileRanges.Count; i++)
         {
-            if(rule.Matches(noiseSample) && rule.Replaces(replacing))
+            if(noiseSample - tileRanges[i] <= 0)
             {
-                return rule.tileID;
+                return tiles[i].nameID;
             }
         }
         return replacing;

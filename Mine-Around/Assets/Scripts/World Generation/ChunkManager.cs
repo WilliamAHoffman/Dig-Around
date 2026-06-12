@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-/*
+
 public class ChunkManager : MonoBehaviour
 {
-    [SerializeField] private bool randomSeed;
     public int chunkSize = 16;
     [SerializeField] private int maxChunkRange = 4;
     private Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
@@ -56,11 +55,11 @@ public class ChunkManager : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, chunkSize);
 
-                WorldWallTile worldWall = chunk.GetWorldWallTile(localPos);
-                WorldFloorTile worldFloor = chunk.GetWorldFloorTile(localPos);
+                string worldWall = chunk.GetWorldWallTile(localPos).nameID;
+                string worldFloor = chunk.GetWorldFloorTile(localPos).nameID;
 
-                RuleTile nextWallTile = WorldManager.Instance.GetWallData(worldWall.nameID).tile;
-                RuleTile nextFloorTile = WorldManager.Instance.GetWallData(worldFloor.nameID).tile;
+                RuleTile nextWallTile = WorldDataRegistry.Instance.GetWallData(worldWall).tile;
+                RuleTile nextFloorTile = WorldDataRegistry.Instance.GetWallData(worldFloor).tile;
 
                 positions[i] = (Vector3Int)worldPos;
                 wallTiles[i] = nextWallTile;
@@ -150,4 +149,3 @@ public class ChunkManager : MonoBehaviour
         return chunks.ContainsKey(chunkCoord);
     }
 }
-*/

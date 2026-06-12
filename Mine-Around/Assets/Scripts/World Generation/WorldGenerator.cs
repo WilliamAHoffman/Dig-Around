@@ -1,15 +1,12 @@
 using System.Collections.Generic;
-using TreeEditor;
-using Unity.Collections;
 using UnityEngine;
-/*
+
 public class WorldGenerator : MonoBehaviour
 {
     public int seed;
     public bool randomSeed;
-    int chunkSize;
     List<string> biomes;
-    NoiseSettings biomeNoise;
+    FastNoiseLite biomeNoise;
     void Start()
     {
         if (randomSeed)
@@ -17,37 +14,40 @@ public class WorldGenerator : MonoBehaviour
             seed = Random.Range(int.MinValue, int.MaxValue);
         }
     }
-    public Chunk GenerateChunk(Vector2Int chunkLocation)
+    public Chunk GenerateChunk(Vector2Int chunkLocation, int chunkSize)
     {
         Chunk chunk = new Chunk(chunkSize);
         for (int x = 0; x < chunkSize; x++)
         {
             for (int y = 0; y < chunkSize; y++)
             {
-
-                Vector2Int localPos = new Vector2Int(x, y);
-                Biome biome = ChooseBiome(localPos + chunkLocation * chunkSize);
-                WorldWallTile worldWall = biome.GenerateWallTile("",);
-                WorldFloorTile worldFloor = 
-
-                RuleTile nextWallTile = WorldManager.Instance.GetWallData(worldWall.nameID).tile;
-                RuleTile nextFloorTile = WorldManager.Instance.GetWallData(worldFloor.nameID).tile;
-                i++;
+                Vector2Int localPos = new Vector2Int(x,y);
+                Vector2Int worldPos = localPos + chunkLocation * chunkSize;
+                string biomeID = ChooseBiome(x, y);
+                Biome biome = WorldDataRegistry.Instance.GetBiomeData(biomeID);
+                string worldWall = biome.GenerateWallTile(WorldDataRegistry.Instance.GetDefaultID(), worldPos, seed);
+                string worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetDefaultID(), worldPos, seed);
+                WorldWallTile nextWallTile = WorldDataRegistry.Instance.GetWorldWall(worldWall);
+                WorldFloorTile nextFloorTile = WorldDataRegistry.Instance.GetWorldFloor(worldFloor);
+                chunk.SetWorldWallTile(localPos, nextWallTile);
+                chunk.SetWorldFloorTile(localPos, nextFloorTile);
             }
         }
+        return chunk;
     }
 
-    private string ChooseBiome(Vector2Int location)
+    private string ChooseBiome(int x, int y)
     {
-        float noiseSample = Noise.SampleNoise(location.x,location.y,biomeNoise,seed);
+        float noiseSample = biomeNoise.GetNoise(x, y);
         foreach(string biome in biomes)
         {
-            if(biome.Matches(noiseSample))
+            Biome biomeData = WorldDataRegistry.Instance.GetBiomeData(biome);
+
+            if(biomeData.Matches(noiseSample))
             {
-                return biome.biomeID;
+                return biomeData.nameID;
             }
         }
-        return "";
+        return WorldDataRegistry.Instance.GetDefaultID();
     }
 }
-*/

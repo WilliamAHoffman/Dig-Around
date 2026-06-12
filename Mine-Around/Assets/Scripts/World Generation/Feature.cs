@@ -6,10 +6,10 @@ public class Feature : ObjectID
 {
     public override ObjectIDType Type => ObjectIDType.Feature;
     public List<GenerationRule> rules;
-    public NoiseSettings featureNoise;
+    public FastNoiseLite featureNoise;
     public string GenerateTile(string replacing, Vector2Int location, int seed)
     {
-        float noiseSample = Noise.SampleNoise(location.x,location.y,featureNoise,seed);
+        float noiseSample = featureNoise.GetNoise(location.x, location.y);
         foreach(GenerationRule rule in rules)
         {
             if(rule.Matches(noiseSample) && rule.Replaces(replacing))

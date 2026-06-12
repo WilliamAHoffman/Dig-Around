@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class WorldDataRegistry : MonoBehaviour
 {
@@ -15,15 +16,14 @@ public class WorldDataRegistry : MonoBehaviour
 
     [Header("Biome Data")]
     [SerializeField] private List<Biome> biomeDataList;
-
     private Dictionary<string, Biome> biomeDataByID;
 
-    [Header("Fallback IDs")]
-    [SerializeField] private string airWallID = "air";
-    [SerializeField] private string defaultFloorID = "air";
+    [Header("Feature Data")]
+    [SerializeField] private List<Feature> featureDataList;
+    private Dictionary<string, Feature> featureDataByID;
 
-    //[Header("Feature Data")]
-    //[SerializeField] 
+    [Header("Fallback IDs")]
+    [SerializeField] private string defaultID = "empty";
 
     private void Awake()
     {
@@ -38,6 +38,7 @@ public class WorldDataRegistry : MonoBehaviour
         wallDataByID = BuildDataLookup(wallDataList);
         floorDataByID = BuildDataLookup(floorDataList);
         biomeDataByID = BuildDataLookup(biomeDataList);
+        featureDataByID = BuildDataLookup(featureDataList);
     }
 
     private Dictionary<string, T> BuildDataLookup<T>(List<T> datas) where T : ObjectID
@@ -97,15 +98,26 @@ public class WorldDataRegistry : MonoBehaviour
         return null;
     }
 
+    public Feature GetFeatureData(string nameID)
+    {
+        if (string.IsNullOrWhiteSpace(nameID))
+            return null;
+
+        if (featureDataByID.TryGetValue(nameID, out Feature feature))
+            return feature;
+
+        Debug.LogWarning($"No Feature found with nameID: {nameID}", this);
+        return null;
+    }
+
+    public string GetDefaultID()
+    {
+        return defaultID;
+    }
+
     public WorldWallTile GetWorldWall(string nameID)
     {
         WallData wallData = GetWallData(nameID);
-
-        if (wallData == null)
-        {
-            WallData fallbackWallData = GetWallData(airWallID);
-            return new WorldWallTile(fallbackWallData.nameID, fallbackWallData.maxHealth);
-        }
 
         return new WorldWallTile(wallData.nameID, wallData.maxHealth);
     }
@@ -113,12 +125,6 @@ public class WorldDataRegistry : MonoBehaviour
     public WorldFloorTile GetWorldFloor(string nameID)
     {
         FloorData floorData = GetFloorData(nameID);
-
-        if (floorData == null)
-        {
-            FloorData fallbackFloorData = GetFloorData(defaultFloorID);
-            return new WorldFloorTile(fallbackFloorData.nameID, fallbackFloorData.maxHealth);
-        }
 
         return new WorldFloorTile(floorData.nameID, floorData.maxHealth);
     }

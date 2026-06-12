@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   chunkSize: 16
-  maxChunkRange: 4
+  maxChunkRange: 3
   walls: {fileID: 475959448}
   floors: {fileID: 575455175}
   generator: {fileID: 1184546137}
@@ -285,8 +285,8 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1594693003
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
@@ -306,15 +306,39 @@ Tilemap:
   m_Enabled: 1
   m_Tiles: {}
   m_AnimatedTiles: {}
-  m_TileAssetArray: []
-  m_TileSpriteArray: []
-  m_TileMatrixArray: []
-  m_TileColorArray: []
+  m_TileAssetArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileMatrixArray:
+  - m_RefCount: 0
+    m_Data:
+      e00: -4.417954e+9
+      e01: 0
+      e02: 2.4966363e+17
+      e03: 2.4966418e+17
+      e10: 4.5908e-41
+      e11: 0
+      e12: 1.88e-43
+      e13: 1.88e-43
+      e20: -1.4767522e+10
+      e21: 1.1118341e-19
+      e22: 1.1118341e-19
+      e23: -2.6164269e-18
+      e30: 4.5908e-41
+      e31: 5.7e-43
+      e32: 5.7e-43
+      e33: 5.66e-43
+  m_TileColorArray:
+  - m_RefCount: 0
+    m_Data: {r: 7.0247e-41, g: 7.0247e-41, b: 7.0247e-41, a: 7.0247e-41}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 0, y: 0, z: 1}
+  m_Origin: {x: -64, y: -64, z: 0}
+  m_Size: {x: 129, y: 128, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -515,11 +539,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9680ab67e711ca4695b85c1930a5932, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldDataRegistry
-  TileDataList: []
-  empty_tile: {fileID: 0}
-  biomeDataList: []
-  empty_biome: {fileID: 0}
-  featureDataList: []
+  TileDataList:
+  - {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
+  - {fileID: 11400000, guid: 0dc785117a239ce448e41109b130a92b, type: 2}
+  - {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
+  empty_tile: {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
+  biomeDataList:
+  - {fileID: 11400000, guid: 3abbb1f859a7985409017f766ac5d1cc, type: 2}
+  - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  empty_biome: {fileID: 11400000, guid: 3abbb1f859a7985409017f766ac5d1cc, type: 2}
+  featureDataList:
+  - {fileID: 11400000, guid: aeb244012eaf2494098e4f409fa4bc31, type: 2}
+  - {fileID: 11400000, guid: df2af8155bdb3db468af2c78fbe9f9e5, type: 2}
 --- !u!1 &575455172
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,8 +629,8 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1210111489
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
@@ -619,15 +650,39 @@ Tilemap:
   m_Enabled: 1
   m_Tiles: {}
   m_AnimatedTiles: {}
-  m_TileAssetArray: []
-  m_TileSpriteArray: []
-  m_TileMatrixArray: []
-  m_TileColorArray: []
+  m_TileAssetArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileMatrixArray:
+  - m_RefCount: 0
+    m_Data:
+      e00: -4.417954e+9
+      e01: 0
+      e02: 2.4966363e+17
+      e03: 2.4966418e+17
+      e10: 4.5908e-41
+      e11: 0
+      e12: 1.88e-43
+      e13: 1.88e-43
+      e20: -1.4767522e+10
+      e21: 1.1672863e-19
+      e22: 1.1672863e-19
+      e23: -2.7513206e-19
+      e30: 4.5908e-41
+      e31: 5.7e-43
+      e32: 5.7e-43
+      e33: 5.66e-43
+  m_TileColorArray:
+  - m_RefCount: 0
+    m_Data: {r: 2.4965978e+17, g: 2.4965978e+17, b: 2.4965978e+17, a: 2.4965978e+17}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 0, y: 0, z: 1}
+  m_Origin: {x: -64, y: -64, z: 0}
+  m_Size: {x: 128, y: 128, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -684,7 +739,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 0000000075eaf2a001d62048
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -760,9 +815,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8ddf3f7de161524baf24598dc324f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldGenerator
-  biomes: []
-  biomeRanges: []
-  noiseSettings: {fileID: 0}
+  biomes:
+  - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  biomeRanges:
+  - 1
+  noiseSettings: {fileID: 11400000, guid: b88e843c0fb4b3944baa4e72ac3afe52, type: 2}
 --- !u!4 &1184546138
 Transform:
   m_ObjectHideFlags: 0
@@ -807,7 +864,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c55fcca63557c3141b6514c907997b7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  worldGenerator: {fileID: 0}
+  worldSeed: 99
+  randomSeed: 0
+  worldGenerator: {fileID: 1184546137}
 --- !u!4 &1218845196
 Transform:
   m_ObjectHideFlags: 0

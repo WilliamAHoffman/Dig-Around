@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -76,6 +75,10 @@ public class ChunkManager : MonoBehaviour
                 positions[i] = (Vector3Int)worldPos;
                 wallTiles[i] = nextWallTile;
                 floorTiles[i] = nextFloorTile;
+                if (!WorldDataRegistry.Instance.IsAirTile(worldWall))
+                {
+                    floorTiles[i] = null;
+                }
                 i++;
             }
         }

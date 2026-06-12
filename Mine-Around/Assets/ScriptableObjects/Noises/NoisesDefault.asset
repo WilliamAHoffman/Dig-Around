@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: NoisesDefault
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   noiseType: 0
-  seed: 0
+  frequency: 0.01

@@ -4,8 +4,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    int worldSeed;
-    bool randomSeed;
+    public int worldSeed;
+    [SerializeField] bool randomSeed;
 
     public WorldGenerator worldGenerator;
 
@@ -19,12 +19,9 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
     }
-    void Start()
-    {
-        CreateWorld();
-    }
     public void CreateWorld()
     {
+        ChunkManager.Instance.DeleteAllChunks();
         if (randomSeed)
         {
             worldSeed = Random.Range(-1000,1000);

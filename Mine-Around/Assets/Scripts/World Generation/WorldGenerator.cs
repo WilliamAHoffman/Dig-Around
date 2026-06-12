@@ -19,14 +19,18 @@ public class WorldGenerator : MonoBehaviour
         {
             for (int y = 0; y < chunkSize; y++)
             {
-                Vector2Int localPos = new Vector2Int(x,y);
+                Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = localPos + chunkLocation * chunkSize;
-                string biomeID = ChooseBiome(x, y);
+
+                string biomeID = ChooseBiome(worldPos.x, worldPos.y);
                 Biome biome = WorldDataRegistry.Instance.GetBiomeData(biomeID);
+
                 string worldWall = biome.GenerateWallTile(WorldDataRegistry.Instance.GetAirTile().nameID, worldPos);
                 string worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetAirTile().nameID, worldPos);
+
                 WorldTile nextWallTile = WorldDataRegistry.Instance.GetWorldTile(worldWall);
                 WorldTile nextFloorTile = WorldDataRegistry.Instance.GetWorldTile(worldFloor);
+
                 chunk.SetWorldWallTile(localPos, nextWallTile);
                 chunk.SetWorldFloorTile(localPos, nextFloorTile);
             }
@@ -36,14 +40,25 @@ public class WorldGenerator : MonoBehaviour
 
     private string ChooseBiome(int x, int y)
     {
-        float noiseSample = biomeNoise.GetNoise(x, y);
-        for(int i = 0; i < biomeRanges.Count; i++)
+        if (biomeNoise == null)
         {
-            if(noiseSample - biomeRanges[i] <= 0)
-            {
-                return biomes[i].nameID;
-            }
+            Debug.LogError($"Feature noise has not been initialized for biome generation", this);
+            return WorldDataRegistry.Instance.GetEmptyBiome().nameID;
         }
+
+        float noiseSample = biomeNoise.GetNoise(x, y);
+
+        int count = Mathf.Min(biomes.Count, biomeRanges.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (biomes[i] == null)
+                continue;
+
+            if (noiseSample <= biomeRanges[i])
+                return biomes[i].nameID;
+        }
+
         return WorldDataRegistry.Instance.GetEmptyBiome().nameID;
     }
 }

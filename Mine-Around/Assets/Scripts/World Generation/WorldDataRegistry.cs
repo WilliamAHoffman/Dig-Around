@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public class WorldDataRegistry : MonoBehaviour
 {
@@ -39,7 +37,7 @@ public class WorldDataRegistry : MonoBehaviour
 
     public void SetFeatureNoise(int seed)
     {
-        foreach(Feature feature in featureDataList)
+        foreach (Feature feature in featureDataList)
         {
             feature.SetNoise(seed);
         }
@@ -106,6 +104,11 @@ public class WorldDataRegistry : MonoBehaviour
     {
         return empty_tile.WorldTile();
     }
+
+    public bool IsAirTile(string nameID)
+    {
+        return empty_tile != null && nameID == empty_tile.nameID;
+    }
     public Biome GetEmptyBiome()
     {
         return empty_biome;
@@ -113,8 +116,14 @@ public class WorldDataRegistry : MonoBehaviour
 
     public WorldTile GetWorldTile(string nameID)
     {
-        TileData wallData = GetTileData(nameID);
+        TileData tileData = GetTileData(nameID);
 
-        return wallData.WorldTile();
+        if (tileData == null)
+        {
+            Debug.LogWarning($"Falling back to empty tile for missing tile ID: {nameID}", this);
+            return GetAirTile();
+        }
+
+        return tileData.WorldTile();
     }
 }

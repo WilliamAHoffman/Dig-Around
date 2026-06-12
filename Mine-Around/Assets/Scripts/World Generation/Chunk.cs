@@ -25,28 +25,44 @@ public class Chunk
 
     public WorldTile GetWorldWallTile(Vector2Int tileLocation)
     {
-        if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
+        if (!InBounds(tileLocation))
+        {
+            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            return null;
+        }
 
         return WorldWallTiles[tileLocation.x, tileLocation.y];
     }
 
     public void SetWorldWallTile(Vector2Int tileLocation, WorldTile tile)
     {
-        if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
+        if (!InBounds(tileLocation))
+        {
+            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            return;
+        }
 
         WorldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
     public WorldTile GetWorldFloorTile(Vector2Int tileLocation)
     {
-        if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
+        if (!InBounds(tileLocation))
+        {
+            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            return null;
+        }
 
         return WorldFloorTiles[tileLocation.x, tileLocation.y];
     }
 
     public void SetWorldFloorTile(Vector2Int tileLocation, WorldTile tile)
     {
-        if(!InBounds(tileLocation)) Debug.LogError("Not in bounds");
+        if (!InBounds(tileLocation))
+        {
+            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            return;
+        }
 
         WorldFloorTiles[tileLocation.x, tileLocation.y] = tile;
     }

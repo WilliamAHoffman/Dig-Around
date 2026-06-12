@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Biome
   nameID: biome_plain
   displayName: Plains
-  wallFeatures: []
-  floorFeatures: []
-  minNoiseValue: 0
-  maxNoiseValue: 1
+  wallFeatures:
+  - {fileID: 11400000, guid: df2af8155bdb3db468af2c78fbe9f9e5, type: 2}
+  floorFeatures:
+  - {fileID: 11400000, guid: aeb244012eaf2494098e4f409fa4bc31, type: 2}

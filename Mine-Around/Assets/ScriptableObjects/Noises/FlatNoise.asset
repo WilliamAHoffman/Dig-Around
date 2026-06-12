@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81fd25521979a8545b03505137268f4a, type: 3}
-  m_Name: BiomeEmpty
-  m_EditorClassIdentifier: Assembly-CSharp::Biome
-  nameID: biome_empty
-  displayName: Void
-  wallFeatures: []
-  floorFeatures: []
+  m_Script: {fileID: 11500000, guid: b5048108922e902458de1e803b7ca8a9, type: 3}
+  m_Name: FlatNoise
+  m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
+  noiseType: 0
+  seed: 0

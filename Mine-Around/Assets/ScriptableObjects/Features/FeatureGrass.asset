@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Feature
   nameID: feature_grass
   displayName: Grass Feature
-  tiles:
-  - {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
-  tileRanges:
+  rules:
+  - {fileID: 11400000, guid: 2e8b4d092f983c04a820644428362b54, type: 2}
+  ruleRanges:
   - 1
-  noiseSettings: {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}
+  noiseSettings: {fileID: 11400000, guid: b88e843c0fb4b3944baa4e72ac3afe52, type: 2}

@@ -1,6 +1,4 @@
-using UnityEngine;
-
-public class WorldTile : ScriptableObject
+public class WorldTile
 {
     public string nameID;
 

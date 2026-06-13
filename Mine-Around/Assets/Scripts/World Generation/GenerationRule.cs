@@ -5,20 +5,48 @@ using UnityEngine;
 public class GenerationRule : ObjectID
 {
     public override ObjectIDType Type => ObjectIDType.GenerationRule;
-    public TileData tile;
-    public List<TileData> replaces;
+    public TileData wall;
+    public TileData floor;
+    public List<TileData> placeOnWall;
+    public List<TileData> placeOnFloor;
 
-    public bool Replaces(string replacing)
+    private bool CheckWall(string wall)
     {
-        if(replaces.Count == 0) return true;
-        foreach(TileData tile in replaces)
+        if(placeOnWall == null || placeOnWall.Count == 0) return true;
+        foreach(TileData tile in placeOnWall)
         {
-            if(tile.nameID == replacing)
+            if(tile.nameID == wall)
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private bool CheckFloor(string floor)
+    {
+        if(placeOnFloor == null || placeOnFloor.Count == 0) return true;
+        foreach(TileData tile in placeOnFloor)
+        {
+            if(tile.nameID == floor)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public LocationTiles GetNewTiles(LocationTiles currentTiles)
+    {
+        string finalWall = currentTiles.wall;
+        string finalFloor = currentTiles.floor;
+        if (!CheckWall(finalWall) || !CheckFloor(finalFloor)) return currentTiles;
+
+        if(wall) finalWall = wall.nameID;
+        if(floor) finalFloor = floor.nameID;
+
+        return new LocationTiles(finalWall, finalFloor);
     }
 }

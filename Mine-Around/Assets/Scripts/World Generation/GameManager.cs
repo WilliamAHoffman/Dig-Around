@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
     public int worldSeed;
     [SerializeField] bool randomSeed;
 
+    [SerializeField] int maxSeed;
+    [SerializeField] int minSeed;
+
     public WorldGenerator worldGenerator;
 
     private void Awake()
@@ -24,11 +27,18 @@ public class GameManager : MonoBehaviour
         ChunkManager.Instance.DeleteAllChunks();
         if (randomSeed)
         {
-            worldSeed = Random.Range(-1000,1000);
+            worldSeed = Random.Range(minSeed, maxSeed);
         }
+
+        Random.InitState(worldSeed);
         worldGenerator.SetNoise(worldSeed);
-        WorldDataRegistry.Instance.SetFeatureNoise(worldSeed);
+        WorldDataRegistry.Instance.SetFeatureNoise();
 
         ChunkManager.Instance.CreateRadiusAt(new Vector2Int(0,0));
+    }
+
+    public int GetNewSeed()
+    {
+        return Random.Range(minSeed, maxSeed);
     }
 }

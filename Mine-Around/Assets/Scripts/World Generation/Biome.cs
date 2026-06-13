@@ -8,31 +8,40 @@ public class Biome : ObjectID
     public List<Feature> wallFeatures;
     public List<Feature> floorFeatures;
 
-    private string GenerateTile(string replacing, List<Feature> features, Vector2Int location)
+    public LocationTiles GenerateFloorTile(LocationTiles currentTiles, Vector2Int location)
     {
-        string newTile = replacing;
 
-        if (features == null)
-            return newTile;
+        if (floorFeatures == null)
+            return currentTiles;
 
-        foreach (Feature feature in features)
+        LocationTiles newTiles = currentTiles;
+
+        foreach (Feature feature in floorFeatures)
         {
             if (feature == null)
                 continue;
-
-            newTile = feature.GenerateTile(newTile, location);
+            
+            newTiles = feature.GenerateTiles(newTiles, location);
         }
 
-        return newTile;
+        return newTiles;
     }
 
-    public string GenerateFloorTile(string replacing, Vector2Int location)
+    public LocationTiles GenerateWallTile(LocationTiles currentTiles, Vector2Int location)
     {
-        return GenerateTile(replacing, floorFeatures, location);
-    }
+        if (wallFeatures == null)
+            return currentTiles;
 
-    public string GenerateWallTile(string replacing, Vector2Int location)
-    {
-        return GenerateTile(replacing, wallFeatures, location);
+        LocationTiles newTiles = currentTiles;
+
+        foreach (Feature feature in wallFeatures)
+        {
+            if (feature == null)
+                continue;
+            
+            newTiles = feature.GenerateTiles(newTiles, location);
+        }
+
+        return newTiles;
     }
 }

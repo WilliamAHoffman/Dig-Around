@@ -35,11 +35,11 @@ public class WorldDataRegistry : MonoBehaviour
         featureDataByID = BuildDataLookup(featureDataList);
     }
 
-    public void SetFeatureNoise(int seed)
+    public void SetFeatureNoise()
     {
         foreach (Feature feature in featureDataList)
         {
-            feature.SetNoise(seed);
+            feature.SetNoise(GameManager.Instance.GetNewSeed());
         }
     }
 
@@ -103,6 +103,11 @@ public class WorldDataRegistry : MonoBehaviour
     public WorldTile GetAirTile()
     {
         return empty_tile.WorldTile();
+    }
+
+    public LocationTiles GetAirTiles()
+    {
+        return new LocationTiles(empty_tile.nameID, empty_tile.nameID);
     }
 
     public bool IsAirTile(string nameID)

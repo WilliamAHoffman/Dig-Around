@@ -25,11 +25,11 @@ public class WorldGenerator : MonoBehaviour
                 string biomeID = ChooseBiome(worldPos.x, worldPos.y);
                 Biome biome = WorldDataRegistry.Instance.GetBiomeData(biomeID);
 
-                string worldWall = biome.GenerateWallTile(WorldDataRegistry.Instance.GetAirTile().nameID, worldPos);
-                string worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetAirTile().nameID, worldPos);
+                LocationTiles worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetAirTiles(), worldPos);
+                LocationTiles worldWall = biome.GenerateWallTile(worldFloor, worldPos);
 
-                WorldTile nextWallTile = WorldDataRegistry.Instance.GetWorldTile(worldWall);
-                WorldTile nextFloorTile = WorldDataRegistry.Instance.GetWorldTile(worldFloor);
+                WorldTile nextWallTile = WorldDataRegistry.Instance.GetWorldTile(worldWall.wall);
+                WorldTile nextFloorTile = WorldDataRegistry.Instance.GetWorldTile(worldWall.floor);
 
                 chunk.SetWorldWallTile(localPos, nextWallTile);
                 chunk.SetWorldFloorTile(localPos, nextFloorTile);

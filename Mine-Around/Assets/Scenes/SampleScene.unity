@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   chunkSize: 16
-  maxChunkRange: 3
+  maxChunkRange: 8
   walls: {fileID: 475959448}
   floors: {fileID: 575455175}
   generator: {fileID: 1184546137}
@@ -543,14 +543,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
   - {fileID: 11400000, guid: 0dc785117a239ce448e41109b130a92b, type: 2}
   - {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
+  - {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}
   empty_tile: {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
   biomeDataList:
   - {fileID: 11400000, guid: 3abbb1f859a7985409017f766ac5d1cc, type: 2}
   - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  - {fileID: 11400000, guid: 47c09ef9a4010824db622cecfb899e5f, type: 2}
   empty_biome: {fileID: 11400000, guid: 3abbb1f859a7985409017f766ac5d1cc, type: 2}
   featureDataList:
   - {fileID: 11400000, guid: aeb244012eaf2494098e4f409fa4bc31, type: 2}
   - {fileID: 11400000, guid: df2af8155bdb3db468af2c78fbe9f9e5, type: 2}
+  - {fileID: 11400000, guid: fbcfa2a20f411d146922f8581bdf5fd5, type: 2}
+  - {fileID: 11400000, guid: 000f33bd1279e7249b068d2368addec2, type: 2}
 --- !u!1 &575455172
 GameObject:
   m_ObjectHideFlags: 0
@@ -866,6 +870,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   worldSeed: 99
   randomSeed: 0
+  maxSeed: 1000
+  minSeed: -1000
   worldGenerator: {fileID: 1184546137}
 --- !u!4 &1218845196
 Transform:

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fddfb814f1146b4cacf529fb5340906, type: 3}
-  m_Name: TileStone
+  m_Name: TileTree
   m_EditorClassIdentifier: Assembly-CSharp::TileData
-  nameID: tile_stone
-  displayName: Stone
-  tile: {fileID: 11400000, guid: 453f8b2db1569b3449df10f1b006df4d, type: 2}
+  nameID: tile_tree
+  displayName: Tree
+  tile: {fileID: 11400000, guid: c30d5a5a8124cab4497618115f30ad51, type: 2}
   maxHealth: 1
   invincible: 0

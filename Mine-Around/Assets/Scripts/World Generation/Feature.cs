@@ -14,12 +14,13 @@ public class Feature : ObjectID
     {
         featureNoise = noiseSettings.GetNoise(seed);
     }
-    public string GenerateTile(string replacing, Vector2Int location)
+    public LocationTiles GenerateTiles(LocationTiles currentTiles, Vector2Int location)
     {
+
         if (featureNoise == null)
         {
             Debug.LogError($"Feature noise has not been initialized for feature: {nameID}", this);
-            return replacing;
+            return currentTiles;
         }
 
         float noiseSample = featureNoise.GetNoise(location.x, location.y);
@@ -31,13 +32,13 @@ public class Feature : ObjectID
             if (rules[i] == null)
                 continue;
 
-            if (noiseSample <= ruleRanges[i] && rules[i].Replaces(replacing))
+            if (noiseSample <= ruleRanges[i])
             {
-                return rules[i].tile.nameID;
+                return rules[i].GetNewTiles(currentTiles);
             }
         }
 
-        return replacing;
+        return currentTiles;
     }
 }
 

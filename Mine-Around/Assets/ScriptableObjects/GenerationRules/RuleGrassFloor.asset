@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
   m_Name: RuleGrassFloor
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  nameID: rule_grass_floor
+  nameID: rule_grass_Floor
   displayName: Grass Floor Rule
-  tile: {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
-  replaces: []
+  wall: {fileID: 0}
+  floor: {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
+  placeOnWall: []
+  placeOnFloor: []

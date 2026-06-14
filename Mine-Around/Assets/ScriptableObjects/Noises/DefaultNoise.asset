@@ -12,5 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5048108922e902458de1e803b7ca8a9, type: 3}
   m_Name: DefaultNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
+  nameID: noise_default
+  displayName: Default Noise
   noiseType: 0
   frequency: 0.01
+  offsetX: -2874
+  offsetY: -2873
+  fractalType: 0
+  fractalOctaves: 3
+  fractalLacunarity: 2
+  fractalGain: 0.5
+  fractalWeightedStrength: 0
+  fractalPingPongStrength: 2
+  cellularDistanceFunction: 1
+  cellularReturnType: 1
+  cellularJitter: 1
+  domainWarp: 0
+  domainWarpType: 0
+  domainWarpAmp: 1
+  domainWarpFrequency: 0.01
+  domainWarpFractal: 0
+  domainWarpOctaves: 3
+  domainWarpLacunarity: 2
+  domainWarpGain: 0.5

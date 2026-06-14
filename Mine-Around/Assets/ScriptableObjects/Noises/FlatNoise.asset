@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5048108922e902458de1e803b7ca8a9, type: 3}
   m_Name: FlatNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
+  nameID: noise_flat
+  displayName: 
   noiseType: 0
   frequency: 0
-  offsetX: 0
-  offsetY: 0
+  offsetX: 7526
+  offsetY: 7527
   fractalType: 0
   fractalOctaves: 3
   fractalLacunarity: 2
@@ -25,6 +27,7 @@ MonoBehaviour:
   cellularDistanceFunction: 0
   cellularReturnType: 1
   cellularJitter: 1
+  domainWarp: 0
   domainWarpType: 0
   domainWarpAmp: 1
   domainWarpFrequency: 0.01

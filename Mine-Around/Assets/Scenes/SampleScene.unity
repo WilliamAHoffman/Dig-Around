@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   chunkSize: 16
-  maxChunkRange: 8
+  maxChunkRange: 20
   walls: {fileID: 475959448}
   floors: {fileID: 575455175}
   generator: {fileID: 1184546137}
@@ -882,7 +882,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   worldSeed: 99
-  randomSeed: 0
+  randomSeed: 1
   maxSeed: 1000
   minSeed: -1000
   worldGenerator: {fileID: 1184546137}

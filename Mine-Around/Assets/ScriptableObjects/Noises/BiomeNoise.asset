@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5048108922e902458de1e803b7ca8a9, type: 3}
   m_Name: BiomeNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
-  nameID: 
-  displayName: 
+  nameID: noise_biome
+  displayName: Biome Noise
   noiseType: 0
   frequency: 0.001
-  offsetX: -768
-  offsetY: -582
+  offsetX: 5687
+  offsetY: 5688
   fractalType: 1
   fractalOctaves: 3
   fractalLacunarity: 2

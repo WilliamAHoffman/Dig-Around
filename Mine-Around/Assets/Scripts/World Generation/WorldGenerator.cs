@@ -17,8 +17,7 @@ public class WorldGenerator : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = localPos + chunkLocation * chunkSize;
 
-                string biomeID = ChooseBiome(worldPos.x, worldPos.y);
-                Biome biome = WorldDataRegistry.Instance.GetBiomeData(biomeID);
+                Biome biome = ChooseBiome(worldPos.x, worldPos.y);
 
                 LocationTiles tiles = biome.GenerateTiles(WorldDataRegistry.Instance.GetAirTiles(), worldPos);
 
@@ -33,27 +32,32 @@ public class WorldGenerator : MonoBehaviour
         return chunk;
     }
 
-    private string ChooseBiome(int x, int y)
+    private Biome ChooseBiome(int x, int y)
     {
         if (biomeNoise == null)
         {
-            Debug.LogError($"Feature noise has not been initialized for biome generation", this);
-            return WorldDataRegistry.Instance.GetEmptyBiome().nameID;
+            Debug.LogError("Biome noise has not been initialized for biome generation.", this);
+            return WorldDataRegistry.Instance.GetEmptyBiome();
         }
 
         float noiseSample = biomeNoise.Sample(x, y);
+
+        if (biomes == null || biomeRanges == null)
+            return WorldDataRegistry.Instance.GetEmptyBiome();
 
         int count = Mathf.Min(biomes.Count, biomeRanges.Count);
 
         for (int i = 0; i < count; i++)
         {
-            if (biomes[i] == null)
+            Biome biome = biomes[i];
+
+            if (biome == null)
                 continue;
 
             if (noiseSample <= biomeRanges[i])
-                return biomes[i].nameID;
+                return biome;
         }
 
-        return WorldDataRegistry.Instance.GetEmptyBiome().nameID;
+        return WorldDataRegistry.Instance.GetEmptyBiome();
     }
 }

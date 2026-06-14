@@ -51,28 +51,43 @@ public class NoiseSettings : ObjectID
     /// <summary>
     /// Creates a FastNoiseLite instance configured for regular noise sampling.
     /// </summary>
-    public void CreateNoise(int seed)
+    public void CreateNoise()
     {
-        noise = new FastNoiseLite(seed);
+        int baseSeed = GameManager.Instance.worldSeed;
 
-        offsetX = GameManager.Instance.GetNumber(-1000,1000);
-        offsetY = GameManager.Instance.GetNumber(-1000,1000);
+        int regularSeed = baseSeed ^ StableHash(nameID + "_regular");
+        int warpSeed = baseSeed ^ StableHash(nameID + "_warp");
+        int offsetSeed = baseSeed ^ StableHash(nameID + "_offset");
+
+        noise = new FastNoiseLite(regularSeed);
+        warpNoise = new FastNoiseLite(warpSeed);
+
+        offsetX = StableHash(nameID + "_offset_x") % 10000;
+        offsetY = StableHash(nameID + "_offset_y") % 10000;
 
         ApplyNoiseSettings(noise);
-
-        CreateWarpNoise(seed);
+        ApplyDomainWarpSettings(warpNoise);
     }
 
+    private static int StableHash(string text)
+    {
+        unchecked
+        {
+            int hash = 23;
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                hash = hash * 31 + text[i];
+            }
+
+            return hash;
+        }
+    }
     /// <summary>
     /// Creates a separate FastNoiseLite instance configured for DomainWarp calls.
     /// FastNoiseLite uses one shared frequency/fractal state, so domain warp settings
     /// are kept separate from regular noise settings by using a separate instance.
     /// </summary>
-    private void CreateWarpNoise(int seed)
-    {
-        warpNoise = new FastNoiseLite(seed);
-        ApplyDomainWarpSettings(warpNoise);
-    }
 
     public void ApplyNoiseSettings(FastNoiseLite noise)
     {
@@ -105,13 +120,23 @@ public class NoiseSettings : ObjectID
 
     public float Sample(int worldX, int worldY)
     {
-
+        if (noise == null)
+        {
+            Debug.LogError($"NoiseSettings '{nameID}' was sampled before CreateNoise() was called.", this);
+            return 0f;
+        }
 
         float x = worldX + offsetX;
         float y = worldY + offsetY;
 
         if (domainWarp)
         {
+            if (warpNoise == null)
+            {
+                Debug.LogError($"NoiseSettings '{nameID}' has domain warp enabled but warpNoise was not created.", this);
+                return noise.GetNoise(x, y);
+            }
+
             warpNoise.DomainWarp(ref x, ref y);
         }
 

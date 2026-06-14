@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Chunk
 {
-    public readonly int chunkSize;
-    public WorldTile[,] worldWallTiles;
-    public WorldTile[,] worldFloorTiles;
+    private readonly int chunkSize;
+    private WorldTile[,] worldWallTiles;
+    private WorldTile[,] worldFloorTiles;
     public bool loaded;
 
     public Chunk(int size)

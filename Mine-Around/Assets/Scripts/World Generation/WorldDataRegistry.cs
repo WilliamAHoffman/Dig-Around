@@ -35,6 +35,7 @@ public class WorldDataRegistry : MonoBehaviour
 
         Instance = this;
 
+        noiseDataByID = BuildDataLookup(noiseDataList);
         tileDataByID = BuildDataLookup(TileDataList);
         biomeDataByID = BuildDataLookup(biomeDataList);
         featureDataByID = BuildDataLookup(featureDataList);
@@ -44,7 +45,7 @@ public class WorldDataRegistry : MonoBehaviour
     {
         foreach (NoiseSettings noise in noiseDataList)
         {
-            noise.CreateNoise(GameManager.Instance.GetNewSeed());
+            noise.CreateNoise();
         }
     }
 

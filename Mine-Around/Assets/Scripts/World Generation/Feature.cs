@@ -19,6 +19,11 @@ public class Feature : ObjectID
             return currentTiles;
         }
 
+        if (rules == null || ruleRanges == null || rules.Count == 0 || ruleRanges.Count == 0)
+        {
+            return currentTiles;
+        }
+
         float noiseSample = featureNoise.Sample(location.x, location.y);
 
         int count = Mathf.Min(rules.Count, ruleRanges.Count);

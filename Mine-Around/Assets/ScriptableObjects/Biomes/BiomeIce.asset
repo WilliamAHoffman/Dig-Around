@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: BiomeIce
   m_EditorClassIdentifier: Assembly-CSharp::Biome
   nameID: biome_ice
-  displayName: Plains
-  wallFeatures:
-  - {fileID: 11400000, guid: df2af8155bdb3db468af2c78fbe9f9e5, type: 2}
-  floorFeatures:
-  - {fileID: 11400000, guid: aeb244012eaf2494098e4f409fa4bc31, type: 2}
+  displayName: Ice Biome
+  features:
+  - {fileID: 11400000, guid: 96c7c03d56faeba44975ad1b21e7d135, type: 2}
+  - {fileID: 11400000, guid: b51300f6c7b718f49ae750be5a6282f7, type: 2}

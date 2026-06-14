@@ -17,5 +17,5 @@ MonoBehaviour:
   rules:
   - {fileID: 11400000, guid: 6eace094366b54a4ca520d4021347c3a, type: 2}
   ruleRanges:
-  - 0
-  noiseSettings: {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}
+  - -0.5
+  featureNoise: {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}

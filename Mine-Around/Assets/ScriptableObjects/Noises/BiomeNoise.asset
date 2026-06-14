@@ -10,21 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5048108922e902458de1e803b7ca8a9, type: 3}
-  m_Name: FlatNoise
+  m_Name: BiomeNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
+  nameID: 
+  displayName: 
   noiseType: 0
-  frequency: 0
-  offsetX: 0
-  offsetY: 0
-  fractalType: 0
+  frequency: 0.001
+  offsetX: -768
+  offsetY: -582
+  fractalType: 1
   fractalOctaves: 3
   fractalLacunarity: 2
   fractalGain: 0.5
   fractalWeightedStrength: 0
   fractalPingPongStrength: 2
-  cellularDistanceFunction: 0
+  cellularDistanceFunction: 3
   cellularReturnType: 1
   cellularJitter: 1
+  domainWarp: 1
   domainWarpType: 0
   domainWarpAmp: 1
   domainWarpFrequency: 0.01

@@ -544,6 +544,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0dc785117a239ce448e41109b130a92b, type: 2}
   - {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
   - {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}
+  - {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
+  - {fileID: 11400000, guid: 72eec38ec6513a340ad3493ffb79f52e, type: 2}
+  - {fileID: 11400000, guid: 79d88833cca17574d855a39d1b600fb0, type: 2}
   empty_tile: {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
   biomeDataList:
   - {fileID: 11400000, guid: 3abbb1f859a7985409017f766ac5d1cc, type: 2}
@@ -555,6 +558,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: df2af8155bdb3db468af2c78fbe9f9e5, type: 2}
   - {fileID: 11400000, guid: fbcfa2a20f411d146922f8581bdf5fd5, type: 2}
   - {fileID: 11400000, guid: 000f33bd1279e7249b068d2368addec2, type: 2}
+  - {fileID: 11400000, guid: 96c7c03d56faeba44975ad1b21e7d135, type: 2}
+  - {fileID: 11400000, guid: b51300f6c7b718f49ae750be5a6282f7, type: 2}
+  - {fileID: 11400000, guid: 3628bbd3e46efe34e81822fd5621da0b, type: 2}
+  noiseDataList:
+  - {fileID: 11400000, guid: b88e843c0fb4b3944baa4e72ac3afe52, type: 2}
+  - {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}
+  - {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+  - {fileID: 11400000, guid: 37a252f01accb3f4cb952165cae856bd, type: 2}
 --- !u!1 &575455172
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,9 +832,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorldGenerator
   biomes:
   - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  - {fileID: 11400000, guid: 47c09ef9a4010824db622cecfb899e5f, type: 2}
   biomeRanges:
+  - 0
   - 1
-  noiseSettings: {fileID: 11400000, guid: b88e843c0fb4b3944baa4e72ac3afe52, type: 2}
+  biomeNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
 --- !u!4 &1184546138
 Transform:
   m_ObjectHideFlags: 0

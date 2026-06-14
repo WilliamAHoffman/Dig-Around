@@ -3,16 +3,16 @@ using UnityEngine;
 public class Chunk
 {
     public readonly int chunkSize;
-    public WorldTile[,] WorldWallTiles;
-    public WorldTile[,] WorldFloorTiles;
+    public WorldTile[,] worldWallTiles;
+    public WorldTile[,] worldFloorTiles;
     public bool loaded;
 
     public Chunk(int size)
     {
         chunkSize = size;
 
-        WorldWallTiles = new WorldTile[size, size];
-        WorldFloorTiles = new WorldTile[size, size];
+        worldWallTiles = new WorldTile[size, size];
+        worldFloorTiles = new WorldTile[size, size];
 
         loaded = false;
     }
@@ -31,7 +31,7 @@ public class Chunk
             return null;
         }
 
-        return WorldWallTiles[tileLocation.x, tileLocation.y];
+        return worldWallTiles[tileLocation.x, tileLocation.y];
     }
 
     public void SetWorldWallTile(Vector2Int tileLocation, WorldTile tile)
@@ -42,7 +42,7 @@ public class Chunk
             return;
         }
 
-        WorldWallTiles[tileLocation.x, tileLocation.y] = tile;
+        worldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
     public WorldTile GetWorldFloorTile(Vector2Int tileLocation)
@@ -53,7 +53,7 @@ public class Chunk
             return null;
         }
 
-        return WorldFloorTiles[tileLocation.x, tileLocation.y];
+        return worldFloorTiles[tileLocation.x, tileLocation.y];
     }
 
     public void SetWorldFloorTile(Vector2Int tileLocation, WorldTile tile)
@@ -64,7 +64,7 @@ public class Chunk
             return;
         }
 
-        WorldFloorTiles[tileLocation.x, tileLocation.y] = tile;
+        worldFloorTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
 }

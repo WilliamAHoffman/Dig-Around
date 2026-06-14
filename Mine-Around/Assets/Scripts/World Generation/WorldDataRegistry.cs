@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class WorldDataRegistry : MonoBehaviour
@@ -20,6 +21,10 @@ public class WorldDataRegistry : MonoBehaviour
     [SerializeField] private List<Feature> featureDataList;
     private Dictionary<string, Feature> featureDataByID;
 
+    [Header("Noise Data")]
+    [SerializeField] private List<NoiseSettings> noiseDataList;
+    private Dictionary<string, NoiseSettings> noiseDataByID;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -35,11 +40,11 @@ public class WorldDataRegistry : MonoBehaviour
         featureDataByID = BuildDataLookup(featureDataList);
     }
 
-    public void SetFeatureNoise()
+    public void SetNoise()
     {
-        foreach (Feature feature in featureDataList)
+        foreach (NoiseSettings noise in noiseDataList)
         {
-            feature.SetNoise(GameManager.Instance.GetNewSeed());
+            noise.CreateNoise(GameManager.Instance.GetNewSeed());
         }
     }
 
@@ -75,6 +80,19 @@ public class WorldDataRegistry : MonoBehaviour
         Debug.LogWarning($"No FloorData found with nameID: {nameID}", this);
         return null;
     }
+
+    public NoiseSettings GetNoiseData(string nameID)
+    {
+        if (string.IsNullOrWhiteSpace(nameID))
+            return null;
+
+        if (noiseDataByID.TryGetValue(nameID, out NoiseSettings noise))
+            return noise;
+
+        Debug.LogWarning($"No FloorData found with nameID: {nameID}", this);
+        return null;
+    }
+
 
     public Biome GetBiomeData(string nameID)
     {

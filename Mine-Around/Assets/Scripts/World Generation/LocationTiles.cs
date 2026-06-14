@@ -1,7 +1,4 @@
-using UnityEngine;
-using UnityEngine.Tilemaps;
-
-public class LocationTiles
+public struct LocationTiles
 {
     public string wall;
     public string floor;

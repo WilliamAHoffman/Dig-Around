@@ -5,7 +5,8 @@ public enum ObjectIDType
     Tile,
     Feature,
     Biome,
-    GenerationRule
+    GenerationRule,
+    Noise
 }
 
 public abstract class ObjectID : ScriptableObject

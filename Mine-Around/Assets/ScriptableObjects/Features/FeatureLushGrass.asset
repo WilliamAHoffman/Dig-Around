@@ -18,4 +18,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 20168fab0505f8440ade7295371fa93e, type: 2}
   ruleRanges:
   - 0
-  noiseSettings: {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}
+  featureNoise: {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}

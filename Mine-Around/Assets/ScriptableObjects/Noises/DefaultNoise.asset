@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5048108922e902458de1e803b7ca8a9, type: 3}
-  m_Name: NoisesDefault
+  m_Name: DefaultNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   noiseType: 0
   frequency: 0.01

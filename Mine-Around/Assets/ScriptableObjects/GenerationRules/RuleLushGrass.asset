@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
   m_Name: RuleLushGrass
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  nameID: rule_lush_grass
+  nameID: rule_lush_grass_floor
   displayName: Lush Grass Rule
   wall: {fileID: 0}
   floor: {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}

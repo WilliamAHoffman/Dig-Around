@@ -5,12 +5,7 @@ public class WorldGenerator : MonoBehaviour
 {
     [SerializeField] List<Biome> biomes;
     [SerializeField] List<float> biomeRanges;
-    private FastNoiseLite biomeNoise;
-    [SerializeField] NoiseSettings noiseSettings;
-    public void SetNoise(int newSeed)
-    {
-        biomeNoise = noiseSettings.GetNoise(newSeed);
-    }
+    [SerializeField] NoiseSettings biomeNoise;
 
     public Chunk GenerateChunk(Vector2Int chunkLocation, int chunkSize)
     {
@@ -25,14 +20,14 @@ public class WorldGenerator : MonoBehaviour
                 string biomeID = ChooseBiome(worldPos.x, worldPos.y);
                 Biome biome = WorldDataRegistry.Instance.GetBiomeData(biomeID);
 
-                LocationTiles worldFloor = biome.GenerateFloorTile(WorldDataRegistry.Instance.GetAirTiles(), worldPos);
-                LocationTiles worldWall = biome.GenerateWallTile(worldFloor, worldPos);
+                LocationTiles tiles = biome.GenerateTiles(WorldDataRegistry.Instance.GetAirTiles(), worldPos);
 
-                WorldTile nextWallTile = WorldDataRegistry.Instance.GetWorldTile(worldWall.wall);
-                WorldTile nextFloorTile = WorldDataRegistry.Instance.GetWorldTile(worldWall.floor);
+                WorldTile wallTile = WorldDataRegistry.Instance.GetWorldTile(tiles.wall);
+                WorldTile floorTile = WorldDataRegistry.Instance.GetWorldTile(tiles.floor);
 
-                chunk.SetWorldWallTile(localPos, nextWallTile);
-                chunk.SetWorldFloorTile(localPos, nextFloorTile);
+                chunk.SetWorldWallTile(localPos, wallTile);
+                chunk.SetWorldFloorTile(localPos, floorTile);
+
             }
         }
         return chunk;
@@ -46,7 +41,7 @@ public class WorldGenerator : MonoBehaviour
             return WorldDataRegistry.Instance.GetEmptyBiome().nameID;
         }
 
-        float noiseSample = biomeNoise.GetNoise(x, y);
+        float noiseSample = biomeNoise.Sample(x, y);
 
         int count = Mathf.Min(biomes.Count, biomeRanges.Count);
 

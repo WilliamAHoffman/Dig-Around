@@ -5,36 +5,17 @@ using UnityEngine;
 public class Biome : ObjectID
 {
     public override ObjectIDType Type => ObjectIDType.Biome;
-    public List<Feature> wallFeatures;
-    public List<Feature> floorFeatures;
+    public List<Feature> features;
 
-    public LocationTiles GenerateFloorTile(LocationTiles currentTiles, Vector2Int location)
+    public LocationTiles GenerateTiles(LocationTiles currentTiles, Vector2Int location)
     {
 
-        if (floorFeatures == null)
+        if (features == null)
             return currentTiles;
 
         LocationTiles newTiles = currentTiles;
 
-        foreach (Feature feature in floorFeatures)
-        {
-            if (feature == null)
-                continue;
-            
-            newTiles = feature.GenerateTiles(newTiles, location);
-        }
-
-        return newTiles;
-    }
-
-    public LocationTiles GenerateWallTile(LocationTiles currentTiles, Vector2Int location)
-    {
-        if (wallFeatures == null)
-            return currentTiles;
-
-        LocationTiles newTiles = currentTiles;
-
-        foreach (Feature feature in wallFeatures)
+        foreach (Feature feature in features)
         {
             if (feature == null)
                 continue;

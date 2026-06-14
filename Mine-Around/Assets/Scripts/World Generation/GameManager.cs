@@ -31,8 +31,7 @@ public class GameManager : MonoBehaviour
         }
 
         Random.InitState(worldSeed);
-        worldGenerator.SetNoise(worldSeed);
-        WorldDataRegistry.Instance.SetFeatureNoise();
+        WorldDataRegistry.Instance.SetNoise();
 
         ChunkManager.Instance.CreateRadiusAt(new Vector2Int(0,0));
     }
@@ -40,5 +39,10 @@ public class GameManager : MonoBehaviour
     public int GetNewSeed()
     {
         return Random.Range(minSeed, maxSeed);
+    }
+
+    public int GetNumber(int min, int max)
+    {
+        return Random.Range(min, max);
     }
 }

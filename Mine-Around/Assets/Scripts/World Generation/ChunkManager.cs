@@ -96,20 +96,20 @@ public class ChunkManager : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, chunkSize);
 
-                WorldTile wallTileData = chunk.GetWorldWallTile(localPos);
-                WorldTile floorTileData = chunk.GetWorldFloorTile(localPos);
+                string wallTileData = chunk.GetWorldWallTile(localPos);
+                string floorTileData = chunk.GetWorldFloorTile(localPos);
 
-                string wallID = wallTileData != null ? wallTileData.nameID : string.Empty;
-                string floorID = floorTileData != null ? floorTileData.nameID : string.Empty;
+                //string wallID = wallTileData != null ? wallTileData : string.Empty;
+                //string floorID = floorTileData != null ? floorTileData : string.Empty;
 
-                TileData wallData = WorldDataRegistry.Instance.GetTileData(wallID);
-                TileData floorData = WorldDataRegistry.Instance.GetTileData(floorID);
+                TileData wallData = WorldDataObjectDataBase.Instance.GetAssetByID<TileData>(wallTileData);
+                TileData floorData = WorldDataObjectDataBase.Instance.GetAssetByID<TileData>(floorTileData);
 
-                bool wallIsAir = WorldDataRegistry.Instance.IsAirTile(wallID);
+                bool isTransparent = wallData.transparent;
 
                 positions[i] = (Vector3Int)worldPos;
                 wallTiles[i] = wallData != null ? wallData.tile : null;
-                floorTiles[i] = wallIsAir && floorData != null ? floorData.tile : null;
+                floorTiles[i] = isTransparent && floorData != null ? floorData.tile : null;
 
                 i++;
             }
@@ -159,7 +159,7 @@ public class ChunkManager : MonoBehaviour
         floors.SetTiles(positions, floorTiles);
     }
 
-    public WorldTile GetWorldWallTileAtLocation(Vector2 location)
+    public string GetWorldWallTileAtLocation(Vector2 location)
     {
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(location, chunkSize);
@@ -173,7 +173,7 @@ public class ChunkManager : MonoBehaviour
         return chunk.GetWorldWallTile(localPos);
     }
 
-    public WorldTile GetWorldFloorTileAtLocation(Vector2 location)
+    public string GetWorldFloorTileAtLocation(Vector2 location)
     {
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(location, chunkSize);
@@ -199,7 +199,8 @@ public class ChunkManager : MonoBehaviour
 
     public void DeleteAllChunks()
     {
-        UnloadAllChunks();
+        walls.ClearAllTiles();
+        floors.ClearAllTiles();
         chunks.Clear();
     }
 

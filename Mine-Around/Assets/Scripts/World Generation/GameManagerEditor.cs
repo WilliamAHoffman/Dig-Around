@@ -14,5 +14,10 @@ public class GameManagerEditor : Editor
         {
             gameManager.CreateWorld();
         }
+
+        if (GUILayout.Button("Delete World"))
+        {
+            gameManager.DeleteWorld();
+        }
     }
 }

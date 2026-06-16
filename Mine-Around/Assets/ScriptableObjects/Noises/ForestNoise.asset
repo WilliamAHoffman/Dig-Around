@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ForestNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: noise_forest
-  displayName: 
+  displayName: Forest Noise
   noiseType: 0
   frequency: 0.01
   offsetX: -9054

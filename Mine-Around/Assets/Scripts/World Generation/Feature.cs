@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Feature", menuName = "Scriptable Objects/Feature")]
-public class Feature : ObjectID
+public class Feature : WorldDataObject
 {
-    public override ObjectIDType Type => ObjectIDType.Feature;
     public List<GenerationRule> rules;
     public List<float> ruleRanges;
     public NoiseSettings featureNoise;

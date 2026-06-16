@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Biome", menuName = "Scriptable Objects/Biome")]
-public class Biome : ObjectID
+public class Biome : WorldDataObject
 {
-    public override ObjectIDType Type => ObjectIDType.Biome;
     public List<Feature> features;
 
     public LocationTiles GenerateTiles(LocationTiles currentTiles, Vector2Int location)

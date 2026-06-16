@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GenerationRule", menuName = "Scriptable Objects/GenerationRule")]
-public class GenerationRule : ObjectID
+public class GenerationRule : WorldDataObject
 {
-    public override ObjectIDType Type => ObjectIDType.GenerationRule;
     public TileData wall;
     public TileData floor;
     public List<TileData> placeOnWall;

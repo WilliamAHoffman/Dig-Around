@@ -1,9 +1,8 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NoiseSettings", menuName = "Scriptable Objects/NoiseSettings")]
-public class NoiseSettings : ObjectID
+public class NoiseSettings : WorldDataObject
 {
-    public override ObjectIDType Type => ObjectIDType.Noise;
     private FastNoiseLite noise;
     private FastNoiseLite warpNoise;
 
@@ -51,37 +50,20 @@ public class NoiseSettings : ObjectID
     /// <summary>
     /// Creates a FastNoiseLite instance configured for regular noise sampling.
     /// </summary>
-    public void CreateNoise()
+    public void CreateNoise(int baseSeed)
     {
-        int baseSeed = GameManager.Instance.worldSeed;
 
-        int regularSeed = baseSeed ^ StableHash(nameID + "_regular");
-        int warpSeed = baseSeed ^ StableHash(nameID + "_warp");
-        int offsetSeed = baseSeed ^ StableHash(nameID + "_offset");
+        int regularSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(nameID + "_regular");
+        int warpSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(nameID + "_warp");
 
         noise = new FastNoiseLite(regularSeed);
         warpNoise = new FastNoiseLite(warpSeed);
 
-        offsetX = StableHash(nameID + "_offset_x") % 10000;
-        offsetY = StableHash(nameID + "_offset_y") % 10000;
+        offsetX = WorldDataObjectRandomness.StableHash(nameID + "_offset_x") % 10000;
+        offsetY = WorldDataObjectRandomness.StableHash(nameID + "_offset_y") % 10000;
 
         ApplyNoiseSettings(noise);
         ApplyDomainWarpSettings(warpNoise);
-    }
-
-    private static int StableHash(string text)
-    {
-        unchecked
-        {
-            int hash = 23;
-
-            for (int i = 0; i < text.Length; i++)
-            {
-                hash = hash * 31 + text[i];
-            }
-
-            return hash;
-        }
     }
     /// <summary>
     /// Creates a separate FastNoiseLite instance configured for DomainWarp calls.
@@ -120,12 +102,6 @@ public class NoiseSettings : ObjectID
 
     public float Sample(int worldX, int worldY)
     {
-        if (noise == null)
-        {
-            Debug.LogError($"NoiseSettings '{nameID}' was sampled before CreateNoise() was called.", this);
-            return 0f;
-        }
-
         float x = worldX + offsetX;
         float y = worldY + offsetY;
 

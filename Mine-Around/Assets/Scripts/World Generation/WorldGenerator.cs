@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldGenerator : MonoBehaviour
+[CreateAssetMenu(fileName = "WorldGenerator", menuName = "Scriptable Objects/WorldGenerator")]
+public class WorldGenerator : ScriptableObject
 {
     [SerializeField] List<Biome> biomes;
     [SerializeField] List<float> biomeRanges;
@@ -19,13 +20,9 @@ public class WorldGenerator : MonoBehaviour
 
                 Biome biome = ChooseBiome(worldPos.x, worldPos.y);
 
-                LocationTiles tiles = biome.GenerateTiles(WorldDataRegistry.Instance.GetAirTiles(), worldPos);
+                LocationTiles tiles = biome.GenerateTiles(WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>().LocationTiles(), worldPos);
 
-                WorldTile wallTile = WorldDataRegistry.Instance.GetWorldTile(tiles.wall);
-                WorldTile floorTile = WorldDataRegistry.Instance.GetWorldTile(tiles.floor);
-
-                chunk.SetWorldWallTile(localPos, wallTile);
-                chunk.SetWorldFloorTile(localPos, floorTile);
+                chunk.SetWorldLocationTile(localPos, tiles);
 
             }
         }
@@ -37,13 +34,13 @@ public class WorldGenerator : MonoBehaviour
         if (biomeNoise == null)
         {
             Debug.LogError("Biome noise has not been initialized for biome generation.", this);
-            return WorldDataRegistry.Instance.GetEmptyBiome();
+            return WorldDataObjectDataBase.Instance.GetDefaultAsset<Biome>();
         }
 
         float noiseSample = biomeNoise.Sample(x, y);
 
         if (biomes == null || biomeRanges == null)
-            return WorldDataRegistry.Instance.GetEmptyBiome();
+            return WorldDataObjectDataBase.Instance.GetDefaultAsset<Biome>();
 
         int count = Mathf.Min(biomes.Count, biomeRanges.Count);
 
@@ -58,6 +55,6 @@ public class WorldGenerator : MonoBehaviour
                 return biome;
         }
 
-        return WorldDataRegistry.Instance.GetEmptyBiome();
+        return WorldDataObjectDataBase.Instance.GetDefaultAsset<Biome>();
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FlatNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: noise_flat
-  displayName: 
+  displayName: Flat Noise
   noiseType: 0
   frequency: 0
   offsetX: 7526

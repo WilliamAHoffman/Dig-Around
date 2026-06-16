@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: FeaturePlainsForest
   m_EditorClassIdentifier: Assembly-CSharp::Feature
   nameID: feature_plains_forests
-  displayName: 
+  displayName: Plains Forest Feature
   rules:
   - {fileID: 11400000, guid: 1f21173d272671745a54c63aa93b3038, type: 2}
   - {fileID: 11400000, guid: 20168fab0505f8440ade7295371fa93e, type: 2}

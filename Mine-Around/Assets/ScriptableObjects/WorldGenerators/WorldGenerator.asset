@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8ddf3f7de161524baf24598dc324f77, type: 3}
+  m_Name: WorldGenerator
+  m_EditorClassIdentifier: Assembly-CSharp::WorldGenerator
+  biomes:
+  - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  - {fileID: 11400000, guid: 47c09ef9a4010824db622cecfb899e5f, type: 2}
+  biomeRanges:
+  - 0
+  - 1
+  biomeNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}

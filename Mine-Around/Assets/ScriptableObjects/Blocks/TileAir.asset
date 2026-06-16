@@ -17,3 +17,4 @@ MonoBehaviour:
   tile: {fileID: 0}
   maxHealth: 1
   invincible: 1
+  transparent: 1

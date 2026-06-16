@@ -15,7 +15,7 @@ MonoBehaviour:
   nameID: rule_tree_wall
   displayName: Tree Wall Rule
   wall: {fileID: 11400000, guid: 79d88833cca17574d855a39d1b600fb0, type: 2}
-  floor: {fileID: 0}
+  floor: {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}
   placeOnWall: []
   placeOnFloor:
   - {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}

@@ -1,17 +1,17 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     public int worldSeed;
+    public bool seedSet = false;
     [SerializeField] bool randomSeed;
-
-    public int maxSeed;
-    public int minSeed;
+    [SerializeField] private int maxSeed;
+    [SerializeField] private int minSeed;
 
     public WorldGenerator worldGenerator;
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -23,15 +23,30 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    private int GetNewSeed()
+    {
+        return Random.Range(minSeed,maxSeed);
+    }
+
     public void CreateWorld()
     {
+        DeleteWorld();
+
         if (randomSeed)
+            worldSeed = GetNewSeed();
+
+        WorldDataObjectDataBase.Instance.Initialize();
+
+        foreach (NoiseSettings noise in WorldDataObjectDataBase.Instance.GetAllAssetsOfType<NoiseSettings>())
         {
-            worldSeed = Random.Range(minSeed, maxSeed);
+            noise.CreateNoise(worldSeed);
         }
-        WorldDataRegistry.Instance.SetNoise();
-        
+
+        ChunkManager.Instance.CreateRadiusAt(new Vector2Int(0, 0));
+    }
+
+    public void DeleteWorld()
+    {
         ChunkManager.Instance.DeleteAllChunks();
-        ChunkManager.Instance.CreateRadiusAt(new Vector2Int(0,0));
     }
 }

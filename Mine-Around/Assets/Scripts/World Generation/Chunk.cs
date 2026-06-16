@@ -3,16 +3,16 @@ using UnityEngine;
 public class Chunk
 {
     private readonly int chunkSize;
-    private WorldTile[,] worldWallTiles;
-    private WorldTile[,] worldFloorTiles;
+    private string[,] worldWallTiles;
+    private string[,] worldFloorTiles;
     public bool loaded;
 
     public Chunk(int size)
     {
         chunkSize = size;
 
-        worldWallTiles = new WorldTile[size, size];
-        worldFloorTiles = new WorldTile[size, size];
+        worldWallTiles = new string[size, size];
+        worldFloorTiles = new string[size, size];
 
         loaded = false;
     }
@@ -23,7 +23,7 @@ public class Chunk
                tileLocation.y >= 0 && tileLocation.y < chunkSize;
     }
 
-    public WorldTile GetWorldWallTile(Vector2Int tileLocation)
+    public string GetWorldWallTile(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
@@ -34,7 +34,7 @@ public class Chunk
         return worldWallTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldWallTile(Vector2Int tileLocation, WorldTile tile)
+    public void SetWorldWallTile(Vector2Int tileLocation, string tile)
     {
         if (!InBounds(tileLocation))
         {
@@ -45,7 +45,7 @@ public class Chunk
         worldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
-    public WorldTile GetWorldFloorTile(Vector2Int tileLocation)
+    public string GetWorldFloorTile(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
@@ -56,7 +56,7 @@ public class Chunk
         return worldFloorTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldFloorTile(Vector2Int tileLocation, WorldTile tile)
+    public void SetWorldFloorTile(Vector2Int tileLocation, string tile)
     {
         if (!InBounds(tileLocation))
         {
@@ -65,6 +65,18 @@ public class Chunk
         }
 
         worldFloorTiles[tileLocation.x, tileLocation.y] = tile;
+    }
+
+    public void SetWorldLocationTile(Vector2Int tileLocation, LocationTiles tile)
+    {
+        if (!InBounds(tileLocation))
+        {
+            Debug.LogError($"Tile location out of bounds: {tileLocation}");
+            return;
+        }
+
+        worldWallTiles[tileLocation.x, tileLocation.y] = tile.wall;
+        worldFloorTiles[tileLocation.x, tileLocation.y] = tile.floor;
     }
 
 }

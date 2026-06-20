@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: noise_forest
   displayName: Forest Noise
+  rngOverride: {fileID: 0}
   noiseType: 0
   frequency: 0.01
   offsetX: -9054
   offsetY: -9053
-  fractalType: 0
+  fractalType: 1
   fractalOctaves: 3
   fractalLacunarity: 2
   fractalGain: 0.5

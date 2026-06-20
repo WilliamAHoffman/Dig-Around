@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 052fac0c446abe545a3416dbc247275e, type: 3}
-  m_Name: FeatureStone
+  m_Name: FeatureColdForest
   m_EditorClassIdentifier: Assembly-CSharp::Feature
-  nameID: feature_stone
-  displayName: Stone Feature
+  nameID: feature_cold_forests
+  displayName: Cold Forest Feature
   rngOverride: {fileID: 0}
   rules:
-  - {fileID: 11400000, guid: 6eace094366b54a4ca520d4021347c3a, type: 2}
+  - {fileID: 11400000, guid: c3110ff89a289b8479abae88ddc2cd5f, type: 2}
   ruleRanges:
   - -0.5
-  featureNoise: {fileID: 11400000, guid: c2a6dadfee53d1740b59f8f797210afd, type: 2}
+  featureNoise: {fileID: 11400000, guid: 37a252f01accb3f4cb952165cae856bd, type: 2}

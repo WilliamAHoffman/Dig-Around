@@ -518,9 +518,12 @@ MonoBehaviour:
   allAssets:
   - {fileID: 11400000, guid: 3abbb1f859a7985409017f766ac5d1cc, type: 2}
   - {fileID: 11400000, guid: 47c09ef9a4010824db622cecfb899e5f, type: 2}
+  - {fileID: 11400000, guid: 94753733755701f4693302f05cffc4b3, type: 2}
   - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  - {fileID: 11400000, guid: 79fc259f3713b8f459cb4da242719666, type: 2}
   - {fileID: 11400000, guid: aeb244012eaf2494098e4f409fa4bc31, type: 2}
   - {fileID: 11400000, guid: b51300f6c7b718f49ae750be5a6282f7, type: 2}
+  - {fileID: 11400000, guid: 4827657e8d0d2184ba9be82527ddfbfb, type: 2}
   - {fileID: 11400000, guid: fbcfa2a20f411d146922f8581bdf5fd5, type: 2}
   - {fileID: 11400000, guid: 3628bbd3e46efe34e81822fd5621da0b, type: 2}
   - {fileID: 11400000, guid: 96c7c03d56faeba44975ad1b21e7d135, type: 2}
@@ -530,6 +533,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}
   - {fileID: 11400000, guid: b88e843c0fb4b3944baa4e72ac3afe52, type: 2}
   - {fileID: 11400000, guid: 37a252f01accb3f4cb952165cae856bd, type: 2}
+  - {fileID: 11400000, guid: 7faa35d482b4bf74aa73bd8333760a85, type: 2}
+  - {fileID: 11400000, guid: c2a6dadfee53d1740b59f8f797210afd, type: 2}
+  - {fileID: 11400000, guid: c3110ff89a289b8479abae88ddc2cd5f, type: 2}
   - {fileID: 11400000, guid: 2e8b4d092f983c04a820644428362b54, type: 2}
   - {fileID: 11400000, guid: 5da5c931244254e489fb931bf28192a9, type: 2}
   - {fileID: 11400000, guid: 20168fab0505f8440ade7295371fa93e, type: 2}
@@ -537,6 +543,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6eace094366b54a4ca520d4021347c3a, type: 2}
   - {fileID: 11400000, guid: 1f21173d272671745a54c63aa93b3038, type: 2}
   - {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
+  - {fileID: 11400000, guid: d005a22ea54265c4dafa6cbb950d2d9c, type: 2}
   - {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
   - {fileID: 11400000, guid: 72eec38ec6513a340ad3493ffb79f52e, type: 2}
   - {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}
@@ -787,8 +794,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c55fcca63557c3141b6514c907997b7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  worldSeed: -578
-  seedSet: 1
+  worldSeed: 111
+  seedSet: 0
   randomSeed: 1
   maxSeed: 1000
   minSeed: -1000

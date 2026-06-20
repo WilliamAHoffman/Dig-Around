@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
-  m_Name: RuleLushGrass
+  m_Name: RuleColdTree
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  nameID: rule_lush_grass_floor
-  displayName: Lush Grass Rule
+  nameID: rule_cold_tree_wall
+  displayName: Tree Wall Rule
   rngOverride: {fileID: 0}
-  wall: {fileID: 0}
-  floor: {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}
+  wall: {fileID: 11400000, guid: d005a22ea54265c4dafa6cbb950d2d9c, type: 2}
+  floor: {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
   placeOnWall: []
   placeOnFloor:
-  - {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
-  - {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
+  - {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
+  - {fileID: 11400000, guid: 4cf3cb939e4c7354582684c5653fb843, type: 2}

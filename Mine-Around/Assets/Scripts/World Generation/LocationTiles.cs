@@ -1,3 +1,4 @@
+//information containing each tile at a location
 public struct LocationTiles
 {
     public string wall;

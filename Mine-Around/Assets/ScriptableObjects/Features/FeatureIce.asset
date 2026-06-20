@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Feature
   nameID: feature_ice
   displayName: Ice Feature
+  rngOverride: {fileID: 0}
   rules:
   - {fileID: 11400000, guid: 5da5c931244254e489fb931bf28192a9, type: 2}
   ruleRanges:
   - -0.5
-  featureNoise: {fileID: 11400000, guid: 697caf99174855043a5d2cd508b95f75, type: 2}
+  featureNoise: {fileID: 11400000, guid: 7faa35d482b4bf74aa73bd8333760a85, type: 2}

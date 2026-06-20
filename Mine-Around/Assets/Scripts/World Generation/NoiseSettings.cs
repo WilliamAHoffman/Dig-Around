@@ -52,15 +52,16 @@ public class NoiseSettings : WorldDataObject
     /// </summary>
     public void CreateNoise(int baseSeed)
     {
+        string objectSeed = GetObjectSeed();
 
-        int regularSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(nameID + "_regular");
-        int warpSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(nameID + "_warp");
+        int regularSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_regular");
+        int warpSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_warp");
 
         noise = new FastNoiseLite(regularSeed);
         warpNoise = new FastNoiseLite(warpSeed);
 
-        offsetX = WorldDataObjectRandomness.StableHash(nameID + "_offset_x") % 10000;
-        offsetY = WorldDataObjectRandomness.StableHash(nameID + "_offset_y") % 10000;
+        offsetX = WorldDataObjectRandomness.StableHash(objectSeed + "_offset_x") % 10000;
+        offsetY = WorldDataObjectRandomness.StableHash(objectSeed + "_offset_y") % 10000;
 
         ApplyNoiseSettings(noise);
         ApplyDomainWarpSettings(warpNoise);

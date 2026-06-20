@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorldGenerator
   biomes:
   - {fileID: 11400000, guid: 7580dc9ee6733ce43b0747e8f7c75c42, type: 2}
+  - {fileID: 11400000, guid: 94753733755701f4693302f05cffc4b3, type: 2}
   - {fileID: 11400000, guid: 47c09ef9a4010824db622cecfb899e5f, type: 2}
   biomeRanges:
   - 0
+  - 0.1
   - 1
   biomeNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}

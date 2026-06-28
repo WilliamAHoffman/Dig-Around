@@ -1,60 +1,44 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WorldGenerator", menuName = "Scriptable Objects/WorldGenerator")]
+[CreateAssetMenu(fileName = "WorldGenerator", menuName = "World Generation/World Generator")]
 public class WorldGenerator : ScriptableObject
 {
-    [SerializeField] List<Biome> biomes;
-    [SerializeField] List<float> biomeRanges;
-    [SerializeField] NoiseSettings biomeNoise;
+    [Header("Layers")]
+    [SerializeField] private List<GenerationLayer> worldLayers;
+    [Header("Noise Sample")]
+    [SerializeField] private WorldSampler worldSampler;
 
     public Chunk GenerateChunk(Vector2Int chunkLocation, int chunkSize)
     {
         Chunk chunk = new Chunk(chunkSize);
+
         for (int x = 0; x < chunkSize; x++)
         {
             for (int y = 0; y < chunkSize; y++)
             {
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = localPos + chunkLocation * chunkSize;
+                GenerationResult result = GenerateLocation(worldPos);
 
-                Biome biome = ChooseBiome(worldPos.x, worldPos.y);
-
-                LocationTiles tiles = biome.GenerateTiles(WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>().LocationTiles(), worldPos);
-
-                chunk.SetWorldLocationTile(localPos, tiles);
-
+                chunk.SetWorldLocationTile(localPos, result.LocationTiles());
             }
         }
+
         return chunk;
     }
 
-    private Biome ChooseBiome(int x, int y)
+    private GenerationResult GenerateLocation(Vector2Int worldPos)
     {
-        if (biomeNoise == null)
+        WorldSample worldSample = worldSampler.Sample(worldPos);
+        GenerationResult result = new GenerationResult(WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>(),WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>());
+        foreach(GenerationLayer layer in worldLayers)
         {
-            Debug.LogError("Biome noise has not been initialized for biome generation.", this);
-            return WorldDataObjectDataBase.Instance.GetDefaultAsset<Biome>();
+            if(layer.Generates(worldSample))
+            {
+                result = layer.Generate(worldPos, worldSample, result);
+            }
         }
-
-        float noiseSample = biomeNoise.Sample(x, y);
-
-        if (biomes == null || biomeRanges == null)
-            return WorldDataObjectDataBase.Instance.GetDefaultAsset<Biome>();
-
-        int count = Mathf.Min(biomes.Count, biomeRanges.Count);
-
-        for (int i = 0; i < count; i++)
-        {
-            Biome biome = biomes[i];
-
-            if (biome == null)
-                continue;
-
-            if (noiseSample <= biomeRanges[i])
-                return biome;
-        }
-
-        return WorldDataObjectDataBase.Instance.GetDefaultAsset<Biome>();
+        return result;
     }
 }

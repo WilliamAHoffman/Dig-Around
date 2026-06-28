@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef9686b8de03a742b2676b071299b89, type: 3}
+  m_Name: MountainFeatureBasic
+  m_EditorClassIdentifier: Assembly-CSharp::MountainFeature
+  idealSample:
+    keys: 00000000
+    values:
+    - 1
+  minSimilarity: 0.306
+  densityNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+  mountainCutoff: 0.1
+  mountainStrength: 2
+  rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}

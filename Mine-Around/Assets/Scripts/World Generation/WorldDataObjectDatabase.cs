@@ -96,6 +96,11 @@ public class WorldDataObjectDataBase : MonoBehaviour
                 typeLookup.Add(assetType, assetsOfType);
             }
 
+            if (string.IsNullOrWhiteSpace(asset.displayName))
+            {
+                asset.displayName = asset.nameID;
+            }
+
             assetsOfType.Add(asset);
         }
     }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NoiseSettings", menuName = "Scriptable Objects/NoiseSettings")]
+[CreateAssetMenu(fileName = "NoiseSettings", menuName = "WorldDataObject/NoiseSettings")]
 public class NoiseSettings : WorldDataObject
 {
     private FastNoiseLite noise;
@@ -60,8 +60,8 @@ public class NoiseSettings : WorldDataObject
         noise = new FastNoiseLite(regularSeed);
         warpNoise = new FastNoiseLite(warpSeed);
 
-        offsetX = WorldDataObjectRandomness.StableHash(objectSeed + "_offset_x") % 10000;
-        offsetY = WorldDataObjectRandomness.StableHash(objectSeed + "_offset_y") % 10000;
+        offsetX = (baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_offset_x")) % 10000;
+        offsetY = (baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_offset_y")) % 10000;
 
         ApplyNoiseSettings(noise);
         ApplyDomainWarpSettings(warpNoise);

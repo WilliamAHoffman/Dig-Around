@@ -7,6 +7,9 @@ public abstract class WorldDataObject : ScriptableObject
     public string displayName;
     public RNGOverride rngOverride;
 
+    [TextArea(3, 5)] 
+    [SerializeField] private string developerNotes;
+
     public string GetObjectSeed()
     {
         string salt = nameID;

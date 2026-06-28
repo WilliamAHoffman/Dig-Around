@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
-  m_Name: RuleGrassFloor
+  m_Name: RuleStone
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  nameID: rule_grass_floor
-  displayName: Grass Floor Rule
+  nameID: rule_stone_floor
+  displayName: Stone Floor Rule
   rngOverride: {fileID: 0}
+  developerNotes: 
   requiredFloor: {fileID: 0}
   requiredWall: {fileID: 0}
-  requiredObjectTile: {fileID: 0}
-  newFloor: {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
-  newWall: {fileID: 0}
-  newObjectTile: {fileID: 0}
+  newFloor: {fileID: 11400000, guid: 0dc785117a239ce448e41109b130a92b, type: 2}
+  newWall: {fileID: 11400000, guid: 0dc785117a239ce448e41109b130a92b, type: 2}

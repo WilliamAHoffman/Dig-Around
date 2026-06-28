@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-[CreateAssetMenu(fileName = "TileData", menuName = "Scriptable Objects/TileData")]
+[CreateAssetMenu(fileName = "TileData", menuName = "WorldDataObject/TileData")]
 public class TileData : WorldDataObject
 {
     public Tile tile;

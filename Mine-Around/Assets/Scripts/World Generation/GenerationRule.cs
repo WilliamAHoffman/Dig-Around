@@ -1,51 +1,24 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GenerationRule", menuName = "Scriptable Objects/GenerationRule")]
-public class GenerationRule : WorldDataObject
+[CreateAssetMenu(fileName = "GenerationRule", menuName = "World Generation/Generation Rule")]
+public class GenerationRule : ScriptableObject
 {
-    public TileData wall;
-    public TileData floor;
-    public List<TileData> placeOnWall;
-    public List<TileData> placeOnFloor;
+    [Header("Placement Requirements")]
+    public TileData requiredFloor;
+    public TileData requiredWall;
 
-    private bool CheckWall(string wall)
+    [Header("Replacement")]
+    public TileData newFloor;
+    public TileData newWall;
+
+    public GenerationResult Apply(GenerationResult result)
     {
-        if(placeOnWall == null || placeOnWall.Count == 0) return true;
-        foreach(TileData tile in placeOnWall)
-        {
-            if(tile.nameID == wall)
-            {
-                return true;
-            }
-        }
+        if ((requiredFloor == null || result.floor == requiredFloor) && newFloor)
+            result.floor = newFloor;
 
-        return false;
-    }
+        if ((requiredWall == null || result.wall == requiredWall) && newWall)
+            result.wall = newWall;
 
-    private bool CheckFloor(string floor)
-    {
-        if(placeOnFloor == null || placeOnFloor.Count == 0) return true;
-        foreach(TileData tile in placeOnFloor)
-        {
-            if(tile.nameID == floor)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public LocationTiles GetNewTiles(LocationTiles currentTiles)
-    {
-        string finalWall = currentTiles.wall;
-        string finalFloor = currentTiles.floor;
-        if (!CheckWall(finalWall) || !CheckFloor(finalFloor)) return currentTiles;
-
-        if(wall) finalWall = wall.nameID;
-        if(floor) finalFloor = floor.nameID;
-
-        return new LocationTiles(finalWall, finalFloor);
+        return result;
     }
 }

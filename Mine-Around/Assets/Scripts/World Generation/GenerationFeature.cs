@@ -2,11 +2,10 @@ using UnityEngine;
 
 public abstract class GenerationFeature : ScriptableObject
 {
-    public WorldSample idealSample;
+    public TargetWorldSample idealSample;
 
     [Range(0f, 1f)]
     public float minSimilarity = 0.5f;
-
     public abstract GenerationResult Apply(
         Vector2Int location,
         float strength,
@@ -18,22 +17,29 @@ public abstract class GenerationFeature : ScriptableObject
         if (idealSample == null || idealSample.keys == null || idealSample.keys.Count == 0)
             return 0f;
 
-        float totalDifference = 0f;
-        int count = 0;
+        float weightedDifference = 0f;
+        float totalImportance = 0f;
 
         foreach (WorldSampleType type in idealSample.keys)
         {
-            float idealValue = idealSample.Get(type);
-            float worldValue = worldSample.Get(type);
+            float importance = idealSample.GetImportance(type);
 
-            totalDifference += Mathf.Abs(idealValue - worldValue);
-            count++;
+            if (importance <= 0f)
+                continue;
+
+            float idealValue = idealSample.GetValue(type);
+            float worldValue = worldSample.GetValue(type);
+
+            float difference = Mathf.Abs(idealValue - worldValue);
+
+            weightedDifference += difference * importance;
+            totalImportance += importance;
         }
 
-        if (count == 0)
+        if (totalImportance <= 0f)
             return 0f;
 
-        float averageDifference = totalDifference / count;
+        float averageDifference = weightedDifference / totalImportance;
 
         return 1f - Mathf.Clamp01(averageDifference);
     }

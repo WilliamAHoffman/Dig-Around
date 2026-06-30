@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02537446e35ed024e83c72483f49ff39, type: 3}
   m_Name: LayerMountains
   m_EditorClassIdentifier: Assembly-CSharp::GenerationLayer
-  nameID: layer_mountains
-  displayName: mountains
-  rngOverride: {fileID: 0}
-  developerNotes: 
   features:
+  - {fileID: 11400000, guid: e5ca09a95b7101340851076d537d5e14, type: 2}
   - {fileID: 11400000, guid: 3280568758602ad42a81d0da55c78892, type: 2}
-  minSimilarity: 0.5
+  mode: 0

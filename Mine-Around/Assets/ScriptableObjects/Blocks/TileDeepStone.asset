@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fddfb814f1146b4cacf529fb5340906, type: 3}
-  m_Name: TileIce
+  m_Name: TileDeepStone
   m_EditorClassIdentifier: Assembly-CSharp::TileData
-  nameID: tile_ice
-  displayName: Ice
+  nameID: tile_deepstone
+  displayName: Deep Stone
   rngOverride: {fileID: 0}
   developerNotes: 
-  tile: {fileID: 11400000, guid: 4fcd63e5a1b4f40488e1f322dcff5db4, type: 2}
+  tile: {fileID: 11400000, guid: c5e2776c8b18a2647b28dc9a1d0c5672, type: 2}
   maxHealth: 1
   invincible: 0
   transparent: 0

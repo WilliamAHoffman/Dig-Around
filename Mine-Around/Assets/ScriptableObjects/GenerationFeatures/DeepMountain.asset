@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ef9686b8de03a742b2676b071299b89, type: 3}
-  m_Name: MountainFeatureBasic
+  m_Name: DeepMountain
   m_EditorClassIdentifier: Assembly-CSharp::MountainFeature
   idealSample:
     keys: 00000000
     values:
-    - 0.3
+    - 0.4
     importance:
     - 1
   minSimilarity: 0.131
   densityNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
   mountainCutoff: 0.185
   mountainStrength: 1
-  rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}
+  rule: {fileID: 11400000, guid: 999c6e0ee379e1f41884e50fef341936, type: 2}

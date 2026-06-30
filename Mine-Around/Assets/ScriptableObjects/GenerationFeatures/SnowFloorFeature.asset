@@ -17,5 +17,8 @@ MonoBehaviour:
     values:
     - 0
     - 0.5
+    importance:
+    - 1
+    - 1
   minSimilarity: 0
   rule: {fileID: 11400000, guid: 82c495e1a2a30484d9380cb1997c361e, type: 2}

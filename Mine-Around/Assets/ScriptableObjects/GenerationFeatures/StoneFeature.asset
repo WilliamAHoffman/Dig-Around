@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db0e8b93dbc9f9843b05fe14b9074e08, type: 3}
   m_Name: StoneFeature
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
-  nameID: feature_flat_stone
-  displayName: Flat Grass
-  rngOverride: {fileID: 0}
-  developerNotes: 
   idealSample:
     keys: 00000000
     values:
     - 1
+    importance:
+    - 1
+  minSimilarity: 0.5
   rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}

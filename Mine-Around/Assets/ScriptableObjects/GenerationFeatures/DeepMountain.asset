@@ -15,7 +15,7 @@ MonoBehaviour:
   idealSample:
     keys: 00000000
     values:
-    - 0.4
+    - 0.7
     importance:
     - 1
   minSimilarity: 0.131

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db0e8b93dbc9f9843b05fe14b9074e08, type: 3}
-  m_Name: SnowFloorFeature
+  m_Name: SandFloorFeature
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
     keys: 01000000
     values:
-    - -0.8
+    - 0.8
     importance:
     - 1
   minSimilarity: 0
-  rule: {fileID: 11400000, guid: 82c495e1a2a30484d9380cb1997c361e, type: 2}
+  rule: {fileID: 11400000, guid: 6186f0e49ab7bb44f87114fea3738ae6, type: 2}

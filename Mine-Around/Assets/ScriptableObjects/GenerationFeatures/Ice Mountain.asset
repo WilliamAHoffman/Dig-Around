@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ef9686b8de03a742b2676b071299b89, type: 3}
-  m_Name: IceMountain
+  m_Name: Ice Mountain
   m_EditorClassIdentifier: Assembly-CSharp::MountainFeature
   idealSample:
     keys: 0000000001000000
     values:
-    - 0.5
-    - 1
+    - 0.2
+    - -0.8
     importance:
+    - 3
     - 1
-    - 2
-  minSimilarity: 0.707
+  minSimilarity: 0.152
   densityNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
-  mountainCutoff: 0.311
-  mountainStrength: 1.095
+  mountainCutoff: 0.185
+  mountainStrength: 1.321
   rule: {fileID: 11400000, guid: 6c2335416626fa44aa6ba06195def551, type: 2}

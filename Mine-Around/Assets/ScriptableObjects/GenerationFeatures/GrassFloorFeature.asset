@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: GrassFloorFeature
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
-    keys: 0100000000000000
+    keys: 01000000
     values:
-    - 0.5
-    - 0.5
+    - 0
     importance:
     - 1
     - 1

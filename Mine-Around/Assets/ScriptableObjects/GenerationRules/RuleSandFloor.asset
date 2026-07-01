@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
-  m_Name: RuleSnowFloor
+  m_Name: RuleSandFloor
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
   requiredFloor: []
   requiredWall: []
-  newFloor: {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
+  newFloor: {fileID: 11400000, guid: d8e7febd359a7b242aaa4e36a548350e, type: 2}
   newWall: {fileID: 0}

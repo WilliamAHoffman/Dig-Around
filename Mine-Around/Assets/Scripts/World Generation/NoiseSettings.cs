@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NoiseSettings", menuName = "WorldDataObject/NoiseSettings")]
@@ -116,7 +117,6 @@ public class NoiseSettings : WorldDataObject
 
             warpNoise.DomainWarp(ref x, ref y);
         }
-
         return noise.GetNoise(x, y);
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
   m_Name: RuleIce
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  requiredFloor: {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
-  requiredWall: {fileID: 0}
+  requiredFloor: []
+  requiredWall: []
   newFloor: {fileID: 11400000, guid: 72eec38ec6513a340ad3493ffb79f52e, type: 2}
   newWall: {fileID: 11400000, guid: 72eec38ec6513a340ad3493ffb79f52e, type: 2}

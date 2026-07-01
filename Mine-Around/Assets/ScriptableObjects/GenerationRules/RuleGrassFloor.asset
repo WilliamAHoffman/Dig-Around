@@ -12,12 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
   m_Name: RuleGrassFloor
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  nameID: rule_grass_floor
-  displayName: Grass Floor Rule
-  rngOverride: {fileID: 0}
-  requiredFloor: {fileID: 0}
-  requiredWall: {fileID: 0}
-  requiredObjectTile: {fileID: 0}
+  requiredFloor: []
+  requiredWall: []
   newFloor: {fileID: 11400000, guid: 144db123b909bd440ad3e57bf3d29f28, type: 2}
   newWall: {fileID: 0}
-  newObjectTile: {fileID: 0}

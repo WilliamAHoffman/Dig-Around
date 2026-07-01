@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
   m_Name: RuleDeepStone
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
-  requiredFloor: {fileID: 0}
-  requiredWall: {fileID: 0}
-  newFloor: {fileID: 0}
+  requiredFloor: []
+  requiredWall: []
+  newFloor: {fileID: 11400000, guid: 61381c77d7ccab84cb802e34b7d5bc56, type: 2}
   newWall: {fileID: 11400000, guid: 61381c77d7ccab84cb802e34b7d5bc56, type: 2}

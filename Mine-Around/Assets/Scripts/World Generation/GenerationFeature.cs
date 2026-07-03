@@ -41,6 +41,6 @@ public abstract class GenerationFeature : ScriptableObject
 
         float averageDifference = weightedDifference / totalImportance;
 
-        return 1f - Mathf.Clamp01(averageDifference);
+        return 2f - (averageDifference + 1);
     }
 }

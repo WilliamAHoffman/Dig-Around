@@ -16,25 +16,6 @@ public class GenerationLayer : ScriptableObject
     [Header("Mode")]
     public GenerationLayerMode mode = GenerationLayerMode.PickBest;
 
-    public bool Generates(WorldSample worldSample)
-    {
-        if (features == null || features.Count == 0)
-            return false;
-
-        foreach (GenerationFeature feature in features)
-        {
-            if (feature == null)
-                continue;
-
-            float score = feature.Similarity(worldSample);
-
-            if (score >= feature.minSimilarity)
-                return true;
-        }
-
-        return false;
-    }
-
     public GenerationResult Generate(Vector2Int location, WorldSample worldSample, GenerationResult result)
     {
         if (features == null || features.Count == 0)

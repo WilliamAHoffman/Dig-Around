@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: SnowFloorFeature
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
-    keys: 01000000
-    values:
-    - -0.8
-    importance:
-    - 1
+    targets:
+    - type: 0
+      value: 0.5
+      importance: 1
+    - type: 1
+      value: -1
+      importance: 1
   minSimilarity: 0
   rule: {fileID: 11400000, guid: 82c495e1a2a30484d9380cb1997c361e, type: 2}

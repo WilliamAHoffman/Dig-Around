@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02537446e35ed024e83c72483f49ff39, type: 3}
-  m_Name: LayerOcean
+  m_Name: LayerOceanFlat
   m_EditorClassIdentifier: Assembly-CSharp::GenerationLayer
   features:
-  - {fileID: 11400000, guid: a6775cd7d6ecd284a9f473e1264e8aa9, type: 2}
-  - {fileID: 11400000, guid: c074a369bd2b90145a622374ed4aebe7, type: 2}
+  - {fileID: 11400000, guid: 1f74fef424880384e9544b47aea52aa0, type: 2}
+  - {fileID: 11400000, guid: 4842960bbbf96334a8a4db3a3f212a1b, type: 2}
   - {fileID: 11400000, guid: 9d217db19f6a1e147a9e60bb54f12e98, type: 2}
   mode: 1

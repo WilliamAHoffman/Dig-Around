@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Ice Mountain
   m_EditorClassIdentifier: Assembly-CSharp::MountainFeature
   idealSample:
-    keys: 0000000001000000
-    values:
-    - 0.2
-    - -0.8
-    importance:
-    - 3
-    - 1
+    targets:
+    - type: 0
+      value: 0.7
+      importance: 1
+    - type: 1
+      value: -1
+      importance: 1
   minSimilarity: 0.152
   densityNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
   mountainCutoff: 0.185

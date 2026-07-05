@@ -45,10 +45,7 @@ public class WorldGenerator : ScriptableObject
 
         foreach (GenerationLayer layer in worldLayers)
         {
-            if (layer.Generates(worldSample))
-            {
-                result = layer.Generate(worldPos, worldSample, result);
-            }
+            result = layer.Generate(worldPos, worldSample, result);
         }
         return result;
     }

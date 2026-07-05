@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fddfb814f1146b4cacf529fb5340906, type: 3}
-  m_Name: TileWater
+  m_Name: TileDeepWater
   m_EditorClassIdentifier: Assembly-CSharp::TileData
-  nameID: tile_water
-  displayName: Water
+  nameID: tile_deep_water
+  displayName: Ocean
   rngOverride: {fileID: 0}
   developerNotes: 
-  tile: {fileID: 11400000, guid: fa8bf23545e5a164da7191fec49d261f, type: 2}
+  tile: {fileID: 11400000, guid: 4fcd63e5a1b4f40488e1f322dcff5db4, type: 2}
   maxHealth: 1
-  invincible: 0
+  invincible: 1
   transparent: 0

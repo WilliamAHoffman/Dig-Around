@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: StoneFeature
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
-    keys: 00000000
-    values:
-    - 1
-    importance:
-    - 1
+    targets:
+    - type: 0
+      value: 0.7
+      importance: 0.8
   minSimilarity: 0.5
   rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}

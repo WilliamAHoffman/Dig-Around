@@ -10,15 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db0e8b93dbc9f9843b05fe14b9074e08, type: 3}
-  m_Name: GrassFloorFeature
+  m_Name: OceanFeatureFlat
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
     targets:
-    - type: 1
-      value: 0.5
-      importance: 1
     - type: 0
-      value: 0.5
+      value: -0.7
       importance: 1
-  minSimilarity: 0
-  rule: {fileID: 11400000, guid: 028d188debbb3b84b9f0daec0e023a74, type: 2}
+  minSimilarity: 0.4
+  rule: {fileID: 11400000, guid: c59c2ac54bf47064f90a78f1a8e5ab7b, type: 2}

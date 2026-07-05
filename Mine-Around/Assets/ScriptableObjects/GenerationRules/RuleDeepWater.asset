@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4edfc0a0130549745bccd273d93dd46f, type: 3}
-  m_Name: RuleSandFloor
+  m_Name: RuleDeepWater
   m_EditorClassIdentifier: Assembly-CSharp::GenerationRule
   requiredFloor: []
   requiredWall: []
-  excludedFloor:
-  - {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
+  excludedFloor: []
   excludedWall: []
-  newFloor: {fileID: 11400000, guid: d8e7febd359a7b242aaa4e36a548350e, type: 2}
+  newFloor: {fileID: 11400000, guid: ec63d283b6d6d3048b365941be584d85, type: 2}
   newWall: {fileID: 0}

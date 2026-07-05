@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: OceanFeatureBasic
   m_EditorClassIdentifier: Assembly-CSharp::OceanFeature
   idealSample:
-    keys: 00000000
-    values:
-    - 0
-    importance:
-    - 1
-  minSimilarity: 0.18
-  densityNoise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
-  oceanCutoff: 0.157
-  oceanStrength: 1.121
+    targets:
+    - type: 0
+      value: -0.7
+      importance: 1
+  minSimilarity: 0.1
+  densityNoise: {fileID: 11400000, guid: d9037f816f706164aabd58146ff8b18d, type: 2}
+  oceanCutoff: 0.067
+  oceanStrength: 1.573
   rule: {fileID: 11400000, guid: c59c2ac54bf47064f90a78f1a8e5ab7b, type: 2}

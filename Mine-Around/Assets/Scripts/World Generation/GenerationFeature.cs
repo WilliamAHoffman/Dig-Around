@@ -12,23 +12,25 @@ public abstract class GenerationFeature : ScriptableObject
         GenerationResult result
     );
 
+    //returns a float from 0 to 1 that represents the similarity of a feature to a world sample
+    //takes a worldsample which is a collection of noise values from -1 to 1
     public float Similarity(WorldSample worldSample)
     {
-        if (idealSample == null || idealSample.keys == null || idealSample.keys.Count == 0)
+        if (idealSample == null || idealSample == null || idealSample.targets.Count == 0)
             return 0f;
 
         float weightedDifference = 0f;
         float totalImportance = 0f;
 
-        foreach (WorldSampleType type in idealSample.keys)
+        foreach (TargetWorldSampleEntry target in idealSample.targets)
         {
-            float importance = idealSample.GetImportance(type);
+            float importance = target.importance;
 
             if (importance <= 0f)
                 continue;
 
-            float idealValue = idealSample.GetValue(type);
-            float worldValue = worldSample.GetValue(type);
+            float idealValue = target.value;
+            float worldValue = worldSample.GetValue(target.type);
 
             float difference = Mathf.Abs(idealValue - worldValue);
 
@@ -41,6 +43,6 @@ public abstract class GenerationFeature : ScriptableObject
 
         float averageDifference = weightedDifference / totalImportance;
 
-        return 2f - (averageDifference + 1);
+        return 1f - averageDifference;
     }
 }

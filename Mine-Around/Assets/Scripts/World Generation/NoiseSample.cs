@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+//all go with NoiseSampler
 public enum WorldSampleType
 {
     elevation,
@@ -33,34 +34,47 @@ public class WorldSample
 [Serializable]
 public class TargetWorldSample
 {
-    [SerializeField] public List<WorldSampleType> keys = new List<WorldSampleType>();
-    [SerializeField] public List<float> values = new List<float>();
-    [SerializeField] public List<float> importance = new List<float>();
+    [SerializeField] public List<TargetWorldSampleEntry> targets = new List<TargetWorldSampleEntry>();
 
-    public void Add(WorldSampleType type, float value, float influence)
+    public TargetWorldSampleEntry GetEntry(WorldSampleType type)
     {
-        keys.Add(type);
-        values.Add(value);
-        importance.Add(influence);
-    }
-
-    public float GetValue(WorldSampleType type)
-    {
-        if (!keys.Contains(type))
+        foreach(TargetWorldSampleEntry tws in targets)
         {
-            Debug.LogError("World sample does not contain this type");
-            return 0;
+            if(tws.type == type)
+            {
+                return tws;
+            }
         }
-        return values[keys.IndexOf(type)];
+
+        Debug.LogError("World sample does not contain this type! (returning: index 0)");
+        return targets[0];
     }
 
-    public float GetImportance(WorldSampleType type)
+    public bool HasEntry(WorldSampleType type)
     {
-        if (!keys.Contains(type))
+        foreach(TargetWorldSampleEntry tws in targets)
         {
-            Debug.LogError("World sample does not contain this type");
-            return 0;
+            if(tws.type == type)
+            {
+                return true;
+            }
         }
-        return importance[keys.IndexOf(type)];
+        Debug.LogError("World sample does not contain this type!");
+        return false;
     }
+}
+
+[Serializable]
+public struct WorldSampleEntry
+{
+    public WorldSampleType type;
+    [Range(-1f, 1f)] public float value;
+}
+
+[Serializable]
+public struct TargetWorldSampleEntry
+{
+    public WorldSampleType type;
+    [Range(-1f, 1f)] public float value;
+    [Min(0f)] public float importance;
 }

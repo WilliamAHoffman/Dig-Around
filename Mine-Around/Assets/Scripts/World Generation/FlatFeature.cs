@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "FlatFeature", menuName = "World Generation/Features/Flat Feature")]

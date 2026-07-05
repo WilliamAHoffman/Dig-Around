@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   chunkSize: 16
-  maxChunkRange: 4
+  maxChunkRange: 8
   walls: {fileID: 475959448}
   floors: {fileID: 575455175}
   generator: {fileID: 11400000, guid: 64e4e2137adb6eb4696393898b5c2170, type: 2}
@@ -529,6 +529,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bd76ea5c7c510374c8941d3038b0d80d, type: 2}
   - {fileID: 11400000, guid: 0dc785117a239ce448e41109b130a92b, type: 2}
   - {fileID: 11400000, guid: 79d88833cca17574d855a39d1b600fb0, type: 2}
+  - {fileID: 11400000, guid: 1ea39291b25734948ab232c811967da4, type: 2}
   defaultWorldDataObjects:
   - {fileID: 11400000, guid: 8e7fc34916fcb294cbd02d919bdac41d, type: 2}
 --- !u!1 &575455172

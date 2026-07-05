@@ -30,11 +30,22 @@ public class WorldGenerator : ScriptableObject
 
     private GenerationResult GenerateLocation(Vector2Int worldPos)
     {
-        WorldSample worldSample = worldSampler.Sample(worldPos);
-        GenerationResult result = new GenerationResult(WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>(),WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>());
-        foreach(GenerationLayer layer in worldLayers)
+
+        if (worldSampler == null)
         {
-            if(layer.Generates(worldSample))
+            Debug.LogError("WorldGenerator has no WorldSampler assigned.", this);
+            return default;
+        }
+
+        WorldSample worldSample = worldSampler.Sample(worldPos);
+        GenerationResult result = new GenerationResult(WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>(), WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>());
+
+        if (worldLayers == null)
+            return result;
+
+        foreach (GenerationLayer layer in worldLayers)
+        {
+            if (layer.Generates(worldSample))
             {
                 result = layer.Generate(worldPos, worldSample, result);
             }

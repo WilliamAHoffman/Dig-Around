@@ -1,4 +1,3 @@
-using Unity.Mathematics;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NoiseSettings", menuName = "WorldDataObject/NoiseSettings")]
@@ -104,6 +103,13 @@ public class NoiseSettings : WorldDataObject
 
     public float Sample(int worldX, int worldY)
     {
+
+        if (noise == null)
+        {
+            Debug.LogError($"NoiseSettings '{nameID}' was sampled before CreateNoise() was called.", this);
+            return 0f;
+        }
+
         float x = worldX + offsetX;
         float y = worldY + offsetY;
 

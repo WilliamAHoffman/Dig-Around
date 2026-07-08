@@ -1,16 +1,18 @@
+using UnityEditor;
 using UnityEngine;
 
-public class WorldPrieviewer : MonoBehaviour
+[CustomEditor(typeof(WorldPreviewer))]
+public class WorldPreviewEditor : Editor
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void OnInspectorGUI()
     {
-        
-    }
+        DrawDefaultInspector();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        WorldPreviewer worldPreviewer = (WorldPreviewer)target;
+
+        if (GUILayout.Button("Preview World"))
+        {
+            worldPreviewer.PreviewBox();
+        }
     }
 }

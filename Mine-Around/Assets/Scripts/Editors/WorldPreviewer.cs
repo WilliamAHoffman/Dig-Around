@@ -13,8 +13,8 @@ public class WorldPreviewer : MonoBehaviour
     public RawImage uiPreviewDisplayFloors;
     private Texture2D previewTextureFloors;
 
-    [SerializeField] private Vector2Int chunkCoord1;
-    [SerializeField] private Vector2Int chunkCoord2;
+    [SerializeField] private int startSizeX;
+    [SerializeField] private int startSizeY;
     [SerializeField] private Vector2Int origin;
 
     public void SaveTexture(Texture2D texture, string filename)
@@ -39,8 +39,8 @@ public class WorldPreviewer : MonoBehaviour
     /// <param name="blocks">The 2D block data structure. Assumes format: blocks[y][x]</param>
     public void PreviewBox()
     {
-        Vector2Int start = Vector2Int.Min(chunkCoord1, chunkCoord2) + origin;
-        Vector2Int end = Vector2Int.Max(chunkCoord1, chunkCoord2) + origin;
+        Vector2Int start = new Vector2Int(-startSizeX, -startSizeY) + origin;
+        Vector2Int end = new Vector2Int(startSizeX, startSizeY) + origin;
 
         int width = (end.x - start.x) * ChunkManager.Instance.ChunkSize;
         int height = (end.y - start.y) * ChunkManager.Instance.ChunkSize;
@@ -79,7 +79,7 @@ public class WorldPreviewer : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                Vector2Int worldPos = new(start.x + x, start.y + y);
+                Vector2Int worldPos = new(start.x * ChunkManager.Instance.ChunkSize + x, start.y * ChunkManager.Instance.ChunkSize + y);
 
                 TileData floor = ChunkManager.Instance.GetFloorDataAtLocation(worldPos);
                 TileData wall = ChunkManager.Instance.GetWallDataAtLocation(worldPos);
@@ -118,9 +118,9 @@ public class WorldPreviewer : MonoBehaviour
             uiPreviewDisplayFloors.texture = previewTextureFloors;
         }
 
-        SaveTexture(previewTexture, "combined: " + GameManager.Instance.worldSeed);
-        SaveTexture(previewTextureWalls, "walls: " + GameManager.Instance.worldSeed);
-        SaveTexture(previewTextureFloors, "floors: " + GameManager.Instance.worldSeed);
+        SaveTexture(previewTexture, "combined");
+        SaveTexture(previewTextureWalls, "walls");
+        SaveTexture(previewTextureFloors, "floors");
 
         GameManager.Instance.DeleteWorld();
     }

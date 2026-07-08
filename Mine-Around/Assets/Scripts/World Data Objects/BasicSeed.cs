@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RNGOverride", menuName = "Scriptable Objects/RNGOverride")]
-public class RNGOverride : ScriptableObject
+public class BasicSeed : ScriptableObject
 {
-    public string salt;
+    public int seed;
 }

@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: LayerMountains
   m_EditorClassIdentifier: Assembly-CSharp::GenerationLayer
   features:
-  - {fileID: 11400000, guid: 2182bd1fc522f6945b5133f866ecc313, type: 2}
-  - {fileID: 11400000, guid: 3280568758602ad42a81d0da55c78892, type: 2}
-  - {fileID: 11400000, guid: e5ca09a95b7101340851076d537d5e14, type: 2}
+  - {fileID: 11400000, guid: a2ef1a2362a6ef049a327f3f5dd0706b, type: 2}
+  - {fileID: 11400000, guid: 52bd73b838fdf9e4f8baec5cb48c9440, type: 2}
   mode: 1

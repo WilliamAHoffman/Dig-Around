@@ -19,6 +19,6 @@ MonoBehaviour:
       importance: 1
   minSimilarity: 0.524
   densityNoise: {fileID: 11400000, guid: d9037f816f706164aabd58146ff8b18d, type: 2}
-  mountainCutoff: 0.185
+  mountainCutoff: 0.365
   mountainStrength: 0.488
   rule: {fileID: 11400000, guid: 999c6e0ee379e1f41884e50fef341936, type: 2}

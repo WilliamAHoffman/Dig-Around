@@ -17,8 +17,8 @@ MonoBehaviour:
     - type: 0
       value: 0.8
       importance: 1
-  minSimilarity: 0
+  minSimilarity: 0.1
   densityNoise: {fileID: 11400000, guid: d9037f816f706164aabd58146ff8b18d, type: 2}
-  mountainCutoff: 0.1
+  mountainCutoff: 0.167
   mountainStrength: 2
   rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}

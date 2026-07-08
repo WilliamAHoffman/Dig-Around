@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NoiseSettings", menuName = "WorldDataObject/NoiseSettings")]
 public class NoiseSettings : WorldDataObject
 {
+    [SerializeField] BasicSeed worldSeed;
     private FastNoiseLite noise;
     private FastNoiseLite warpNoise;
 
@@ -50,18 +51,18 @@ public class NoiseSettings : WorldDataObject
     /// <summary>
     /// Creates a FastNoiseLite instance configured for regular noise sampling.
     /// </summary>
-    public void CreateNoise(int baseSeed)
+    public void CreateNoise()
     {
-        string objectSeed = GetObjectSeed();
+        int objectSeed = GetObjectSeed();
 
-        int regularSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_regular");
-        int warpSeed = baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_warp");
+        int regularSeed = worldSeed.seed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_regular");
+        int warpSeed = worldSeed.seed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_warp");
 
         noise = new FastNoiseLite(regularSeed);
         warpNoise = new FastNoiseLite(warpSeed);
 
-        offsetX = (baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_offset_x")) % 10000;
-        offsetY = (baseSeed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_offset_y")) % 10000;
+        offsetX = (worldSeed.seed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_offset_x")) % 10000;
+        offsetY = (worldSeed.seed ^ WorldDataObjectRandomness.StableHash(objectSeed + "_offset_y")) % 10000;
 
         ApplyNoiseSettings(noise);
         ApplyDomainWarpSettings(warpNoise);

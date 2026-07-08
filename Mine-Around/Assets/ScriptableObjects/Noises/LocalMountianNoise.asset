@@ -16,17 +16,18 @@ MonoBehaviour:
   displayName: noise_local_mountain
   rngOverride: {fileID: 0}
   developerNotes: 
+  worldSeed: {fileID: 11400000, guid: 59653d708eb1ca34295d1865f6f2b656, type: 2}
   noiseType: 0
-  frequency: 0.01
-  offsetX: -792
-  offsetY: -791
+  frequency: 0.001
+  offsetX: -3069
+  offsetY: -3070
   fractalType: 1
   fractalOctaves: 5
   fractalLacunarity: 3
   fractalGain: 0.5
   fractalWeightedStrength: 0
   fractalPingPongStrength: 2
-  cellularDistanceFunction: 1
+  cellularDistanceFunction: 3
   cellularReturnType: 1
   cellularJitter: 1
   domainWarp: 1

@@ -10,15 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db0e8b93dbc9f9843b05fe14b9074e08, type: 3}
-  m_Name: GrassFloorFeature
+  m_Name: FlatDeepMountain
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
     targets:
-    - type: 1
-      value: 0
-      importance: 1
     - type: 0
-      value: 0.5
+      value: 1
       importance: 1
-  minSimilarity: 0
-  rule: {fileID: 11400000, guid: 028d188debbb3b84b9f0daec0e023a74, type: 2}
+  minSimilarity: 0.335
+  rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}

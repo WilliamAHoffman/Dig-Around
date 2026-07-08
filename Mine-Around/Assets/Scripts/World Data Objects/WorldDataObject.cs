@@ -5,17 +5,17 @@ public abstract class WorldDataObject : ScriptableObject
     [Header("Identity")]
     public string nameID;
     public string displayName;
-    public RNGOverride rngOverride;
+    public BasicSeed rngOverride;
 
     [TextArea(3, 5)] 
     [SerializeField] private string developerNotes;
 
-    public string GetObjectSeed()
+    public int GetObjectSeed()
     {
-        string salt = nameID;
+        int salt = WorldDataObjectRandomness.StableHash(nameID);
         if(rngOverride != null)
         {
-            salt = rngOverride.salt;
+            salt = rngOverride.seed;
         }
 
         return salt;

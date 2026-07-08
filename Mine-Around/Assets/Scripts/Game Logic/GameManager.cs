@@ -4,8 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public int worldSeed;
-    public bool seedSet = false;
+    public BasicSeed worldSeed;
     [SerializeField] bool randomSeed;
     [SerializeField] private int maxSeed;
     [SerializeField] private int minSeed;
@@ -24,6 +23,8 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+
+        SetUpGame();
     }
 
     private int GetNewSeed()
@@ -33,17 +34,24 @@ public class GameManager : MonoBehaviour
 
     public void CreateWorld()
     {
-        DeleteWorld();
+        SetUpGame();
+        ChunkManager.Instance.DeleteAllChunks();
+        ChunkManager.Instance.CreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
+    }
 
-        if (randomSeed) worldSeed = GetNewSeed();
+    public void SetUpGame()
+    {
 
+        if (randomSeed) worldSeed.seed = GetNewSeed();
+        
         WorldDataObjectDataBase.Instance.Initialize();
 
-        foreach (NoiseSettings noise in WorldDataObjectDataBase.Instance.GetAllAssetsOfType<NoiseSettings>()){
-            noise.CreateNoise(worldSeed);
-        }
+        ChunkManager.Instance.DeleteAllChunks();
 
-        ChunkManager.Instance.CreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
+        foreach (NoiseSettings noise in WorldDataObjectDataBase.Instance.GetAllAssetsOfType<NoiseSettings>())
+        {
+            noise.CreateNoise();
+        }
     }
 
     public void DeleteWorld()

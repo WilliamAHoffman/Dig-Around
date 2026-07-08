@@ -16,10 +16,11 @@ MonoBehaviour:
   displayName: noise_global_temperature
   rngOverride: {fileID: 0}
   developerNotes: 
+  worldSeed: {fileID: 11400000, guid: 59653d708eb1ca34295d1865f6f2b656, type: 2}
   noiseType: 0
   frequency: 0.001
-  offsetX: 9534
-  offsetY: 9521
+  offsetX: 946
+  offsetY: 945
   fractalType: 1
   fractalOctaves: 5
   fractalLacunarity: 3

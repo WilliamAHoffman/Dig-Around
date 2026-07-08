@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
-public class ChunkPreviewer : MonoBehaviour
+public class WorldPreviewer : MonoBehaviour
 {
     public RawImage uiPreviewDisplay;
     private Texture2D previewTexture;
@@ -12,6 +12,10 @@ public class ChunkPreviewer : MonoBehaviour
 
     public RawImage uiPreviewDisplayFloors;
     private Texture2D previewTextureFloors;
+
+    [SerializeField] private Vector2Int chunkCoord1;
+    [SerializeField] private Vector2Int chunkCoord2;
+    [SerializeField] private Vector2Int origin;
 
     public void SaveTexture(Texture2D texture, string filename)
     {
@@ -33,10 +37,10 @@ public class ChunkPreviewer : MonoBehaviour
     /// Converts a List of Lists into a fast 1D array and renders it to a texture.
     /// </summary>
     /// <param name="blocks">The 2D block data structure. Assumes format: blocks[y][x]</param>
-    public void PreviewBox(Vector2Int pos1, Vector2Int pos2, bool render)
+    public void PreviewBox()
     {
-        Vector2Int start = Vector2Int.Min(pos1, pos2);
-        Vector2Int end = Vector2Int.Max(pos1, pos2);
+        Vector2Int start = Vector2Int.Min(chunkCoord1, chunkCoord2) + origin;
+        Vector2Int end = Vector2Int.Max(chunkCoord1, chunkCoord2) + origin;
 
         int width = (end.x - start.x) * ChunkManager.Instance.ChunkSize;
         int height = (end.y - start.y) * ChunkManager.Instance.ChunkSize;
@@ -69,7 +73,7 @@ public class ChunkPreviewer : MonoBehaviour
         Color[] floorPixels = new Color[width * height];
         Color[] combinedPixels = new Color[width * height];
 
-        ChunkManager.Instance.CreateBox(start, end, render);
+        ChunkManager.Instance.CreateBox(start, end, false);
 
         for (int y = 0; y < height; y++)
         {
@@ -114,8 +118,10 @@ public class ChunkPreviewer : MonoBehaviour
             uiPreviewDisplayFloors.texture = previewTextureFloors;
         }
 
-        SaveTexture(previewTexture, "combined");
-        SaveTexture(previewTextureWalls, "walls");
-        SaveTexture(previewTextureFloors, "floors");
+        SaveTexture(previewTexture, "combined: " + GameManager.Instance.worldSeed);
+        SaveTexture(previewTextureWalls, "walls: " + GameManager.Instance.worldSeed);
+        SaveTexture(previewTextureFloors, "floors: " + GameManager.Instance.worldSeed);
+
+        GameManager.Instance.DeleteWorld();
     }
 }

@@ -11,9 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int minSeed;
     [SerializeField] private int startSizeX;
     [SerializeField] private int startSizeY;
+    [SerializeField] private Vector2Int origin;
     [SerializeField] private bool renderStartChunks;
-    [SerializeField] private bool previewStartChunks;
-    [SerializeField] private ChunkPreviewer chunkPreviewer;
 
     public WorldGenerator worldGenerator;
     private void Awake()
@@ -29,31 +28,22 @@ public class GameManager : MonoBehaviour
 
     private int GetNewSeed()
     {
-        return Random.Range(minSeed,maxSeed);
+        return Random.Range(minSeed, maxSeed);
     }
 
     public void CreateWorld()
     {
         DeleteWorld();
 
-        if (randomSeed)
-            worldSeed = GetNewSeed();
+        if (randomSeed) worldSeed = GetNewSeed();
 
         WorldDataObjectDataBase.Instance.Initialize();
 
-        foreach (NoiseSettings noise in WorldDataObjectDataBase.Instance.GetAllAssetsOfType<NoiseSettings>())
-        {
+        foreach (NoiseSettings noise in WorldDataObjectDataBase.Instance.GetAllAssetsOfType<NoiseSettings>()){
             noise.CreateNoise(worldSeed);
         }
 
-        if (previewStartChunks)
-        {
-            chunkPreviewer.PreviewBox(new Vector2Int(0, 0), new Vector2Int(startSizeX, startSizeY), renderStartChunks);
-        }
-        else
-        {
-            ChunkManager.Instance.CreateBox(new Vector2Int(0, 0), new Vector2Int(startSizeX, startSizeY), renderStartChunks);
-        }
+        ChunkManager.Instance.CreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
     }
 
     public void DeleteWorld()

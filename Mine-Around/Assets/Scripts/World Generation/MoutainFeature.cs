@@ -10,7 +10,7 @@ public class MountainFeature : GenerationFeature
     [Range(0f, 1f)] public float mountainCutoff = 0.6f;
 
     [Tooltip("Extra control over how strong this mountain feature is.")]
-    [Range(0f, 2f)] public float mountainStrength = 1f;
+    public float mountainStrength = 1f;
 
     [Header("Rule")]
     [SerializeField] private GenerationRule rule;

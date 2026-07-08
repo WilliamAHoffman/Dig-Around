@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileData
   nameID: tile_lush_grass
   displayName: Lush Grass
+  rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 11400000, guid: 5362d47d4ceba564baecbb263e6f6aa7, type: 2}
   maxHealth: 1
   invincible: 0
+  transparent: 0
+  mapColor: {r: 0.07457369, g: 0.4792453, b: 0, a: 1}

@@ -9,6 +9,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] bool randomSeed;
     [SerializeField] private int maxSeed;
     [SerializeField] private int minSeed;
+    [SerializeField] private int startSizeX;
+    [SerializeField] private int startSizeY;
+    [SerializeField] private bool renderStartChunks;
+    [SerializeField] private bool previewStartChunks;
+    [SerializeField] private ChunkPreviewer chunkPreviewer;
 
     public WorldGenerator worldGenerator;
     private void Awake()
@@ -41,7 +46,14 @@ public class GameManager : MonoBehaviour
             noise.CreateNoise(worldSeed);
         }
 
-        ChunkManager.Instance.CreateRadiusAt(new Vector2Int(0, 0));
+        if (previewStartChunks)
+        {
+            chunkPreviewer.PreviewBox(new Vector2Int(0, 0), new Vector2Int(startSizeX, startSizeY), renderStartChunks);
+        }
+        else
+        {
+            ChunkManager.Instance.CreateBox(new Vector2Int(0, 0), new Vector2Int(startSizeX, startSizeY), renderStartChunks);
+        }
     }
 
     public void DeleteWorld()

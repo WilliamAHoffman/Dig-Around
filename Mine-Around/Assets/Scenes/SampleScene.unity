@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
   chunkSize: 16
-  maxChunkRange: 16
+  maxChunkRange: 8
   walls: {fileID: 475959448}
   floors: {fileID: 575455175}
   generator: {fileID: 11400000, guid: 64e4e2137adb6eb4696393898b5c2170, type: 2}

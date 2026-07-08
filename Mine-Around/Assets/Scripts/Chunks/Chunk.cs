@@ -23,7 +23,7 @@ public class Chunk
                tileLocation.y >= 0 && tileLocation.y < chunkSize;
     }
 
-    public string GetWorldWallTile(Vector2Int tileLocation)
+    public string GetWallTileID(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
@@ -45,7 +45,7 @@ public class Chunk
         worldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
-    public string GetWorldFloorTile(Vector2Int tileLocation)
+    public string GetFloorTileID(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {

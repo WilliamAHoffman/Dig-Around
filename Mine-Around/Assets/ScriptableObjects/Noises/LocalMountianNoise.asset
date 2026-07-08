@@ -17,12 +17,12 @@ MonoBehaviour:
   rngOverride: {fileID: 0}
   developerNotes: 
   noiseType: 0
-  frequency: 0.001
-  offsetX: -7849
-  offsetY: -7850
+  frequency: 0.01
+  offsetX: -792
+  offsetY: -791
   fractalType: 1
-  fractalOctaves: 3
-  fractalLacunarity: 2
+  fractalOctaves: 5
+  fractalLacunarity: 3
   fractalGain: 0.5
   fractalWeightedStrength: 0
   fractalPingPongStrength: 2

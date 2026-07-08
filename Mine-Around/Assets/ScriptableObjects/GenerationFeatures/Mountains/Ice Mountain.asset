@@ -9,16 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acca8c7adf9fb844d844ba7252b4b95f, type: 3}
-  m_Name: OceanFeatureBasic
-  m_EditorClassIdentifier: Assembly-CSharp::OceanFeature
+  m_Script: {fileID: 11500000, guid: 6ef9686b8de03a742b2676b071299b89, type: 3}
+  m_Name: Ice Mountain
+  m_EditorClassIdentifier: Assembly-CSharp::MountainFeature
   idealSample:
     targets:
     - type: 0
-      value: -0.7
+      value: 0.8
+      importance: 1
+    - type: 1
+      value: -1
       importance: 1
   minSimilarity: 0.1
   densityNoise: {fileID: 11400000, guid: d9037f816f706164aabd58146ff8b18d, type: 2}
-  oceanCutoff: 0.067
-  oceanStrength: 1.573
-  rule: {fileID: 11400000, guid: c59c2ac54bf47064f90a78f1a8e5ab7b, type: 2}
+  mountainCutoff: 0.1
+  mountainStrength: 10
+  rule: {fileID: 11400000, guid: 6c2335416626fa44aa6ba06195def551, type: 2}

@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileData
   nameID: tile_stone
   displayName: Stone
+  rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 11400000, guid: 453f8b2db1569b3449df10f1b006df4d, type: 2}
   maxHealth: 1
   invincible: 0
+  transparent: 0
+  mapColor: {r: 0.4188679, g: 0.4188679, b: 0.4188679, a: 1}

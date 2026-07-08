@@ -18,8 +18,8 @@ MonoBehaviour:
   developerNotes: 
   noiseType: 0
   frequency: 0.001
-  offsetX: -7512
-  offsetY: -7513
+  offsetX: 9534
+  offsetY: 9521
   fractalType: 1
   fractalOctaves: 5
   fractalLacunarity: 3

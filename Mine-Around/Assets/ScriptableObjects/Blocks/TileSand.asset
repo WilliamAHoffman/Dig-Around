@@ -20,3 +20,4 @@ MonoBehaviour:
   maxHealth: 1
   invincible: 0
   transparent: 0
+  mapColor: {r: 1, g: 0.86514914, b: 0, a: 1}

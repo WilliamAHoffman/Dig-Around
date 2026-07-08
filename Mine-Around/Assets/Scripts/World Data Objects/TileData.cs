@@ -8,6 +8,7 @@ public class TileData : WorldDataObject
     public int maxHealth;
     public bool invincible;
     public bool transparent;
+    public Color mapColor;
 
     public WorldTile WorldTile()
     {

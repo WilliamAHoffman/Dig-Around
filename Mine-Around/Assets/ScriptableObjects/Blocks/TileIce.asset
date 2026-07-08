@@ -16,7 +16,8 @@ MonoBehaviour:
   displayName: Ice
   rngOverride: {fileID: 0}
   developerNotes: 
-  tile: {fileID: 11400000, guid: 4fcd63e5a1b4f40488e1f322dcff5db4, type: 2}
+  tile: {fileID: 11400000, guid: 0baa79dc0ba596c49835f67c473835e9, type: 2}
   maxHealth: 1
   invincible: 0
   transparent: 0
+  mapColor: {r: 0.52605784, g: 0, b: 0.84313726, a: 1}

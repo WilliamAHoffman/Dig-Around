@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileData
   nameID: tile_snow
   displayName: Snow
+  rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 11400000, guid: 43052404241ecdc4f998ca19c77ed659, type: 2}
   maxHealth: 1
   invincible: 0
+  transparent: 0
+  mapColor: {r: 1, g: 1, b: 1, a: 1}

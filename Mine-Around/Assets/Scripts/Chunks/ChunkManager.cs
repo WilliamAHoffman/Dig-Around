@@ -8,14 +8,14 @@ public class ChunkManager : MonoBehaviour
 
     [Header("Chunk Settings")]
     [SerializeField] private int chunkSize = 16;
-    [SerializeField] private int maxChunkRange = 4;
+    [SerializeField] const int MAXCHUNKRANGE = 4;
 
     [Header("Tilemaps")]
     [SerializeField] private Tilemap walls;
     [SerializeField] private Tilemap floors;
 
     [Header("Generation")]
-    [SerializeField] private WorldGenerator generator;
+    [SerializeField] public WorldGenerator generator;
 
     private readonly Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
 
@@ -32,21 +32,23 @@ public class ChunkManager : MonoBehaviour
         Instance = this;
     }
 
-    public void CreateRadiusAt(Vector2Int chunkLocation)
+    public void CreateBox(Vector2Int pos1, Vector2Int pos2, bool render = false)
     {
-        for (int x = -maxChunkRange; x <= maxChunkRange; x++)
+        Vector2Int start = Vector2Int.Min(pos1, pos2);
+        Vector2Int end = Vector2Int.Max(pos1, pos2);
+        for (int x = start.x; x <= end.x; x++)
         {
-            for (int y = -maxChunkRange; y <= maxChunkRange; y++)
+            for (int y = start.y; y <= end.y; y++)
             {
-                Vector2Int offset = new Vector2Int(x, y);
-                LoadChunk(chunkLocation + offset);
+                Vector2Int chunkLocation = new Vector2Int(x, y);
+                Chunk newChunk = GetOrCreateChunk(chunkLocation);
+
+                if (render)
+                {
+                    RenderChunk(chunkLocation, newChunk);
+                }
             }
         }
-    }
-
-    public void CreateChunk(Vector2Int chunkLocation)
-    {
-        GetOrCreateChunk(chunkLocation);
     }
 
     private Chunk GetOrCreateChunk(Vector2Int chunkLocation)
@@ -66,19 +68,18 @@ public class ChunkManager : MonoBehaviour
         return chunk;
     }
 
-    public void LoadChunk(Vector2Int chunkLocation)
+    public Chunk LoadChunk(Vector2Int chunkLocation)
     {
         Chunk chunk = GetOrCreateChunk(chunkLocation);
 
-        if (chunk == null)
-            return;
-
         if (chunk.loaded)
-            return;
+            return chunk;
 
         chunk.loaded = true;
 
         RenderChunk(chunkLocation, chunk);
+
+        return chunk;
     }
 
     private void RenderChunk(Vector2Int chunkLocation, Chunk chunk)
@@ -96,8 +97,8 @@ public class ChunkManager : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, chunkSize);
 
-                string wallTileData = chunk.GetWorldWallTile(localPos);
-                string floorTileData = chunk.GetWorldFloorTile(localPos);
+                string wallTileData = chunk.GetWallTileID(localPos);
+                string floorTileData = chunk.GetFloorTileID(localPos);
 
                 //string wallID = wallTileData != null ? wallTileData : string.Empty;
                 //string floorID = floorTileData != null ? floorTileData : string.Empty;
@@ -159,7 +160,7 @@ public class ChunkManager : MonoBehaviour
         floors.SetTiles(positions, floorTiles);
     }
 
-    public string GetWorldWallTileAtLocation(Vector2 location)
+    public string GetWallIDAtLocation(Vector2 location)
     {
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(location, chunkSize);
@@ -170,10 +171,10 @@ public class ChunkManager : MonoBehaviour
             return null;
         }
 
-        return chunk.GetWorldWallTile(localPos);
+        return chunk.GetWallTileID(localPos);
     }
 
-    public string GetWorldFloorTileAtLocation(Vector2 location)
+    public string GetFloorIDAtLocation(Vector2 location)
     {
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(location, chunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(location, chunkSize);
@@ -184,7 +185,17 @@ public class ChunkManager : MonoBehaviour
             return null;
         }
 
-        return chunk.GetWorldFloorTile(localPos);
+        return chunk.GetFloorTileID(localPos);
+    }
+
+    public TileData GetWallDataAtLocation(Vector2 location)
+    {
+        return WorldDataObjectDataBase.Instance.GetTileData(GetWallIDAtLocation(location));
+    }
+
+    public TileData GetFloorDataAtLocation(Vector2 location)
+    {
+        return WorldDataObjectDataBase.Instance.GetTileData(GetFloorIDAtLocation(location));
     }
 
     public void UnloadAllChunks()

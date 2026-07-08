@@ -15,7 +15,9 @@ MonoBehaviour:
   nameID: tile_cold_tree
   displayName: Snow Tree
   rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 11400000, guid: e7a9ba52bb1e67146a36bb5f4857bd8c, type: 2}
   maxHealth: 1
   invincible: 0
   transparent: 1
+  mapColor: {r: 0.2396226, g: 1, b: 0.70345455, a: 1}

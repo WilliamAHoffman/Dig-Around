@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acca8c7adf9fb844d844ba7252b4b95f, type: 3}
-  m_Name: BeachFeature
-  m_EditorClassIdentifier: Assembly-CSharp::OceanFeature
+  m_Script: {fileID: 11500000, guid: 6ef9686b8de03a742b2676b071299b89, type: 3}
+  m_Name: MountainFeatureBasic
+  m_EditorClassIdentifier: Assembly-CSharp::MountainFeature
   idealSample:
     targets:
     - type: 0
-      value: -0.6
+      value: 0.8
       importance: 1
-  minSimilarity: 0.1
+  minSimilarity: 0
   densityNoise: {fileID: 11400000, guid: d9037f816f706164aabd58146ff8b18d, type: 2}
-  oceanCutoff: 0.067
-  oceanStrength: 1.573
-  rule: {fileID: 11400000, guid: 6186f0e49ab7bb44f87114fea3738ae6, type: 2}
+  mountainCutoff: 0.1
+  mountainStrength: 2
+  rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}

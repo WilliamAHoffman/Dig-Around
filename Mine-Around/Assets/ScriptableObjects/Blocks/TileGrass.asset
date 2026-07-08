@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileData
   nameID: tile_grass
   displayName: Grass
+  rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 11400000, guid: e2e6afcb6d86e0941940fb0214dcbaa1, type: 2}
   maxHealth: 1
   invincible: 0
+  transparent: 0
+  mapColor: {r: 0.19942844, g: 1, b: 0, a: 1}

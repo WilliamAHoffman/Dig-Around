@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileData
   nameID: tile_tree
   displayName: Tree
+  rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 11400000, guid: c0a71fc488ad11e41b7c0efbca027a3c, type: 2}
   maxHealth: 1
   invincible: 0
   transparent: 1
+  mapColor: {r: 0.5018867, g: 0.21451248, b: 0, a: 1}

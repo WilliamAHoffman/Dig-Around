@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileData
   nameID: tile_air
   displayName: Air
+  rngOverride: {fileID: 0}
+  developerNotes: 
   tile: {fileID: 0}
   maxHealth: 1
   invincible: 1
   transparent: 1
+  mapColor: {r: 0.7254902, g: 0.7254902, b: 0.7254902, a: 0}

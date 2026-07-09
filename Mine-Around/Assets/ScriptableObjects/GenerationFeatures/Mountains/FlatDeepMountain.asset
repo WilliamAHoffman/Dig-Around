@@ -17,5 +17,5 @@ MonoBehaviour:
     - type: 0
       value: 1
       importance: 1
-  minSimilarity: 0.335
-  rule: {fileID: 11400000, guid: d77bf6034c6ca3c43b9635dd7ea5f866, type: 2}
+  minSimilarity: 0.569
+  rule: {fileID: 11400000, guid: 999c6e0ee379e1f41884e50fef341936, type: 2}

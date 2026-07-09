@@ -15,10 +15,10 @@ MonoBehaviour:
   idealSample:
     targets:
     - type: 0
-      value: 0.8
+      value: 0.9
       importance: 1
     - type: 1
       value: -1
-      importance: 1
+      importance: 2
   minSimilarity: 0.4
   rule: {fileID: 11400000, guid: 6c2335416626fa44aa6ba06195def551, type: 2}

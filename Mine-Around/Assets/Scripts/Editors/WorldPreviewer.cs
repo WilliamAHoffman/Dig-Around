@@ -42,8 +42,11 @@ public class WorldPreviewer : MonoBehaviour
         Vector2Int start = new Vector2Int(-startSizeX, -startSizeY) + origin;
         Vector2Int end = new Vector2Int(startSizeX, startSizeY) + origin;
 
-        int width = (end.x - start.x) * ChunkManager.Instance.ChunkSize;
-        int height = (end.y - start.y) * ChunkManager.Instance.ChunkSize;
+        int chunkWidth = end.x - start.x + 1;
+        int chunkHeight = end.y - start.y + 1;
+
+        int width = chunkWidth * ChunkManager.Instance.ChunkSize;
+        int height = chunkHeight * ChunkManager.Instance.ChunkSize;
 
         if (previewTexture == null || previewTexture.width != width || previewTexture.height != height)
         {

@@ -3,15 +3,21 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-
-    public BasicSeed worldSeed;
     [SerializeField] bool randomSeed;
-    [SerializeField] private int maxSeed;
-    [SerializeField] private int minSeed;
+
+    //starting spawn area
     [SerializeField] private int startSizeX;
     [SerializeField] private int startSizeY;
     [SerializeField] private Vector2Int origin;
     [SerializeField] private bool renderStartChunks;
+
+    //external references
+    [SerializeField] private GameController gameController;
+    public ChunkManager ChunkManager => gameController.ChunkManager;
+    public GameVariables GameVariables => gameController.GameVariables;
+    public WorldDataObjectDataBase WorldDataObjectDataBase => gameController.WorldDataObjectDataBase;
+    public int ChunkSize => GameVariables.chunkSize; 
+    public int WorldSeed => GameVariables.worldSeed; 
 
     public WorldGenerator worldGenerator;
     private void Awake()
@@ -27,28 +33,23 @@ public class GameManager : MonoBehaviour
         SetUpGame();
     }
 
-    private int GetNewSeed()
-    {
-        return Random.Range(minSeed, maxSeed);
-    }
-
     public void CreateWorld()
     {
         SetUpGame();
-        ChunkManager.Instance.DeleteAllChunks();
-        ChunkManager.Instance.CreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
+        ChunkManager.DeleteAllChunks();
+        ChunkManager.CreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
     }
 
     public void SetUpGame()
     {
 
-        if (randomSeed) worldSeed.seed = GetNewSeed();
+        if (randomSeed) GameVariables.SetNewWorldSeed();
         
-        WorldDataObjectDataBase.Instance.Initialize();
+        WorldDataObjectDataBase.Initialize();
 
-        ChunkManager.Instance.DeleteAllChunks();
+        ChunkManager.DeleteAllChunks();
 
-        foreach (NoiseSettings noise in WorldDataObjectDataBase.Instance.GetAllAssetsOfType<NoiseSettings>())
+        foreach (NoiseSettings noise in WorldDataObjectDataBase.GetAllAssetsOfType<NoiseSettings>())
         {
             noise.CreateNoise();
         }
@@ -56,6 +57,6 @@ public class GameManager : MonoBehaviour
 
     public void DeleteWorld()
     {
-        ChunkManager.Instance.DeleteAllChunks();
+        ChunkManager.DeleteAllChunks();
     }
 }

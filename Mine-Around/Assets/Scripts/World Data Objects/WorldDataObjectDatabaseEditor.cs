@@ -100,9 +100,6 @@ public class WorldDataObjectDatabaseEditor : Editor
 
         EditorUtility.SetDirty(database);
 
-        if (!Application.isPlaying)
-            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(database.gameObject.scene);
-
         Debug.Log($"WorldDataObjectDatabase filled with {assets.Count} WorldDataObject asset(s).", database);
     }
 

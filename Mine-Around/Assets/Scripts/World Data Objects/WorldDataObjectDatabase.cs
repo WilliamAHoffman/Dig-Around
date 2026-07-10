@@ -2,20 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Central lookup database for WorldDataObject-based ScriptableObject assets.
-///
-/// Responsibilities:
-/// - Look up assets by nameID.
-/// - Return all assets of a requested WorldDataObject type.
-/// - Return configured default assets by type.
-/// - Provide safe helpers for common world-generation lookups.
-///
-/// This class is a scene singleton MonoBehaviour. Add it to one GameObject in your bootstrap scene.
-/// </summary>
-public class WorldDataObjectDataBase : MonoBehaviour
+[CreateAssetMenu(fileName = "WorldDataObjectDataBase", menuName = "Storage/WorldDataObjectDataBase")]
+public class WorldDataObjectDataBase : ScriptableObject
 {
-    public static WorldDataObjectDataBase Instance { get; private set; }
 
     [Header("Registered Assets")]
     [SerializeField] private List<WorldDataObject> allAssets = new List<WorldDataObject>();
@@ -29,18 +18,6 @@ public class WorldDataObjectDataBase : MonoBehaviour
     private readonly Dictionary<Type, WorldDataObject> defaultLookup = new Dictionary<Type, WorldDataObject>();
 
     private bool initialized;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        Initialize();
-    }
 
     /// <summary>
     /// Rebuilds all lookup tables from the configured asset list.

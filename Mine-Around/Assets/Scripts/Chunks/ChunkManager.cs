@@ -6,11 +6,6 @@ using UnityEngine.Tilemaps;
 // Chunk coordinates are grid positions in chunk space, not world tile positions
 public class ChunkManager : MonoBehaviour
 {
-    public static ChunkManager Instance { get; private set; }
-
-    [Header("Chunk Settings")]
-    [SerializeField] private int chunkSize = 16;
-    [SerializeField] private int maxChunkRange = 4;
 
     [Header("Tilemaps")]
     [SerializeField] private Tilemap walls;
@@ -22,21 +17,9 @@ public class ChunkManager : MonoBehaviour
     private readonly Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
 
     // Global chunk values
-    public int ChunkSize => chunkSize;
-    public int MaxChunkRange => maxChunkRange;
-
-    // Sets up self static instance
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
+    [SerializeField] private GameController gameController;
+    public int ChunkSize => gameController.GameVariables.chunkSize;
+    public WorldDataObjectDataBase WorldDataObjectDataBase => gameController.WorldDataObjectDataBase;
 
     // Loads or Creates all chunks within the two given positions
     // Can be set to render automatically
@@ -77,7 +60,7 @@ public class ChunkManager : MonoBehaviour
             return null;
         }
 
-        chunk = generator.GenerateChunk(chunkPosition, chunkSize);
+        chunk = generator.GenerateChunk(chunkPosition, ChunkSize);
 
         if (chunk == null)
         {
@@ -137,30 +120,30 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        if (WorldDataObjectDataBase.Instance == null)
+        if (WorldDataObjectDataBase == null)
         {
             Debug.LogError("WorldDataObjectDataBase instance is missing.", this);
             return;
         }
 
-        Vector3Int[] positions = new Vector3Int[chunkSize * chunkSize];
-        TileBase[] wallTiles = new TileBase[chunkSize * chunkSize];
-        TileBase[] floorTiles = new TileBase[chunkSize * chunkSize];
+        Vector3Int[] positions = new Vector3Int[ChunkSize * ChunkSize];
+        TileBase[] wallTiles = new TileBase[ChunkSize * ChunkSize];
+        TileBase[] floorTiles = new TileBase[ChunkSize * ChunkSize];
 
         int i = 0;
 
-        for (int x = 0; x < chunkSize; x++)
+        for (int x = 0; x < ChunkSize; x++)
         {
-            for (int y = 0; y < chunkSize; y++)
+            for (int y = 0; y < ChunkSize; y++)
             {
                 Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation);
+                Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, ChunkSize);
 
                 string wallTileID = chunk.GetWallTileID(localPos);
                 string floorTileID = chunk.GetFloorTileID(localPos);
 
-                TileData wallData = WorldDataObjectDataBase.Instance.GetAssetByID<TileData>(wallTileID);
-                TileData floorData = WorldDataObjectDataBase.Instance.GetAssetByID<TileData>(floorTileID);
+                TileData wallData = WorldDataObjectDataBase.GetAssetByID<TileData>(wallTileID);
+                TileData floorData = WorldDataObjectDataBase.GetAssetByID<TileData>(floorTileID);
 
                 bool showFloor = wallData == null || wallData.transparent;
 
@@ -182,17 +165,17 @@ public class ChunkManager : MonoBehaviour
         if (!HasValidTilemaps())
             return;
 
-        Vector3Int[] positions = new Vector3Int[chunkSize * chunkSize];
-        TileBase[] emptyTiles = new TileBase[chunkSize * chunkSize];
+        Vector3Int[] positions = new Vector3Int[ChunkSize * ChunkSize];
+        TileBase[] emptyTiles = new TileBase[ChunkSize * ChunkSize];
 
         int i = 0;
 
-        for (int x = 0; x < chunkSize; x++)
+        for (int x = 0; x < ChunkSize; x++)
         {
-            for (int y = 0; y < chunkSize; y++)
+            for (int y = 0; y < ChunkSize; y++)
             {
                 Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkPosition);
+                Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkPosition, ChunkSize);
 
                 positions[i] = (Vector3Int)worldPos;
                 emptyTiles[i] = null;
@@ -208,8 +191,8 @@ public class ChunkManager : MonoBehaviour
     // Gives the wall string ID at the given location if it exists
     public string GetWallIDAtLocation(Vector2 position)
     {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position);
-        Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position);
+        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
+        Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position, ChunkSize);
 
         if (!chunks.TryGetValue(chunkCoord, out Chunk chunk))
         {
@@ -224,8 +207,8 @@ public class ChunkManager : MonoBehaviour
     // Gives the floor string ID at the given location if it exists
     public string GetFloorIDAtLocation(Vector2 position)
     {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position);
-        Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position);
+        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
+        Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position, ChunkSize);
 
         if (!chunks.TryGetValue(chunkCoord, out Chunk chunk))
         {
@@ -239,7 +222,7 @@ public class ChunkManager : MonoBehaviour
     // Gives the wall data asset at the given location if it exists
     public TileData GetWallDataAtLocation(Vector2 location)
     {
-        if (WorldDataObjectDataBase.Instance == null)
+        if (WorldDataObjectDataBase == null)
         {
             Debug.LogError("WorldDataObjectDataBase instance is missing.", this);
             return null;
@@ -250,13 +233,13 @@ public class ChunkManager : MonoBehaviour
         if (string.IsNullOrEmpty(tileID))
             return null;
 
-        return WorldDataObjectDataBase.Instance.GetTileData(tileID);
+        return WorldDataObjectDataBase.GetTileData(tileID);
     }
 
     // Gives the floor data asset at the given location if it exists
     public TileData GetFloorDataAtLocation(Vector2 location)
     {
-        if (WorldDataObjectDataBase.Instance == null)
+        if (WorldDataObjectDataBase == null)
         {
             Debug.LogError("WorldDataObjectDataBase instance is missing.", this);
             return null;
@@ -267,7 +250,7 @@ public class ChunkManager : MonoBehaviour
         if (string.IsNullOrEmpty(tileID))
             return null;
 
-        return WorldDataObjectDataBase.Instance.GetTileData(tileID);
+        return WorldDataObjectDataBase.GetTileData(tileID);
     }
 
     // Unloads and UnRenders all chunks
@@ -296,14 +279,14 @@ public class ChunkManager : MonoBehaviour
     // Checks if a chunk exists at a world position
     public bool HasChunkAtWorldLocation(Vector3 position)
     {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position);
+        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
         return chunks.ContainsKey(chunkCoord);
     }
 
     // Checks if a chunk exists at a block position
     public bool HasChunkAtBlockLocation(Vector2Int blockPosition)
     {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord((Vector3Int)blockPosition);
+        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord((Vector3Int)blockPosition, ChunkSize);
         return chunks.ContainsKey(chunkCoord);
     }
 

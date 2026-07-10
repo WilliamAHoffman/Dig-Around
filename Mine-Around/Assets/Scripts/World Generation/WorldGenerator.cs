@@ -8,6 +8,7 @@ public class WorldGenerator : ScriptableObject
     [SerializeField] private List<GenerationLayer> worldLayers;
     [Header("Noise Sample")]
     [SerializeField] private WorldSampler worldSampler;
+    public WorldDataObjectDataBase WorldDataObjectDataBase;
 
     public Chunk GenerateChunk(Vector2Int chunkLocation, int chunkSize)
     {
@@ -38,7 +39,7 @@ public class WorldGenerator : ScriptableObject
         }
 
         WorldSample worldSample = worldSampler.Sample(worldPos);
-        GenerationResult result = new GenerationResult(WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>(), WorldDataObjectDataBase.Instance.GetDefaultAsset<TileData>());
+        GenerationResult result = new GenerationResult(WorldDataObjectDataBase.GetDefaultAsset<TileData>(), WorldDataObjectDataBase.GetDefaultAsset<TileData>());
 
         if (worldLayers == null)
             return result;

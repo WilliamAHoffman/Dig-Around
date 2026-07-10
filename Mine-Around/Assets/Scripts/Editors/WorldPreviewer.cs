@@ -17,6 +17,11 @@ public class WorldPreviewer : MonoBehaviour
     [SerializeField] private int startSizeY;
     [SerializeField] private Vector2Int origin;
 
+    // Global chunk values
+    [SerializeField] private GameController gameController;
+    public ChunkManager ChunkManager => gameController.ChunkManager;
+    public int ChunkSize => ChunkManager.ChunkSize;
+
     public void SaveTexture(Texture2D texture, string filename)
     {
         byte[] png = texture.EncodeToPNG();
@@ -45,8 +50,8 @@ public class WorldPreviewer : MonoBehaviour
         int chunkWidth = end.x - start.x + 1;
         int chunkHeight = end.y - start.y + 1;
 
-        int width = chunkWidth * ChunkManager.Instance.ChunkSize;
-        int height = chunkHeight * ChunkManager.Instance.ChunkSize;
+        int width = chunkWidth * ChunkSize;
+        int height = chunkHeight * ChunkSize;
 
         if (previewTexture == null || previewTexture.width != width || previewTexture.height != height)
         {
@@ -76,16 +81,16 @@ public class WorldPreviewer : MonoBehaviour
         Color[] floorPixels = new Color[width * height];
         Color[] combinedPixels = new Color[width * height];
 
-        ChunkManager.Instance.CreateBox(start, end, false);
+        ChunkManager.CreateBox(start, end, false);
 
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                Vector2Int worldPos = new(start.x * ChunkManager.Instance.ChunkSize + x, start.y * ChunkManager.Instance.ChunkSize + y);
+                Vector2Int worldPos = new(start.x * ChunkSize + x, start.y * ChunkSize + y);
 
-                TileData floor = ChunkManager.Instance.GetFloorDataAtLocation(worldPos);
-                TileData wall = ChunkManager.Instance.GetWallDataAtLocation(worldPos);
+                TileData floor = ChunkManager.GetFloorDataAtLocation(worldPos);
+                TileData wall = ChunkManager.GetWallDataAtLocation(worldPos);
 
                 int index = y * width + x;
 

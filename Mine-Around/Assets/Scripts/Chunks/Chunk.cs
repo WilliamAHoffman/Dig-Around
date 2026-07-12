@@ -3,16 +3,16 @@ using UnityEngine;
 public class Chunk
 {
     private readonly int chunkSize;
-    private string[,] worldWallTiles;
-    private string[,] worldFloorTiles;
+    private int[,] worldWallTiles;
+    private int[,] worldFloorTiles;
     public bool loaded;
 
     public Chunk(int size)
     {
         chunkSize = size;
 
-        worldWallTiles = new string[size, size];
-        worldFloorTiles = new string[size, size];
+        worldWallTiles = new int[size, size];
+        worldFloorTiles = new int[size, size];
 
         loaded = false;
     }
@@ -23,18 +23,18 @@ public class Chunk
                tileLocation.y >= 0 && tileLocation.y < chunkSize;
     }
 
-    public string GetWallTileID(Vector2Int tileLocation)
+    public int GetWallTileID(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
             Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
-            return null;
+            return -1;
         }
 
         return worldWallTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldWallTile(Vector2Int tileLocation, string tile)
+    public void SetWorldWallTile(Vector2Int tileLocation, int tile)
     {
         if (!InBounds(tileLocation))
         {
@@ -45,18 +45,18 @@ public class Chunk
         worldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
-    public string GetFloorTileID(Vector2Int tileLocation)
+    public int GetFloorTileID(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
             Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
-            return null;
+            return -1;
         }
 
         return worldFloorTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldFloorTile(Vector2Int tileLocation, string tile)
+    public void SetWorldFloorTile(Vector2Int tileLocation, int tile)
     {
         if (!InBounds(tileLocation))
         {

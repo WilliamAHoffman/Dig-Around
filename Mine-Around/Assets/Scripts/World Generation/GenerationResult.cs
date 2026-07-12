@@ -11,6 +11,6 @@ public struct GenerationResult
 
     public LocationTiles LocationTiles()
     {
-        return new LocationTiles(wall.nameID, floor.nameID);
+        return new LocationTiles(wall.ID, floor.ID);
     }
 }

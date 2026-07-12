@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameController gameController;
     public ChunkManager ChunkManager => gameController.ChunkManager;
     public GameVariables GameVariables => gameController.GameVariables;
-    public WorldDataObjectDataBase WorldDataObjectDataBase => gameController.WorldDataObjectDataBase;
+    public GameDatabase GameDatabase => gameController.GameDatabase;
     public int ChunkSize => GameVariables.chunkSize; 
     public int WorldSeed => GameVariables.worldSeed; 
 
@@ -44,15 +44,10 @@ public class GameManager : MonoBehaviour
     {
 
         if (randomSeed) GameVariables.SetNewWorldSeed();
-        
-        WorldDataObjectDataBase.Initialize();
 
         ChunkManager.DeleteAllChunks();
 
-        foreach (NoiseSettings noise in WorldDataObjectDataBase.GetAllAssetsOfType<NoiseSettings>())
-        {
-            noise.CreateNoise();
-        }
+        GameDatabase.Initialize();
     }
 
     public void DeleteWorld()

@@ -12,7 +12,7 @@ public class NoiseSettingsEditor : Editor
 
         if (GUILayout.Button("Resfresh Noise"))
         {
-            Noise.CreateNoise();
+            Noise.Initialize();
         }
     }
 }

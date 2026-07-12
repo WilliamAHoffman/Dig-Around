@@ -17,4 +17,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1adaff42d801097439ce8f524267d7b3, type: 2}
   - {fileID: 11400000, guid: 1b9384bf932b248429232e3d0b580306, type: 2}
   worldSampler: {fileID: 11400000, guid: 2de9d49fffc352946867d98e115e0b2d, type: 2}
-  WorldDataObjectDataBase: {fileID: 11400000, guid: 5900fb8b827471d4c9b392fc83e96536, type: 2}
+  gameDatabase: {fileID: 11400000, guid: 5900fb8b827471d4c9b392fc83e96536, type: 2}

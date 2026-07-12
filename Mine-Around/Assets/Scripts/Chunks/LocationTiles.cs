@@ -1,10 +1,10 @@
 //information containing each tile at a location
 public struct LocationTiles
 {
-    public string wall;
-    public string floor;
+    public int wall;
+    public int floor;
 
-    public LocationTiles(string wall, string floor)
+    public LocationTiles(int wall, int floor)
     {
         this.wall = wall;
         this.floor = floor;

@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
     public ChunkManager ChunkManager;
     public GameManager GameManager;
     public GameVariables GameVariables;
-    public WorldDataObjectDataBase WorldDataObjectDataBase;
+    public GameDatabase GameDatabase;
 
     private void Awake()
     {
@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour
 
         Instance = this;
 
-        if(!ChunkManager || !GameManager || !WorldDataObjectDataBase || !GameVariables)
+        if(!ChunkManager || !GameManager || !GameDatabase || !GameVariables)
         {
             Debug.LogError("One or more singletons are not set!", this);
         }

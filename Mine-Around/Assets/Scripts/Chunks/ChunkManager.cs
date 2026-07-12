@@ -19,7 +19,7 @@ public class ChunkManager : MonoBehaviour
     // Global chunk values
     [SerializeField] private GameController gameController;
     public int ChunkSize => gameController.GameVariables.chunkSize;
-    public WorldDataObjectDataBase WorldDataObjectDataBase => gameController.WorldDataObjectDataBase;
+    public GameDatabase GameDatabase => gameController.GameDatabase;
 
     // Loads or Creates all chunks within the two given positions
     // Can be set to render automatically
@@ -120,9 +120,9 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        if (WorldDataObjectDataBase == null)
+        if (GameDatabase == null)
         {
-            Debug.LogError("WorldDataObjectDataBase instance is missing.", this);
+            Debug.LogError("GameDatabase instance is missing.", this);
             return;
         }
 
@@ -139,11 +139,11 @@ public class ChunkManager : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, ChunkSize);
 
-                string wallTileID = chunk.GetWallTileID(localPos);
-                string floorTileID = chunk.GetFloorTileID(localPos);
+                int wallTileID = chunk.GetWallTileID(localPos);
+                int floorTileID = chunk.GetFloorTileID(localPos);
 
-                TileData wallData = WorldDataObjectDataBase.GetAssetByID<TileData>(wallTileID);
-                TileData floorData = WorldDataObjectDataBase.GetAssetByID<TileData>(floorTileID);
+                TileData wallData = GameDatabase.GetAssetByID<TileData>(wallTileID);
+                TileData floorData = GameDatabase.GetAssetByID<TileData>(floorTileID);
 
                 bool showFloor = wallData == null || wallData.transparent;
 
@@ -189,7 +189,7 @@ public class ChunkManager : MonoBehaviour
     }
 
     // Gives the wall string ID at the given location if it exists
-    public string GetWallIDAtLocation(Vector2 position)
+    public int GetWallIDAtLocation(Vector2 position)
     {
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position, ChunkSize);
@@ -197,7 +197,7 @@ public class ChunkManager : MonoBehaviour
         if (!chunks.TryGetValue(chunkCoord, out Chunk chunk))
         {
             Debug.LogWarning($"No chunk exists at chunk coordinate {chunkCoord}.", this);
-            return null;
+            return -1;
         }
 
         return chunk.GetWallTileID(localPos);
@@ -205,7 +205,7 @@ public class ChunkManager : MonoBehaviour
     
 
     // Gives the floor string ID at the given location if it exists
-    public string GetFloorIDAtLocation(Vector2 position)
+    public int GetFloorIDAtLocation(Vector2 position)
     {
         Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
         Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position, ChunkSize);
@@ -213,7 +213,7 @@ public class ChunkManager : MonoBehaviour
         if (!chunks.TryGetValue(chunkCoord, out Chunk chunk))
         {
             Debug.LogWarning($"No chunk exists at chunk coordinate {chunkCoord}.", this);
-            return null;
+            return -1;
         }
 
         return chunk.GetFloorTileID(localPos);
@@ -222,35 +222,18 @@ public class ChunkManager : MonoBehaviour
     // Gives the wall data asset at the given location if it exists
     public TileData GetWallDataAtLocation(Vector2 location)
     {
-        if (WorldDataObjectDataBase == null)
-        {
-            Debug.LogError("WorldDataObjectDataBase instance is missing.", this);
-            return null;
-        }
+        int tileID = GetWallIDAtLocation(location);
 
-        string tileID = GetWallIDAtLocation(location);
-
-        if (string.IsNullOrEmpty(tileID))
-            return null;
-
-        return WorldDataObjectDataBase.GetTileData(tileID);
+        return GameDatabase.GetAssetByID<TileData>(tileID);
     }
 
     // Gives the floor data asset at the given location if it exists
     public TileData GetFloorDataAtLocation(Vector2 location)
     {
-        if (WorldDataObjectDataBase == null)
-        {
-            Debug.LogError("WorldDataObjectDataBase instance is missing.", this);
-            return null;
-        }
 
-        string tileID = GetFloorIDAtLocation(location);
+        int tileID = GetFloorIDAtLocation(location);
 
-        if (string.IsNullOrEmpty(tileID))
-            return null;
-
-        return WorldDataObjectDataBase.GetTileData(tileID);
+        return GameDatabase.GetAssetByID<TileData>(tileID);
     }
 
     // Unloads and UnRenders all chunks

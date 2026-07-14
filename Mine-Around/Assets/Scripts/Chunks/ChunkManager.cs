@@ -46,6 +46,14 @@ public class ChunkManager : MonoBehaviour
         }
     }
 
+    public void CreateBox(Vector2Int chunkPosition, int radius, bool render = false)
+    {
+        Vector2Int start = new Vector2Int(chunkPosition.x - radius, chunkPosition.y - radius);
+        Vector2Int end = new Vector2Int(chunkPosition.x + radius, chunkPosition.y + radius);
+        CreateBox(start,end, render);
+        
+    }
+
     // Gets and or creates a chunk at a chunkPosition
     // Does not render the chunk
     // Returns the created chunk

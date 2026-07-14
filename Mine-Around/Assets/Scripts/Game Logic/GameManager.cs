@@ -54,4 +54,9 @@ public class GameManager : MonoBehaviour
     {
         ChunkManager.DeleteAllChunks();
     }
+
+    public void UnloadWorld()
+    {
+        ChunkManager.UnloadAllChunks();
+    }
 }

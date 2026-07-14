@@ -19,5 +19,10 @@ public class GameManagerEditor : Editor
         {
             gameManager.DeleteWorld();
         }
+
+        if (GUILayout.Button("Unload World"))
+        {
+            gameManager.UnloadWorld();
+        }
     }
 }

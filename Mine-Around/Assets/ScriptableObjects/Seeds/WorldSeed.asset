@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5fbdd450e43bfb4db2d7290167635f0, type: 3}
   m_Name: WorldSeed
   m_EditorClassIdentifier: Assembly-CSharp::RNGOverride
-  seed: 212121
+  seed: 988

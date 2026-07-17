@@ -16,8 +16,6 @@ public class GameManager : MonoBehaviour
     public ChunkManager ChunkManager => gameController.ChunkManager;
     public GameVariables GameVariables => gameController.GameVariables;
     public GameDatabase GameDatabase => gameController.GameDatabase;
-    public int ChunkSize => GameVariables.chunkSize; 
-    public int WorldSeed => GameVariables.worldSeed; 
 
     public WorldGenerator worldGenerator;
     private void Start()

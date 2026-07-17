@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: LocalMountianNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: noise_local_mountain
+  ID: 2
   displayName: noise_local_mountain
   rngOverride: {fileID: 0}
   developerNotes: 
-  worldSeed: {fileID: 11400000, guid: 59653d708eb1ca34295d1865f6f2b656, type: 2}
+  gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   noiseType: 0
   frequency: 0.001
-  offsetX: -3069
-  offsetY: -3070
+  offsetX: -5459
+  offsetY: -5460
   fractalType: 1
   fractalOctaves: 5
   fractalLacunarity: 3

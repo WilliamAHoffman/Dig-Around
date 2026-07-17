@@ -1,26 +1,28 @@
 using UnityEngine;
 
-public enum LoadingStatus
+public enum ChunkState
 {
-    loaded,
-    loading
+    rendered,
+    saved,
+    queued,
+    dequeue
 }
 
 public class Chunk
 {
-    private readonly int chunkSize;
+    public readonly int chunkSize;
     private int[,] worldWallTiles;
     private int[,] worldFloorTiles;
-    public LoadingStatus loaded;
+    public ChunkState state;
 
-    public Chunk(int size)
+    public Chunk(int size, ChunkState state = ChunkState.saved)
     {
         chunkSize = size;
 
         worldWallTiles = new int[size, size];
         worldFloorTiles = new int[size, size];
 
-        loaded = LoadingStatus.loading;
+        this.state = state;
     }
 
     public bool InBounds(Vector2Int tileLocation)

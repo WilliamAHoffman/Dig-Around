@@ -10,16 +10,14 @@ public class WorldGenerator : ScriptableObject
     [SerializeField] private WorldSampler worldSampler;
     public GameDatabase gameDatabase;
 
-    public Chunk GenerateChunk(Vector2Int chunkLocation, int chunkSize)
+    public Chunk GenerateChunk(Vector2Int chunkLocation, Chunk chunk)
     {
-        Chunk chunk = new Chunk(chunkSize);
-
-        for (int x = 0; x < chunkSize; x++)
+        for (int x = 0; x < chunk.chunkSize; x++)
         {
-            for (int y = 0; y < chunkSize; y++)
+            for (int y = 0; y < chunk.chunkSize; y++)
             {
                 Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = localPos + chunkLocation * chunkSize;
+                Vector2Int worldPos = localPos + chunkLocation * chunk.chunkSize;
                 GenerationResult result = GenerateLocation(worldPos);
 
                 chunk.SetWorldLocationTile(localPos, result.LocationTiles());

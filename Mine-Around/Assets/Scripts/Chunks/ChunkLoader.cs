@@ -67,7 +67,7 @@ public class ChunkLoader : MonoBehaviour
             }
         }
 
-        chunkManager.CreateBox(start, end, true);
+        chunkManager.AsyncCreateBox(start, end, true);
 
         loadedChunks.Clear();
         loadedChunks.UnionWith(requiredChunks);

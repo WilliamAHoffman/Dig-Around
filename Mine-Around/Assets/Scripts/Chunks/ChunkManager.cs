@@ -23,6 +23,9 @@ public class ChunkManager : MonoBehaviour
     public int ChunkSize => gameController.GameVariables.chunkSize;
     public GameDatabase GameDatabase => gameController.GameDatabase;
 
+    // Chunk Queueing
+    private readonly Queue<Vector2Int> queuedChunks = new();
+    private readonly HashSet<Vector2Int> queuedChunkSet = new();
     private Coroutine loadingCoroutine;
 
     // Loads or Creates all chunks within the two given positions
@@ -38,14 +41,7 @@ public class ChunkManager : MonoBehaviour
             {
                 Vector2Int chunkLocation = new Vector2Int(x, y);
 
-                if (render)
-                {
-                    LoadChunk(chunkLocation);
-                }
-                else
-                {
-                    GetOrCreateChunk(chunkLocation);
-                }
+                GetOrCreateChunk(chunkLocation, render);
             }
         }
     }
@@ -57,13 +53,10 @@ public class ChunkManager : MonoBehaviour
         CreateBox(start, end, render);
     }
 
-    // Gets and or creates a chunk at a chunkPosition
-    // Does not render the chunk
-    // Returns the created chunk
-    private Chunk GetOrCreateChunk(Vector2Int chunkPosition)
+
+    // Creates a chunk if needed, marks it loaded, renders the chunk if needed and then returns it
+    public Chunk GetOrCreateChunk(Vector2Int chunkPosition, bool render = false)
     {
-        if (chunks.TryGetValue(chunkPosition, out Chunk chunk))
-            return chunk;
 
         if (generator == null)
         {
@@ -71,32 +64,26 @@ public class ChunkManager : MonoBehaviour
             return null;
         }
 
-        chunk = generator.GenerateChunk(chunkPosition, ChunkSize);
+        Chunk chunk = null;
 
-        if (chunk == null)
+        if (chunks.TryGetValue(chunkPosition, out Chunk currChunk))
         {
-            Debug.LogError($"WorldGenerator failed to generate chunk at {chunkPosition}.", this);
-            return null;
+            if (currChunk.state == ChunkState.queued || currChunk.state == ChunkState.dequeue)
+            {
+                chunk = generator.GenerateChunk(chunkPosition, currChunk);
+                chunk.state = ChunkState.saved;
+            }
+        }
+        else
+        {
+            chunk = generator.GenerateChunk(chunkPosition, new Chunk(ChunkSize));
+            chunks.Add(chunkPosition, chunk);
         }
 
-        chunks.Add(chunkPosition, chunk);
-
-        return chunk;
-    }
-
-    // Creates a chunk if needed, marks it loaded, renders the chunk and then returns it
-    public Chunk LoadChunk(Vector2Int chunkPosition)
-    {
-        Chunk chunk = GetOrCreateChunk(chunkPosition);
-
-        if (chunk == null)
-            return null;
-
-        if (chunk.loaded == LoadingStatus.loaded)
-            return chunk;
-
-        chunk.loaded = LoadingStatus.loaded;
-        RenderChunk(chunkPosition);
+        if (render)
+        {
+            RenderChunk(chunkPosition);
+        }
 
         return chunk;
     }
@@ -107,10 +94,16 @@ public class ChunkManager : MonoBehaviour
         if (!chunks.TryGetValue(chunkLocation, out Chunk chunk))
             return;
 
-        if (chunk.loaded == LoadingStatus.loading)
-            return;
+        if (chunk.state == ChunkState.queued)
+        {
+            chunk.state = ChunkState.dequeue;
+        }
 
-        chunk.loaded = LoadingStatus.loaded;
+        if (chunk.state == ChunkState.saved)
+        {
+            return;
+        }
+
         UnRenderChunk(chunkLocation);
     }
 
@@ -119,7 +112,7 @@ public class ChunkManager : MonoBehaviour
     {
         Chunk chunk = chunks[chunkLocation];
 
-        if (chunk == null)
+        if (chunk == null || chunk.state != ChunkState.saved)
         {
             Debug.LogError("No valid chunk at the given location.", this);
             return;
@@ -168,6 +161,7 @@ public class ChunkManager : MonoBehaviour
 
         walls.SetTiles(positions, wallTiles);
         floors.SetTiles(positions, floorTiles);
+        chunk.state = ChunkState.rendered;
     }
 
     // Removes tiles from tilemaps of the chunk at the given position
@@ -197,6 +191,18 @@ public class ChunkManager : MonoBehaviour
 
         walls.SetTiles(positions, emptyTiles);
         floors.SetTiles(positions, emptyTiles);
+
+        if (chunks.ContainsKey(chunkPosition))
+        {
+            if (chunks[chunkPosition].state == ChunkState.queued)
+            {
+                chunks[chunkPosition].state = ChunkState.dequeue;
+            }
+            else
+            {
+                chunks[chunkPosition].state = ChunkState.saved;
+            }
+        }
     }
 
     // Gives the wall string ID at the given location if it exists
@@ -213,7 +219,6 @@ public class ChunkManager : MonoBehaviour
 
         return chunk.GetWallTileID(localPos);
     }
-
 
     // Gives the floor string ID at the given location if it exists
     public int GetFloorIDAtLocation(Vector2 position)
@@ -261,17 +266,15 @@ public class ChunkManager : MonoBehaviour
     // Deletes and unloads all chunks
     public void DeleteAllChunks()
     {
+
         if (walls != null)
             walls.ClearAllTiles();
 
         if (floors != null)
             floors.ClearAllTiles();
 
-        if (loadingCoroutine != null)
-        {
-            StopCoroutine(loadingCoroutine);
-        }
-
+        queuedChunks.Clear();
+        queuedChunkSet.Clear();
         chunks.Clear();
     }
 
@@ -301,74 +304,102 @@ public class ChunkManager : MonoBehaviour
         return true;
     }
 
-    private IEnumerator AsyncLoadChunks(
-        IEnumerable<Vector2Int> loadingChunks,
-        bool render)
+    private void QueueChunk(Vector2Int coordinate)
     {
-        const int chunksPerFrame = 3;
-        int processedThisFrame = 0;
-
-        foreach (Vector2Int coordinate in loadingChunks)
+        // Already waiting to load.
+        if (!queuedChunkSet.Add(coordinate))
         {
-            if (render)
+            return;
+        }
+
+        if (chunks.TryGetValue(coordinate, out Chunk chunk))
+        {
+            // Already visible.
+            if (chunk.state == ChunkState.rendered)
             {
-                LoadChunk(coordinate);
-            }
-            else
-            {
-                GetOrCreateChunk(coordinate);
+                queuedChunkSet.Remove(coordinate);
+                return;
             }
 
-            processedThisFrame++;
+            chunk.state = ChunkState.queued;
+        }
+        else
+        {
+            chunks.Add(
+                coordinate,
+                new Chunk(ChunkSize, ChunkState.queued)
+            );
+        }
 
-            if (processedThisFrame >= chunksPerFrame)
+        queuedChunks.Enqueue(coordinate);
+    }
+    // processes chunk queue
+    private IEnumerator ProcessChunkQueue(bool render)
+    {
+        const double frameBudgetMs = 4.0;
+
+        var stopwatch =
+            System.Diagnostics.Stopwatch.StartNew();
+
+        while (queuedChunks.Count > 0)
+        {
+            stopwatch.Restart();
+
+            while (queuedChunks.Count > 0 &&
+                   stopwatch.Elapsed.TotalMilliseconds < frameBudgetMs)
             {
-                processedThisFrame = 0;
-                yield return null;
+                Vector2Int coordinate = queuedChunks.Dequeue();
+                queuedChunkSet.Remove(coordinate);
+
+                if (!chunks.TryGetValue(coordinate, out Chunk chunk))
+                {
+                    continue;
+                }
+
+                // It left the loading area before being processed.
+                if (chunk.state == ChunkState.dequeue)
+                {
+                    chunk.state = ChunkState.saved;
+                    continue;
+                }
+
+                GetOrCreateChunk(coordinate, render);
             }
+
+            yield return null;
         }
 
         loadingCoroutine = null;
     }
 
-    public void AsyncCreateBox(
-        Vector2Int chunkPosition1,
-        Vector2Int chunkPosition2,
-        bool render = false)
+    public void AsyncCreateBox(Vector2Int chunkPosition1, Vector2Int chunkPosition2, bool render = true)
     {
-        Vector2Int start = Vector2Int.Min(chunkPosition1, chunkPosition2);
-        Vector2Int end = Vector2Int.Max(chunkPosition1, chunkPosition2);
+        Vector2Int start = Vector2Int.Min(
+            chunkPosition1,
+            chunkPosition2
+        );
 
-        List<Vector2Int> chunkPositions = new List<Vector2Int>();
+        Vector2Int end = Vector2Int.Max(
+            chunkPosition1,
+            chunkPosition2
+        );
 
         for (int x = start.x; x <= end.x; x++)
         {
             for (int y = start.y; y <= end.y; y++)
             {
-                Vector2Int coordinate = new Vector2Int(x, y);
-
-                if (!chunks.TryGetValue(coordinate, out Chunk chunk) ||
-                    render && chunk.loaded != LoadingStatus.loaded)
-                {
-                    chunkPositions.Add(coordinate);
-                }
+                QueueChunk(new Vector2Int(x, y));
             }
         }
 
-        if (loadingCoroutine != null)
+        if (loadingCoroutine == null)
         {
-            StopCoroutine(loadingCoroutine);
+            loadingCoroutine = StartCoroutine(
+                ProcessChunkQueue(render)
+            );
         }
-
-        loadingCoroutine = StartCoroutine(
-            AsyncLoadChunks(chunkPositions, render)
-        );
     }
-
-    public void AsyncCreateBox(
-        Vector2Int chunkPosition,
-        int radius,
-        bool render = false)
+    public void AsyncCreateBox(Vector2Int chunkPosition, int radius, bool render = false)
     {
         Vector2Int start = new Vector2Int(
             chunkPosition.x - radius,
@@ -383,4 +414,3 @@ public class ChunkManager : MonoBehaviour
         AsyncCreateBox(start, end, render);
     }
 }
-

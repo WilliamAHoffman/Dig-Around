@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections;
+using System;
 
 // Manages chunk generation, loading, rendering, unloading, and tile lookup
 // Chunk coordinates are grid positions in chunk space, not world tile positions
@@ -20,6 +22,8 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private GameController gameController;
     public int ChunkSize => gameController.GameVariables.chunkSize;
     public GameDatabase GameDatabase => gameController.GameDatabase;
+
+    private Coroutine loadingCoroutine;
 
     // Loads or Creates all chunks within the two given positions
     // Can be set to render automatically
@@ -50,8 +54,7 @@ public class ChunkManager : MonoBehaviour
     {
         Vector2Int start = new Vector2Int(chunkPosition.x - radius, chunkPosition.y - radius);
         Vector2Int end = new Vector2Int(chunkPosition.x + radius, chunkPosition.y + radius);
-        CreateBox(start,end, render);
-        
+        CreateBox(start, end, render);
     }
 
     // Gets and or creates a chunk at a chunkPosition
@@ -89,10 +92,10 @@ public class ChunkManager : MonoBehaviour
         if (chunk == null)
             return null;
 
-        if (chunk.loaded)
+        if (chunk.loaded == LoadingStatus.loaded)
             return chunk;
 
-        chunk.loaded = true;
+        chunk.loaded = LoadingStatus.loaded;
         RenderChunk(chunkPosition);
 
         return chunk;
@@ -104,10 +107,10 @@ public class ChunkManager : MonoBehaviour
         if (!chunks.TryGetValue(chunkLocation, out Chunk chunk))
             return;
 
-        if (!chunk.loaded)
+        if (chunk.loaded == LoadingStatus.loading)
             return;
 
-        chunk.loaded = false;
+        chunk.loaded = LoadingStatus.loaded;
         UnRenderChunk(chunkLocation);
     }
 
@@ -210,7 +213,7 @@ public class ChunkManager : MonoBehaviour
 
         return chunk.GetWallTileID(localPos);
     }
-    
+
 
     // Gives the floor string ID at the given location if it exists
     public int GetFloorIDAtLocation(Vector2 position)
@@ -264,6 +267,11 @@ public class ChunkManager : MonoBehaviour
         if (floors != null)
             floors.ClearAllTiles();
 
+        if (loadingCoroutine != null)
+        {
+            StopCoroutine(loadingCoroutine);
+        }
+
         chunks.Clear();
     }
 
@@ -291,6 +299,88 @@ public class ChunkManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private IEnumerator AsyncLoadChunks(
+        IEnumerable<Vector2Int> loadingChunks,
+        bool render)
+    {
+        const int chunksPerFrame = 3;
+        int processedThisFrame = 0;
+
+        foreach (Vector2Int coordinate in loadingChunks)
+        {
+            if (render)
+            {
+                LoadChunk(coordinate);
+            }
+            else
+            {
+                GetOrCreateChunk(coordinate);
+            }
+
+            processedThisFrame++;
+
+            if (processedThisFrame >= chunksPerFrame)
+            {
+                processedThisFrame = 0;
+                yield return null;
+            }
+        }
+
+        loadingCoroutine = null;
+    }
+
+    public void AsyncCreateBox(
+        Vector2Int chunkPosition1,
+        Vector2Int chunkPosition2,
+        bool render = false)
+    {
+        Vector2Int start = Vector2Int.Min(chunkPosition1, chunkPosition2);
+        Vector2Int end = Vector2Int.Max(chunkPosition1, chunkPosition2);
+
+        List<Vector2Int> chunkPositions = new List<Vector2Int>();
+
+        for (int x = start.x; x <= end.x; x++)
+        {
+            for (int y = start.y; y <= end.y; y++)
+            {
+                Vector2Int coordinate = new Vector2Int(x, y);
+
+                if (!chunks.TryGetValue(coordinate, out Chunk chunk) ||
+                    render && chunk.loaded != LoadingStatus.loaded)
+                {
+                    chunkPositions.Add(coordinate);
+                }
+            }
+        }
+
+        if (loadingCoroutine != null)
+        {
+            StopCoroutine(loadingCoroutine);
+        }
+
+        loadingCoroutine = StartCoroutine(
+            AsyncLoadChunks(chunkPositions, render)
+        );
+    }
+
+    public void AsyncCreateBox(
+        Vector2Int chunkPosition,
+        int radius,
+        bool render = false)
+    {
+        Vector2Int start = new Vector2Int(
+            chunkPosition.x - radius,
+            chunkPosition.y - radius
+        );
+
+        Vector2Int end = new Vector2Int(
+            chunkPosition.x + radius,
+            chunkPosition.y + radius
+        );
+
+        AsyncCreateBox(start, end, render);
     }
 }
 

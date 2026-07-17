@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Diagnostics; //debug
 
 public class WorldPreviewer : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class WorldPreviewer : MonoBehaviour
 
         File.WriteAllBytes(path, png);
 
-        Debug.Log($"Saved texture to: {path}");
+        UnityEngine.Debug.Log($"Saved texture to: {path}");
     }
 
     /// <summary>
@@ -44,6 +45,10 @@ public class WorldPreviewer : MonoBehaviour
     /// <param name="blocks">The 2D block data structure. Assumes format: blocks[y][x]</param>
     public void PreviewBox()
     {
+
+        Stopwatch stopwatch = new Stopwatch(); //debug
+        stopwatch.Start(); //debug
+
         Vector2Int start = new Vector2Int(-startSizeX, -startSizeY) + origin;
         Vector2Int end = new Vector2Int(startSizeX, startSizeY) + origin;
 
@@ -130,6 +135,9 @@ public class WorldPreviewer : MonoBehaviour
         SaveTexture(previewTextureWalls, "walls");
         SaveTexture(previewTextureFloors, "floors");
 
-        GameManager.Instance.DeleteWorld();
+        stopwatch.Stop(); //debug
+        UnityEngine.Debug.Log($"Previewing the world took: {stopwatch.ElapsedMilliseconds} ms", this); //debug
+
+        ChunkManager.DeleteAllChunks();
     }
 }

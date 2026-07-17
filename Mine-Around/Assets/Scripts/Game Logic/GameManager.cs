@@ -1,8 +1,8 @@
 using UnityEngine;
+using System.Diagnostics; //debug
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
     [SerializeField] bool randomSeed;
 
     //starting spawn area
@@ -20,24 +20,23 @@ public class GameManager : MonoBehaviour
     public int WorldSeed => GameVariables.worldSeed; 
 
     public WorldGenerator worldGenerator;
-    private void Awake()
+    private void Start()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-
         SetUpGame();
     }
 
     public void CreateWorld()
     {
+
+        Stopwatch stopwatch = new Stopwatch(); //debug
+        stopwatch.Start(); //debug
+
         SetUpGame();
-        ChunkManager.DeleteAllChunks();
-        ChunkManager.CreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
+        //ChunkManager.DeleteAllChunks();
+        ChunkManager.AsyncCreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
+
+        stopwatch.Stop(); //debug
+        UnityEngine.Debug.Log($"Creating the world took: {stopwatch.ElapsedMilliseconds} ms", this); //debug
     }
 
     public void SetUpGame()
@@ -45,7 +44,7 @@ public class GameManager : MonoBehaviour
 
         if (randomSeed) GameVariables.SetNewWorldSeed();
 
-        ChunkManager.DeleteAllChunks();
+        //ChunkManager.DeleteAllChunks();
 
         GameDatabase.Initialize();
     }

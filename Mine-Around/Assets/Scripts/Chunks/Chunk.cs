@@ -1,11 +1,17 @@
 using UnityEngine;
 
+public enum LoadingStatus
+{
+    loaded,
+    loading
+}
+
 public class Chunk
 {
     private readonly int chunkSize;
     private int[,] worldWallTiles;
     private int[,] worldFloorTiles;
-    public bool loaded;
+    public LoadingStatus loaded;
 
     public Chunk(int size)
     {
@@ -14,7 +20,7 @@ public class Chunk
         worldWallTiles = new int[size, size];
         worldFloorTiles = new int[size, size];
 
-        loaded = false;
+        loaded = LoadingStatus.loading;
     }
 
     public bool InBounds(Vector2Int tileLocation)

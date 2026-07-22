@@ -47,8 +47,8 @@ TagManager:
   - name: Walls
     uniqueID: 2700274293
     locked: 0
-  - name: Objects
-    uniqueID: 3902494711
+  - name: WorldObjects
+    uniqueID: 2306340913
     locked: 0
   m_RenderingLayers:
   - Default

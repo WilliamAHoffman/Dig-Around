@@ -45,7 +45,6 @@ public class ChunkManager : MonoBehaviour
             }
         }
     }
-
     public void CreateBox(Vector2Int chunkPosition, int radius, bool render = false)
     {
         Vector2Int start = new Vector2Int(chunkPosition.x - radius, chunkPosition.y - radius);
@@ -143,8 +142,8 @@ public class ChunkManager : MonoBehaviour
                 Vector2Int localPos = new Vector2Int(x, y);
                 Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, ChunkSize);
 
-                int wallTileID = chunk.GetWallTileID(localPos);
-                int floorTileID = chunk.GetFloorTileID(localPos);
+                int wallTileID = chunk.GetWallTile(localPos);
+                int floorTileID = chunk.GetFloorTile(localPos);
 
                 TileData wallData = GameDatabase.GetAssetByID<TileData>(wallTileID);
                 TileData floorData = GameDatabase.GetAssetByID<TileData>(floorTileID);
@@ -217,7 +216,7 @@ public class ChunkManager : MonoBehaviour
             return -1;
         }
 
-        return chunk.GetWallTileID(localPos);
+        return chunk.GetWallTile(localPos);
     }
 
     // Gives the floor string ID at the given location if it exists
@@ -232,7 +231,7 @@ public class ChunkManager : MonoBehaviour
             return -1;
         }
 
-        return chunk.GetFloorTileID(localPos);
+        return chunk.GetFloorTile(localPos);
     }
 
     // Gives the wall data asset at the given location if it exists
@@ -276,6 +275,15 @@ public class ChunkManager : MonoBehaviour
         queuedChunks.Clear();
         queuedChunkSet.Clear();
         chunks.Clear();
+    }
+    //deletes the chunk at the location
+    public void DeleteChunk(Vector2Int chunkPosition)
+    {
+        if (chunks.ContainsKey(chunkPosition))
+        {
+            UnloadChunk(chunkPosition);
+            chunks.Remove(chunkPosition);
+        }
     }
 
     // Checks if a chunk exists at a world position

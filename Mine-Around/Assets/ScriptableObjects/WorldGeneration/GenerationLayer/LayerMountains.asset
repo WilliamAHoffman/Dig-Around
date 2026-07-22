@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02537446e35ed024e83c72483f49ff39, type: 3}
+  m_Name: LayerMountains
+  m_EditorClassIdentifier: Assembly-CSharp::GenerationLayer
+  features:
+  - {fileID: 11400000, guid: a2ef1a2362a6ef049a327f3f5dd0706b, type: 2}
+  - {fileID: 11400000, guid: 52bd73b838fdf9e4f8baec5cb48c9440, type: 2}
+  - {fileID: 11400000, guid: fe4d75fedb3296546b986e0b57311933, type: 2}
+  mode: 1

@@ -31,7 +31,7 @@ public class Chunk
                tileLocation.y >= 0 && tileLocation.y < chunkSize;
     }
 
-    public int GetWallTileID(Vector2Int tileLocation)
+    public int GetWallTile(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
@@ -42,7 +42,7 @@ public class Chunk
         return worldWallTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldWallTile(Vector2Int tileLocation, int tile)
+    public void SetWallTile(Vector2Int tileLocation, int tile)
     {
         if (!InBounds(tileLocation))
         {
@@ -53,7 +53,7 @@ public class Chunk
         worldWallTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
-    public int GetFloorTileID(Vector2Int tileLocation)
+    public int GetFloorTile(Vector2Int tileLocation)
     {
         if (!InBounds(tileLocation))
         {
@@ -64,7 +64,7 @@ public class Chunk
         return worldFloorTiles[tileLocation.x, tileLocation.y];
     }
 
-    public void SetWorldFloorTile(Vector2Int tileLocation, int tile)
+    public void SetFloorTile(Vector2Int tileLocation, int tile)
     {
         if (!InBounds(tileLocation))
         {
@@ -86,5 +86,4 @@ public class Chunk
         worldWallTiles[tileLocation.x, tileLocation.y] = tile.wall;
         worldFloorTiles[tileLocation.x, tileLocation.y] = tile.floor;
     }
-
 }

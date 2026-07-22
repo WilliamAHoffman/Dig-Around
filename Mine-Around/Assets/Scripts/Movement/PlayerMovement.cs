@@ -2,19 +2,29 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private InputActionReference moveAction;
+    [SerializeField] private InputActionReference toggleSprint;
     [SerializeField] private InputActionReference clickAction;
     [SerializeField] private Camera playerCamera;
+
+    //movement variables
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] float sprintSpeed = 15f;
+
+
     private Rigidbody2D rb;
+    private Collider2D cld;
     [SerializeField] private Vector2 movement;
+    [SerializeField] private bool sprinting;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if(!moveAction || !playerCamera)
+        cld = GetComponent<Collider2D>();
+        if(!moveAction || !playerCamera || !clickAction || !toggleSprint)
         {
             Debug.LogError("Missing a reference", this);
         }
@@ -26,6 +36,9 @@ public class PlayerMovement : MonoBehaviour
 
         clickAction.action.performed += TeleportToMouse;
         clickAction.action.Enable();
+
+        toggleSprint.action.started += ToggleSprint;
+        toggleSprint.action.Enable();
     }
 
     private void OnDisable()
@@ -34,6 +47,9 @@ public class PlayerMovement : MonoBehaviour
 
         clickAction.action.performed -= TeleportToMouse;
         clickAction.action.Disable();
+
+        toggleSprint.action.started -= ToggleSprint;
+        toggleSprint.action.Disable();
     }
 
     private void Update()
@@ -43,8 +59,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 nextPosition =
-            rb.position + movement * moveSpeed * Time.fixedDeltaTime;
+        Movement();
+    }
+
+    private void Movement()
+    {
+        float speed = moveSpeed;
+        if(sprinting) speed = sprintSpeed;
+
+        Vector2 nextPosition = rb.position + movement * speed * Time.fixedDeltaTime;
 
         rb.MovePosition(nextPosition);
     }
@@ -62,5 +85,12 @@ public class PlayerMovement : MonoBehaviour
             worldPosition.x,
             worldPosition.y
         );
+    }
+
+    private void ToggleSprint(InputAction.CallbackContext context)
+    {
+        Debug.Log("sprinting");
+        sprinting = !sprinting;
+        cld.enabled = !sprinting;
     }
 }

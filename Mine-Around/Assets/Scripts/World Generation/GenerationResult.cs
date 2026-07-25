@@ -1,16 +1,16 @@
 
 public struct GenerationResult
 {
-    public TileData floor;
-    public TileData wall;
-    public GenerationResult(TileData floor, TileData wall)
+    public TileDataAsset floor;
+    public TileDataAsset wall;
+    public GenerationResult(TileDataAsset floor, TileDataAsset wall)
     {
         this.floor = floor;
         this.wall = wall;
     }
 
-    public LocationTiles LocationTiles()
+    public MapCell MapCellValues()
     {
-        return new LocationTiles(wall.ID, floor.ID);
+        return new MapCell(floor.ID, wall.ID);
     }
 }

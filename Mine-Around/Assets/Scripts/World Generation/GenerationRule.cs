@@ -5,15 +5,15 @@ using UnityEngine;
 public class GenerationRule : ScriptableObject
 {
     [Header("Placement Requirements")]
-    public List<TileData> requiredFloor;
-    public List<TileData> requiredWall;
+    public List<TileDataAsset> requiredFloor;
+    public List<TileDataAsset> requiredWall;
     [Header("Placement Exclusions")]
-    public List<TileData> excludedFloor;
-    public List<TileData> excludedWall;
+    public List<TileDataAsset> excludedFloor;
+    public List<TileDataAsset> excludedWall;
 
     [Header("Replacement")]
-    public TileData newFloor;
-    public TileData newWall;
+    public TileDataAsset newFloor;
+    public TileDataAsset newWall;
 
     public GenerationResult Apply(GenerationResult result)
     {

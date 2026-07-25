@@ -130,8 +130,8 @@ public class ChunkManager : MonoBehaviour
         }
 
         Vector3Int[] positions = new Vector3Int[ChunkSize * ChunkSize];
-        TileBase[] wallTiles = new TileBase[ChunkSize * ChunkSize];
-        TileBase[] floorTiles = new TileBase[ChunkSize * ChunkSize];
+        UnityEngine.Tilemaps.TileBase[] wallTiles = new UnityEngine.Tilemaps.TileBase[ChunkSize * ChunkSize];
+        UnityEngine.Tilemaps.TileBase[] floorTiles = new UnityEngine.Tilemaps.TileBase[ChunkSize * ChunkSize];
 
         int i = 0;
 
@@ -145,14 +145,17 @@ public class ChunkManager : MonoBehaviour
                 int wallTileID = chunk.GetWallTile(localPos);
                 int floorTileID = chunk.GetFloorTile(localPos);
 
-                TileData wallData = GameDatabase.GetAssetByID<TileData>(wallTileID);
-                TileData floorData = GameDatabase.GetAssetByID<TileData>(floorTileID);
+                TileDataAsset wall = GameDatabase.GetAssetByID<TileDataAsset>(wallTileID);
+                TileDataAsset floor = GameDatabase.GetAssetByID<TileDataAsset>(floorTileID);
 
-                bool showFloor = wallData == null || wallData.transparent;
+                wallTiles[i] = wall.tile;
+
+                if (wall.IsTransparent)
+                {
+                    floorTiles[i] = floor.tile;
+                }
 
                 positions[i] = (Vector3Int)worldPos;
-                wallTiles[i] = wallData != null ? wallData.tile : null;
-                floorTiles[i] = showFloor && floorData != null ? floorData.tile : null;
 
                 i++;
             }
@@ -170,7 +173,7 @@ public class ChunkManager : MonoBehaviour
             return;
 
         Vector3Int[] positions = new Vector3Int[ChunkSize * ChunkSize];
-        TileBase[] emptyTiles = new TileBase[ChunkSize * ChunkSize];
+        UnityEngine.Tilemaps.TileBase[] emptyTiles = new UnityEngine.Tilemaps.TileBase[ChunkSize * ChunkSize];
 
         int i = 0;
 
@@ -235,20 +238,19 @@ public class ChunkManager : MonoBehaviour
     }
 
     // Gives the wall data asset at the given location if it exists
-    public TileData GetWallDataAtLocation(Vector2 location)
+    public TileDataAsset GetWallDataAtLocation(Vector2 location)
     {
         int tileID = GetWallIDAtLocation(location);
 
-        return GameDatabase.GetAssetByID<TileData>(tileID);
+        return GameDatabase.GetAssetByID<TileDataAsset>(tileID);
     }
 
     // Gives the floor data asset at the given location if it exists
-    public TileData GetFloorDataAtLocation(Vector2 location)
+    public TileDataAsset GetFloorDataAtLocation(Vector2 location)
     {
-
         int tileID = GetFloorIDAtLocation(location);
 
-        return GameDatabase.GetAssetByID<TileData>(tileID);
+        return GameDatabase.GetAssetByID<TileDataAsset>(tileID);
     }
 
     // Unloads and UnRenders all chunks

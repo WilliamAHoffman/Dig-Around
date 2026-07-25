@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: GlobalElevationNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: noise_global_elevation
-  ID: 0
+  id: 0
   displayName: noise_global_elevation
   rngOverride: {fileID: 0}
   developerNotes: 
   gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   noiseType: 0
   frequency: 0.001
-  offsetX: 6619
-  offsetY: 6618
+  offsetX: -3664
+  offsetY: -3663
   fractalType: 1
   fractalOctaves: 5
   fractalLacunarity: 3

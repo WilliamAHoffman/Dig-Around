@@ -117,19 +117,19 @@ public class GameDatabaseEditor : Editor
             if (asset == null)
                 continue;
 
-            if (string.IsNullOrWhiteSpace(asset.nameID))
+            if (string.IsNullOrWhiteSpace(asset.NameID))
             {
                 Debug.LogWarning($"DatabaseAsset asset at '{path}' has an empty nameID and was still added. Consider assigning a nameID.", asset);
             }
-            else if (!seenIDs.Add(asset.nameID))
+            else if (!seenIDs.Add(asset.NameID))
             {
-                Debug.LogError($"Duplicate DatabaseAsset nameID found while scanning: '{asset.nameID}'. Asset path: {path}", asset);
+                Debug.LogError($"Duplicate DatabaseAsset nameID found while scanning: '{asset.NameID}'. Asset path: {path}", asset);
             }
 
             assets.Add(asset);
         }
 
-        assets.Sort((a, b) => string.Compare(a.nameID, b.nameID, System.StringComparison.Ordinal));
+        assets.Sort((a, b) => string.Compare(a.NameID, b.NameID, System.StringComparison.Ordinal));
         return assets;
     }
 }

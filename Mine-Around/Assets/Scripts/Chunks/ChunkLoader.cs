@@ -4,7 +4,6 @@ using UnityEngine;
 public class ChunkLoader : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private ChunkManager chunkManager;
     [SerializeField, Min(0)] private int chunkRange = 1;
 
     private readonly HashSet<Vector2Int> loadedChunks = new();
@@ -12,16 +11,18 @@ public class ChunkLoader : MonoBehaviour
     private Vector2Int previousChunkPosition;
     private bool initialized;
 
+    private ChunkManager ChunkManager => GameController.Instance.ChunkManager;
+
     private void Update()
     {
-        if (target == null || chunkManager == null)
+        if (target == null || ChunkManager == null)
         {
             return;
         }
 
         Vector2Int chunkPosition = ChunkUtilities.WorldToChunkCoord(
             target.position,
-            chunkManager.ChunkSize
+            ChunkManager.ChunkSize
         );
 
         // Only update when the target enters a different chunk.
@@ -63,11 +64,11 @@ public class ChunkLoader : MonoBehaviour
         {
             if (!requiredChunks.Contains(chunk))
             {
-                chunkManager.UnloadChunk(chunk);
+                ChunkManager.UnloadChunk(chunk);
             }
         }
 
-        chunkManager.AsyncCreateBox(start, end, true);
+        ChunkManager.AsyncCreateBox(start, end, true);
 
         loadedChunks.Clear();
         loadedChunks.UnionWith(requiredChunks);

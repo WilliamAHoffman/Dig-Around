@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: GlobalTemperatureNoise
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: noise_global_temperature
-  ID: 1
+  id: 1
   displayName: noise_global_temperature
   rngOverride: {fileID: 0}
   developerNotes: 
   gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   noiseType: 0
   frequency: 0.001
-  offsetX: 1604
-  offsetY: 1603
+  offsetX: -4273
+  offsetY: -4280
   fractalType: 1
   fractalOctaves: 5
   fractalLacunarity: 3

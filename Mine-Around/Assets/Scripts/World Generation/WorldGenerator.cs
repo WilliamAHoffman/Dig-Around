@@ -20,7 +20,7 @@ public class WorldGenerator : ScriptableObject
                 Vector2Int worldPos = localPos + chunkLocation * chunk.chunkSize;
                 GenerationResult result = GenerateLocation(worldPos);
 
-                chunk.SetWorldLocationTile(localPos, result.LocationTiles());
+                chunk.SetChunkCellValues(localPos, result.MapCellValues());
             }
         }
 
@@ -37,7 +37,7 @@ public class WorldGenerator : ScriptableObject
         }
 
         WorldSample worldSample = worldSampler.Sample(worldPos);
-        GenerationResult result = new GenerationResult(gameDatabase.GetDefaultAsset<TileData>(), gameDatabase.GetDefaultAsset<TileData>());
+        GenerationResult result = new GenerationResult(gameDatabase.GetDefaultAsset<TileDataAsset>(), gameDatabase.GetDefaultAsset<TileDataAsset>());
 
         if (worldLayers == null)
             return result;

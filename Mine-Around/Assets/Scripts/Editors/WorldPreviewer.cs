@@ -94,16 +94,16 @@ public class WorldPreviewer : MonoBehaviour
             {
                 Vector2Int worldPos = new(start.x * ChunkSize + x, start.y * ChunkSize + y);
 
-                TileData floor = ChunkManager.GetFloorDataAtLocation(worldPos);
-                TileData wall = ChunkManager.GetWallDataAtLocation(worldPos);
+                TileDataAsset floor = ChunkManager.GetFloorDataAtLocation(worldPos);
+                TileDataAsset wall = ChunkManager.GetWallDataAtLocation(worldPos);
 
                 int index = y * width + x;
 
-                floorPixels[index] = floor.mapColor;
-                wallPixels[index] = wall.mapColor;
-                combinedPixels[index] = wall.transparent
-                    ? floor.mapColor
-                    : wall.mapColor;
+                floorPixels[index] = floor.MapColor;
+                wallPixels[index] = wall.MapColor;
+                combinedPixels[index] = wall.IsTransparent
+                    ? floor.MapColor
+                    : wall.MapColor;
             }
         }
 

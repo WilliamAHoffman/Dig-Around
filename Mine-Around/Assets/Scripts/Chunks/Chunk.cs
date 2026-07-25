@@ -75,7 +75,7 @@ public class Chunk
         worldFloorTiles[tileLocation.x, tileLocation.y] = tile;
     }
 
-    public void SetWorldLocationTile(Vector2Int tileLocation, LocationTiles tile)
+    public void SetChunkCellValues(Vector2Int tileLocation, MapCell tile)
     {
         if (!InBounds(tileLocation))
         {
@@ -83,7 +83,7 @@ public class Chunk
             return;
         }
 
-        worldWallTiles[tileLocation.x, tileLocation.y] = tile.wall;
-        worldFloorTiles[tileLocation.x, tileLocation.y] = tile.floor;
+        worldWallTiles[tileLocation.x, tileLocation.y] = tile.WallID;
+        worldFloorTiles[tileLocation.x, tileLocation.y] = tile.FloorID;
     }
 }

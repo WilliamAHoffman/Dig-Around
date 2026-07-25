@@ -2,33 +2,83 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WorldDataObjectDataBase", menuName = "Storage/WorldDataObjectDataBase")]
-public class GameDatabase : ScriptableObject
+[CreateAssetMenu(
+    fileName = "GameDatabase",
+    menuName = "Storage/Game Database"
+)]
+public sealed class GameDatabase : ScriptableObject
 {
+    [Header("Registered Assets")]
+    [SerializeField]
+    private List<DatabaseAsset> allAssets = new();
 
-    [Header("Registered Objects")]
-    [SerializeField] private List<DatabaseAsset> allAssets = new List<DatabaseAsset>();
+    [Header("Default Assets")]
+    [SerializeField]
+    private List<DatabaseAsset> defaultAssets = new();
 
-    [Header("Default Object")]
-    [SerializeField] private List<DatabaseAsset> defaultAssets = new List<DatabaseAsset>();
+    /*
+     * Registry category
+     *     ↓
+     * Numeric ID → asset
+     *
+     * TileData:
+     *     1 → Grass
+     *
+     * BiomeData:
+     *     1 → Plains
+     */
+    private readonly Dictionary<
+        Type,
+        Dictionary<int, DatabaseAsset>
+    > idLookups = new();
 
-    private readonly Dictionary<int, DatabaseAsset> idLookup = new Dictionary<int, DatabaseAsset>();
-    private readonly Dictionary<string, int> nameLookup = new Dictionary<string, int>();
-    private readonly Dictionary<Type, List<DatabaseAsset>> typeLookup = new Dictionary<Type, List<DatabaseAsset>>();
-    private readonly Dictionary<Type, DatabaseAsset> defaultLookup = new Dictionary<Type, DatabaseAsset>();
+    /*
+     * Registry category
+     *     ↓
+     * String ID → asset
+     */
+    private readonly Dictionary<
+        Type,
+        Dictionary<string, DatabaseAsset>
+    > nameLookups = new();
+
+    /*
+     * Exact runtime type
+     *     ↓
+     * All assets whose concrete C# type exactly matches
+     */
+    private readonly Dictionary<
+        Type,
+        List<DatabaseAsset>
+    > exactTypeLookups = new();
+
+    /*
+     * Registry category
+     *     ↓
+     * Default asset for that category
+     */
+    private readonly Dictionary<
+        Type,
+        DatabaseAsset
+    > defaultLookups = new();
 
     private bool initialized;
 
+    private void OnEnable()
+    {
+        // Runtime dictionaries are not serialized by Unity.
+        initialized = false;
+    }
+
     /// <summary>
-    /// Rebuilds all lookup tables from the configured asset list.
-    /// Safe to call manually after changing the asset list at runtime or from editor tools.
+    /// Rebuilds all runtime lookup tables from the serialized asset lists.
     /// </summary>
     public void Initialize()
     {
-        idLookup.Clear();
-        nameLookup.Clear();
-        typeLookup.Clear();
-        defaultLookup.Clear();
+        idLookups.Clear();
+        nameLookups.Clear();
+        exactTypeLookups.Clear();
+        defaultLookups.Clear();
 
         BuildAssetLookups();
         BuildDefaultLookups();
@@ -47,45 +97,183 @@ public class GameDatabase : ScriptableObject
         if (allAssets == null)
             return;
 
-        for(int i = 0; i < allAssets.Count; i++)
+        for (int index = 0; index < allAssets.Count; index++)
         {
-            DatabaseAsset asset = allAssets[i];
-            
+            DatabaseAsset asset = allAssets[index];
+
             if (asset == null)
-                continue;
-
-            if (string.IsNullOrWhiteSpace(asset.nameID))
             {
-                Debug.LogError($"Asset '{asset.name}' has an empty nameID.", this);
+                Debug.LogWarning(
+                    $"Registered asset entry {index} is null.",
+                    this
+                );
+
                 continue;
             }
 
-            if (nameLookup.ContainsKey(asset.nameID))
+            if (!ValidateAssetIdentity(asset))
+                continue;
+
+            Type registryType = asset.RegistryType;
+
+            if (!ValidateRegistryType(asset, registryType))
+                continue;
+
+            Dictionary<int, DatabaseAsset> idRegistry =
+                GetOrCreateIDRegistry(registryType);
+
+            Dictionary<string, DatabaseAsset> nameRegistry =
+                GetOrCreateNameRegistry(registryType);
+
+            if (idRegistry.TryGetValue(
+                    asset.ID,
+                    out DatabaseAsset duplicateIDAsset))
             {
-                Debug.LogError($"Duplicate WorldDataObject nameID found: '{asset.nameID}'. Asset '{asset.name}' was ignored.", this);
+                Debug.LogError(
+                    $"Duplicate ID {asset.ID} in registry " +
+                    $"'{registryType.Name}'. " +
+                    $"Asset '{asset.name}' conflicts with " +
+                    $"'{duplicateIDAsset.name}'.",
+                    asset
+                );
+
                 continue;
             }
-            asset.ID = i;
+
+            if (nameRegistry.TryGetValue(
+                    asset.NameID,
+                    out DatabaseAsset duplicateNameAsset))
+            {
+                Debug.LogError(
+                    $"Duplicate name ID '{asset.NameID}' in registry " +
+                    $"'{registryType.Name}'. " +
+                    $"Asset '{asset.name}' conflicts with " +
+                    $"'{duplicateNameAsset.name}'.",
+                    asset
+                );
+
+                continue;
+            }
+
+            idRegistry.Add(asset.ID, asset);
+            nameRegistry.Add(asset.NameID, asset);
+
+            AddToExactTypeLookup(asset);
+
             asset.Initialize();
-
-            nameLookup.Add(asset.nameID, i);
-            idLookup.Add(i, asset);
-
-            Type assetType = asset.GetType();
-
-            if (!typeLookup.TryGetValue(assetType, out List<DatabaseAsset> assetsOfType))
-            {
-                assetsOfType = new List<DatabaseAsset>();
-                typeLookup.Add(assetType, assetsOfType);
-            }
-
-            if (string.IsNullOrWhiteSpace(asset.displayName))
-            {
-                asset.displayName = asset.nameID;
-            }
-
-            assetsOfType.Add(asset);
         }
+    }
+
+    private bool ValidateAssetIdentity(DatabaseAsset asset)
+    {
+        if (asset.ID < 0)
+        {
+            Debug.LogError(
+                $"Asset '{asset.name}' has invalid ID {asset.ID}. " +
+                "IDs must be zero or greater.",
+                asset
+            );
+
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(asset.NameID))
+        {
+            Debug.LogError(
+                $"Asset '{asset.name}' has an empty name ID.",
+                asset
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool ValidateRegistryType(
+        DatabaseAsset asset,
+        Type registryType)
+    {
+        if (registryType == null)
+        {
+            Debug.LogError(
+                $"Asset '{asset.name}' returned a null registry type.",
+                asset
+            );
+
+            return false;
+        }
+
+        if (!typeof(DatabaseAsset).IsAssignableFrom(registryType))
+        {
+            Debug.LogError(
+                $"Registry type '{registryType.Name}' on asset " +
+                $"'{asset.name}' does not derive from DatabaseAsset.",
+                asset
+            );
+
+            return false;
+        }
+
+        if (!registryType.IsAssignableFrom(asset.GetType()))
+        {
+            Debug.LogError(
+                $"Asset '{asset.name}' is of type " +
+                $"'{asset.GetType().Name}', which cannot belong to " +
+                $"registry '{registryType.Name}'.",
+                asset
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private Dictionary<int, DatabaseAsset> GetOrCreateIDRegistry(
+        Type registryType)
+    {
+        if (!idLookups.TryGetValue(
+                registryType,
+                out Dictionary<int, DatabaseAsset> registry))
+        {
+            registry = new Dictionary<int, DatabaseAsset>();
+            idLookups.Add(registryType, registry);
+        }
+
+        return registry;
+    }
+
+    private Dictionary<string, DatabaseAsset> GetOrCreateNameRegistry(
+        Type registryType)
+    {
+        if (!nameLookups.TryGetValue(
+                registryType,
+                out Dictionary<string, DatabaseAsset> registry))
+        {
+            registry = new Dictionary<string, DatabaseAsset>(
+                StringComparer.Ordinal
+            );
+
+            nameLookups.Add(registryType, registry);
+        }
+
+        return registry;
+    }
+
+    private void AddToExactTypeLookup(DatabaseAsset asset)
+    {
+        Type exactType = asset.GetType();
+
+        if (!exactTypeLookups.TryGetValue(
+                exactType,
+                out List<DatabaseAsset> assets))
+        {
+            assets = new List<DatabaseAsset>();
+            exactTypeLookups.Add(exactType, assets);
+        }
+
+        assets.Add(asset);
     }
 
     private void BuildDefaultLookups()
@@ -93,132 +281,303 @@ public class GameDatabase : ScriptableObject
         if (defaultAssets == null)
             return;
 
-        foreach (DatabaseAsset defaultAsset in defaultAssets)
+        for (int index = 0; index < defaultAssets.Count; index++)
         {
+            DatabaseAsset defaultAsset = defaultAssets[index];
 
             if (defaultAsset == null)
             {
-                Debug.LogError($"Default WorldDataObject '{defaultAsset}' could not be found in the registered asset list.", this);
+                Debug.LogError(
+                    $"Default asset entry {index} is null.",
+                    this
+                );
+
                 continue;
             }
 
-            Type assetType = defaultAsset.GetType();
+            Type registryType = defaultAsset.RegistryType;
 
-            if (defaultLookup.ContainsKey(defaultAsset.GetType()))
+            if (!ValidateRegistryType(defaultAsset, registryType))
+                continue;
+
+            if (!IsRegistered(defaultAsset))
             {
-                Debug.LogWarning($"Multiple default assets were registered for type {assetType.Name}. '{defaultAsset.nameID}' replaced '{defaultLookup[assetType].nameID}'.", this);
+                Debug.LogError(
+                    $"Default asset '{defaultAsset.name}' is not " +
+                    $"registered in the '{registryType.Name}' registry.",
+                    defaultAsset
+                );
+
+                continue;
             }
 
-            defaultLookup[defaultAsset.GetType()] = defaultAsset;
+            if (defaultLookups.TryGetValue(
+                    registryType,
+                    out DatabaseAsset previousDefault))
+            {
+                Debug.LogWarning(
+                    $"Multiple defaults were assigned to registry " +
+                    $"'{registryType.Name}'. " +
+                    $"'{defaultAsset.NameID}' replaced " +
+                    $"'{previousDefault.NameID}'.",
+                    this
+                );
+            }
+
+            defaultLookups[registryType] = defaultAsset;
         }
+    }
+
+    private bool IsRegistered(DatabaseAsset asset)
+    {
+        Type registryType = asset.RegistryType;
+
+        if (!idLookups.TryGetValue(
+                registryType,
+                out Dictionary<int, DatabaseAsset> registry))
+        {
+            return false;
+        }
+
+        return registry.TryGetValue(asset.ID, out DatabaseAsset found) &&
+               found == asset;
     }
 
     /// <summary>
-    /// Returns an inheritance-aware list of all registered assets assignable to T.
-    /// For example, GetAllAssetsOfType<TileData>() will include TileData subclasses too.
+    /// Returns an asset from the registry category represented by T.
+    ///
+    /// Example:
+    /// GetAssetByID&lt;TileData&gt;(1)
+    /// GetAssetByID&lt;BiomeData&gt;(1)
     /// </summary>
-    public List<T> GetAllAssetsOfType<T>() where T : DatabaseAsset
+    public T GetAssetByID<T>(int id)
+        where T : DatabaseAsset
     {
-        EnsureInitialized();
+        if (TryGetAssetByID(id, out T asset))
+            return asset;
 
-        List<T> result = new List<T>();
+        Debug.LogWarning(
+            $"Asset ID {id} could not be found in registry " +
+            $"'{typeof(T).Name}'.",
+            this
+        );
 
-        if (allAssets == null)
-            return result;
-
-        foreach (DatabaseAsset asset in allAssets)
-        {
-            if (asset is T typedAsset)
-                result.Add(typedAsset);
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Faster exact-type lookup. This only returns assets whose runtime type is exactly T.
-    /// Use GetAllAssetsOfType<T>() if subclasses should be included.
-    /// </summary>
-    public List<T> GetAllAssetsOfExactType<T>() where T : DatabaseAsset
-    {
-        EnsureInitialized();
-
-        Type targetType = typeof(T);
-        List<T> result = new List<T>();
-
-        if (!typeLookup.TryGetValue(targetType, out List<DatabaseAsset> assets))
-            return result;
-
-        foreach (DatabaseAsset asset in assets)
-        {
-            if (asset is T typedAsset)
-                result.Add(typedAsset);
-        }
-
-        return result;
-    }
-
-    public T GetDefaultAsset<T>() where T : DatabaseAsset
-    {
-        EnsureInitialized();
-
-        Type targetType = typeof(T);
-
-        if (defaultLookup.TryGetValue(targetType, out DatabaseAsset asset))
-            return asset as T;
-
-        Debug.LogWarning($"Default object of type {targetType.Name} could not be found.", this);
         return null;
     }
 
-    public T GetAssetByID<T>(int id) where T : DatabaseAsset
+    public bool TryGetAssetByID<T>(int id, out T asset)
+        where T : DatabaseAsset
     {
         EnsureInitialized();
 
-        DatabaseAsset asset = GetAssetByIDInternal(id, logMissing: false);
+        asset = null;
 
-        if (asset == null)
-            return null;
+        Type registryType = typeof(T);
 
-        if (asset is T typedAsset)
-            return typedAsset;
+        if (!idLookups.TryGetValue(
+                registryType,
+                out Dictionary<int, DatabaseAsset> registry))
+        {
+            return false;
+        }
 
-        Debug.LogWarning($"WorldDataObject '{id}' exists but is not of type {typeof(T).Name}. It is {asset.GetType().Name}.", this);
-        return null;
-    }
+        if (!registry.TryGetValue(id, out DatabaseAsset found))
+            return false;
 
-    public bool TryGetAssetByID<T>(int id, out T asset) where T : DatabaseAsset
-    {
-        asset = GetAssetByID<T>(id);
+        asset = found as T;
         return asset != null;
     }
 
-    public bool HasAssetByName(string id)
+    /// <summary>
+    /// Performs a lookup when the registry category is only known at runtime.
+    /// </summary>
+    public bool TryGetAssetByID(
+        Type registryType,
+        int id,
+        out DatabaseAsset asset)
     {
         EnsureInitialized();
 
-        if (string.IsNullOrWhiteSpace(id))
+        asset = null;
+
+        if (registryType == null)
             return false;
 
-        return nameLookup.ContainsKey(id);
+        if (!idLookups.TryGetValue(
+                registryType,
+                out Dictionary<int, DatabaseAsset> registry))
+        {
+            return false;
+        }
+
+        return registry.TryGetValue(id, out asset);
     }
 
-    public bool HasAssetByID(int id)
+    public T GetAssetByName<T>(string nameID)
+        where T : DatabaseAsset
+    {
+        if (TryGetAssetByName(nameID, out T asset))
+            return asset;
+
+        Debug.LogWarning(
+            $"Asset '{nameID}' could not be found in registry " +
+            $"'{typeof(T).Name}'.",
+            this
+        );
+
+        return null;
+    }
+
+    public bool TryGetAssetByName<T>(
+        string nameID,
+        out T asset)
+        where T : DatabaseAsset
     {
         EnsureInitialized();
 
-        return idLookup.ContainsKey(id);
+        asset = null;
+
+        if (string.IsNullOrWhiteSpace(nameID))
+            return false;
+
+        Type registryType = typeof(T);
+
+        if (!nameLookups.TryGetValue(
+                registryType,
+                out Dictionary<string, DatabaseAsset> registry))
+        {
+            return false;
+        }
+
+        if (!registry.TryGetValue(nameID, out DatabaseAsset found))
+            return false;
+
+        asset = found as T;
+        return asset != null;
     }
 
-
-    private DatabaseAsset GetAssetByIDInternal(int id, bool logMissing = true)
+    public bool TryGetAssetByName(
+        Type registryType,
+        string nameID,
+        out DatabaseAsset asset)
     {
+        EnsureInitialized();
 
-        if (idLookup.TryGetValue(id, out DatabaseAsset asset))
-            return asset;
+        asset = null;
 
-        if (logMissing)
-            Debug.LogWarning($"WorldDataObject '{id}' could not be found.", this);
+        if (registryType == null ||
+            string.IsNullOrWhiteSpace(nameID))
+        {
+            return false;
+        }
+
+        if (!nameLookups.TryGetValue(
+                registryType,
+                out Dictionary<string, DatabaseAsset> registry))
+        {
+            return false;
+        }
+
+        return registry.TryGetValue(nameID, out asset);
+    }
+
+    public bool HasAssetByID<T>(int id)
+        where T : DatabaseAsset
+    {
+        EnsureInitialized();
+
+        return idLookups.TryGetValue(
+                   typeof(T),
+                   out Dictionary<int, DatabaseAsset> registry) &&
+               registry.ContainsKey(id);
+    }
+
+    public bool HasAssetByName<T>(string nameID)
+        where T : DatabaseAsset
+    {
+        EnsureInitialized();
+
+        if (string.IsNullOrWhiteSpace(nameID))
+            return false;
+
+        return nameLookups.TryGetValue(
+                   typeof(T),
+                   out Dictionary<string, DatabaseAsset> registry) &&
+               registry.ContainsKey(nameID);
+    }
+
+    /// <summary>
+    /// Returns every asset registered under category T.
+    /// Subclasses are included because they share T's registry.
+    /// </summary>
+    public List<T> GetAllAssetsOfType<T>()
+        where T : DatabaseAsset
+    {
+        EnsureInitialized();
+
+        List<T> result = new();
+
+        if (!idLookups.TryGetValue(
+                typeof(T),
+                out Dictionary<int, DatabaseAsset> registry))
+        {
+            return result;
+        }
+
+        foreach (DatabaseAsset asset in registry.Values)
+        {
+            if (asset is T typedAsset)
+                result.Add(typedAsset);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Returns assets whose concrete runtime type is exactly T.
+    /// </summary>
+    public List<T> GetAllAssetsOfExactType<T>()
+        where T : DatabaseAsset
+    {
+        EnsureInitialized();
+
+        List<T> result = new();
+
+        if (!exactTypeLookups.TryGetValue(
+                typeof(T),
+                out List<DatabaseAsset> assets))
+        {
+            return result;
+        }
+
+        foreach (DatabaseAsset asset in assets)
+            result.Add((T)asset);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Returns the default asset for registry category T.
+    /// </summary>
+    public T GetDefaultAsset<T>()
+        where T : DatabaseAsset
+    {
+        EnsureInitialized();
+
+        Type registryType = typeof(T);
+
+        if (defaultLookups.TryGetValue(
+                registryType,
+                out DatabaseAsset asset))
+        {
+            return asset as T;
+        }
+
+        Debug.LogWarning(
+            $"No default asset is configured for registry " +
+            $"'{registryType.Name}'.",
+            this
+        );
 
         return null;
     }

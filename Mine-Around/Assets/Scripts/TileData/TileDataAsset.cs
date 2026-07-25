@@ -1,21 +1,42 @@
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using System;
 
-[CreateAssetMenu(fileName = "TileDataAsset", menuName = "WorldDataObject/TileDataAsset")]
+public enum TilePlacementLayer
+{
+    Ground,
+    Structure,
+    Overlay
+}
+
+[CreateAssetMenu(
+    fileName = "TileDataAsset",
+    menuName = "World Data/Tile"
+)]
 public class TileDataAsset : DatabaseAsset
 {
     public override Type RegistryType => typeof(TileDataAsset);
 
-    [Header("Rendering")]
-    public TileBase tile;
+    [Header("Classification")]
+    [SerializeField] private TilePlacementLayer placementLayer;
 
-    [Header("General Behavior")]
+    [Header("Rendering")]
+    [SerializeField] private TileBase tile;
+    [SerializeField] private Color mapColor = Color.white;
     [SerializeField] private bool isTransparent;
-    [SerializeField] private Color mapColor;
+
+    [Header("Movement and Visibility")]
+    [SerializeField] private bool blocksMovement;
+    [SerializeField] private bool blocksVision;
+
+    public TilePlacementLayer PlacementLayer => placementLayer;
+
+    public TileBase Tile => tile;
+    public Color MapColor => mapColor;
     public bool IsTransparent => isTransparent;
 
-    public Color MapColor => mapColor;
+    public bool BlocksMovement => blocksMovement;
+    public bool BlocksVision => blocksVision;
 
     public virtual void OnPlaced(TileContext context)
     {
@@ -32,5 +53,4 @@ public class TileDataAsset : DatabaseAsset
     public virtual void OnRandomTick(TileContext context)
     {
     }
-
 }

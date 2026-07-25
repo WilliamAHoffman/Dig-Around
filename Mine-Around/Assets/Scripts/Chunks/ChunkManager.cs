@@ -148,11 +148,11 @@ public class ChunkManager : MonoBehaviour
                 TileDataAsset wall = GameDatabase.GetAssetByID<TileDataAsset>(wallTileID);
                 TileDataAsset floor = GameDatabase.GetAssetByID<TileDataAsset>(floorTileID);
 
-                wallTiles[i] = wall.tile;
+                wallTiles[i] = wall.Tile;
 
                 if (wall.IsTransparent)
                 {
-                    floorTiles[i] = floor.tile;
+                    floorTiles[i] = floor.Tile;
                 }
 
                 positions[i] = (Vector3Int)worldPos;

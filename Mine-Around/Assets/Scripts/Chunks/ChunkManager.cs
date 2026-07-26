@@ -1,14 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using System.Collections;
-using System;
 
-// Manages chunk generation, loading, rendering, unloading, and tile lookup
-// Chunk coordinates are grid positions in chunk space, not world tile positions
 public class ChunkManager : MonoBehaviour
 {
-
     [Header("Tilemaps")]
     [SerializeField] private Tilemap walls;
     [SerializeField] private Tilemap floors;
@@ -16,382 +13,91 @@ public class ChunkManager : MonoBehaviour
     [Header("Generation")]
     [SerializeField] private WorldGenerator generator;
 
-    private readonly Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
-
-    // Global chunk values
+    [Header("References")]
     [SerializeField] private GameController gameController;
+
+    private readonly Dictionary<Vector2Int, Chunk> chunks = new();
+
+    private readonly Queue<Vector2Int> queuedChunks = new();
+    private readonly HashSet<Vector2Int> queuedChunkSet = new();
+
+    private Coroutine loadingCoroutine;
+
     public int ChunkSize => gameController.GameVariables.chunkSize;
     public GameDatabase GameDatabase => gameController.GameDatabase;
 
-    // Chunk Queueing
-    private readonly Queue<Vector2Int> queuedChunks = new();
-    private readonly HashSet<Vector2Int> queuedChunkSet = new();
-    private Coroutine loadingCoroutine;
+    private readonly Dictionary<int, TileDataAsset> tileCache = new();
 
-    // Loads or Creates all chunks within the two given positions
-    // Can be set to render automatically
-    public void CreateBox(Vector2Int chunkPosition1, Vector2Int chunkPosition2, bool render = false)
+    private TileDataAsset GetTileData(int id)
     {
-        Vector2Int start = Vector2Int.Min(chunkPosition1, chunkPosition2);
-        Vector2Int end = Vector2Int.Max(chunkPosition1, chunkPosition2);
+        if (tileCache.TryGetValue(id, out TileDataAsset data))
+        {
+            return data;
+        }
+
+        data = GameDatabase.GetAssetByID<TileDataAsset>(id);
+        tileCache[id] = data;
+
+        return data;
+    }
+
+    public void CreateBox(
+        Vector2Int firstPosition,
+        Vector2Int secondPosition,
+        bool render = false
+    )
+    {
+        Vector2Int start = Vector2Int.Min(
+            firstPosition,
+            secondPosition
+        );
+
+        Vector2Int end = Vector2Int.Max(
+            firstPosition,
+            secondPosition
+        );
 
         for (int x = start.x; x <= end.x; x++)
         {
             for (int y = start.y; y <= end.y; y++)
             {
-                Vector2Int chunkLocation = new Vector2Int(x, y);
-
-                GetOrCreateChunk(chunkLocation, render);
-            }
-        }
-    }
-    public void CreateBox(Vector2Int chunkPosition, int radius, bool render = false)
-    {
-        Vector2Int start = new Vector2Int(chunkPosition.x - radius, chunkPosition.y - radius);
-        Vector2Int end = new Vector2Int(chunkPosition.x + radius, chunkPosition.y + radius);
-        CreateBox(start, end, render);
-    }
-
-
-    // Creates a chunk if needed, marks it loaded, renders the chunk if needed and then returns it
-    public Chunk GetOrCreateChunk(Vector2Int chunkPosition, bool render = false)
-    {
-
-        if (generator == null)
-        {
-            Debug.LogError("ChunkManager is missing a WorldGenerator reference.", this);
-            return null;
-        }
-
-        Chunk chunk = null;
-
-        if (chunks.TryGetValue(chunkPosition, out Chunk currChunk))
-        {
-            if (currChunk.state == ChunkState.queued || currChunk.state == ChunkState.dequeue)
-            {
-                chunk = generator.GenerateChunk(chunkPosition, currChunk);
-                chunk.state = ChunkState.saved;
-            }
-        }
-        else
-        {
-            chunk = generator.GenerateChunk(chunkPosition, new Chunk(ChunkSize));
-            chunks.Add(chunkPosition, chunk);
-        }
-
-        if (render)
-        {
-            RenderChunk(chunkPosition);
-        }
-
-        return chunk;
-    }
-
-    // Marks chunk as unloaded and derenders it
-    public void UnloadChunk(Vector2Int chunkLocation)
-    {
-        if (!chunks.TryGetValue(chunkLocation, out Chunk chunk))
-            return;
-
-        if (chunk.state == ChunkState.queued)
-        {
-            chunk.state = ChunkState.dequeue;
-        }
-
-        if (chunk.state == ChunkState.saved)
-        {
-            return;
-        }
-
-        UnRenderChunk(chunkLocation);
-    }
-
-    // Places the tiles from a chunk at the correct position on the tilemaps
-    private void RenderChunk(Vector2Int chunkLocation)
-    {
-        Chunk chunk = chunks[chunkLocation];
-
-        if (chunk == null || chunk.state != ChunkState.saved)
-        {
-            Debug.LogError("No valid chunk at the given location.", this);
-            return;
-        }
-
-        if (!HasValidTilemaps())
-        {
-            Debug.LogError("Tilemaps are missing.", this);
-            return;
-        }
-
-        if (GameDatabase == null)
-        {
-            Debug.LogError("GameDatabase instance is missing.", this);
-            return;
-        }
-
-        Vector3Int[] positions = new Vector3Int[ChunkSize * ChunkSize];
-        UnityEngine.Tilemaps.TileBase[] wallTiles = new UnityEngine.Tilemaps.TileBase[ChunkSize * ChunkSize];
-        UnityEngine.Tilemaps.TileBase[] floorTiles = new UnityEngine.Tilemaps.TileBase[ChunkSize * ChunkSize];
-
-        int i = 0;
-
-        for (int x = 0; x < ChunkSize; x++)
-        {
-            for (int y = 0; y < ChunkSize; y++)
-            {
-                Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkLocation, ChunkSize);
-
-                int wallTileID = chunk.GetWallTile(localPos);
-                int floorTileID = chunk.GetFloorTile(localPos);
-
-                TileDataAsset wall = GameDatabase.GetAssetByID<TileDataAsset>(wallTileID);
-                TileDataAsset floor = GameDatabase.GetAssetByID<TileDataAsset>(floorTileID);
-
-                wallTiles[i] = wall.Tile;
-
-                if (wall.IsTransparent)
-                {
-                    floorTiles[i] = floor.Tile;
-                }
-
-                positions[i] = (Vector3Int)worldPos;
-
-                i++;
-            }
-        }
-
-        walls.SetTiles(positions, wallTiles);
-        floors.SetTiles(positions, floorTiles);
-        chunk.state = ChunkState.rendered;
-    }
-
-    // Removes tiles from tilemaps of the chunk at the given position
-    private void UnRenderChunk(Vector2Int chunkPosition)
-    {
-        if (!HasValidTilemaps())
-            return;
-
-        Vector3Int[] positions = new Vector3Int[ChunkSize * ChunkSize];
-        UnityEngine.Tilemaps.TileBase[] emptyTiles = new UnityEngine.Tilemaps.TileBase[ChunkSize * ChunkSize];
-
-        int i = 0;
-
-        for (int x = 0; x < ChunkSize; x++)
-        {
-            for (int y = 0; y < ChunkSize; y++)
-            {
-                Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = ChunkUtilities.LocalToWorldCoord(localPos, chunkPosition, ChunkSize);
-
-                positions[i] = (Vector3Int)worldPos;
-                emptyTiles[i] = null;
-
-                i++;
-            }
-        }
-
-        walls.SetTiles(positions, emptyTiles);
-        floors.SetTiles(positions, emptyTiles);
-
-        if (chunks.ContainsKey(chunkPosition))
-        {
-            if (chunks[chunkPosition].state == ChunkState.queued)
-            {
-                chunks[chunkPosition].state = ChunkState.dequeue;
-            }
-            else
-            {
-                chunks[chunkPosition].state = ChunkState.saved;
+                GetOrCreateChunk(
+                    new Vector2Int(x, y),
+                    render
+                );
             }
         }
     }
 
-    // Gives the wall string ID at the given location if it exists
-    public int GetWallIDAtLocation(Vector2 position)
+    public void CreateBox(
+        Vector2Int center,
+        int radius,
+        bool render = false
+    )
     {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
-        Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position, ChunkSize);
+        Vector2Int radiusOffset = new(radius, radius);
 
-        if (!chunks.TryGetValue(chunkCoord, out Chunk chunk))
-        {
-            Debug.LogWarning($"No chunk exists at chunk coordinate {chunkCoord}.", this);
-            return -1;
-        }
-
-        return chunk.GetWallTile(localPos);
+        CreateBox(
+            center - radiusOffset,
+            center + radiusOffset,
+            render
+        );
     }
 
-    // Gives the floor string ID at the given location if it exists
-    public int GetFloorIDAtLocation(Vector2 position)
-    {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
-        Vector2Int localPos = ChunkUtilities.WorldToLocalCoord(position, ChunkSize);
-
-        if (!chunks.TryGetValue(chunkCoord, out Chunk chunk))
-        {
-            Debug.LogWarning($"No chunk exists at chunk coordinate {chunkCoord}.", this);
-            return -1;
-        }
-
-        return chunk.GetFloorTile(localPos);
-    }
-
-    // Gives the wall data asset at the given location if it exists
-    public TileDataAsset GetWallDataAtLocation(Vector2 location)
-    {
-        int tileID = GetWallIDAtLocation(location);
-
-        return GameDatabase.GetAssetByID<TileDataAsset>(tileID);
-    }
-
-    // Gives the floor data asset at the given location if it exists
-    public TileDataAsset GetFloorDataAtLocation(Vector2 location)
-    {
-        int tileID = GetFloorIDAtLocation(location);
-
-        return GameDatabase.GetAssetByID<TileDataAsset>(tileID);
-    }
-
-    // Unloads and UnRenders all chunks
-    public void UnloadAllChunks()
-    {
-        List<Vector2Int> chunkLocations = new List<Vector2Int>(chunks.Keys);
-
-        foreach (Vector2Int chunkLocation in chunkLocations)
-        {
-            UnloadChunk(chunkLocation);
-        }
-    }
-
-    // Deletes and unloads all chunks
-    public void DeleteAllChunks()
-    {
-
-        if (walls != null)
-            walls.ClearAllTiles();
-
-        if (floors != null)
-            floors.ClearAllTiles();
-
-        queuedChunks.Clear();
-        queuedChunkSet.Clear();
-        chunks.Clear();
-    }
-    //deletes the chunk at the location
-    public void DeleteChunk(Vector2Int chunkPosition)
-    {
-        if (chunks.ContainsKey(chunkPosition))
-        {
-            UnloadChunk(chunkPosition);
-            chunks.Remove(chunkPosition);
-        }
-    }
-
-    // Checks if a chunk exists at a world position
-    public bool HasChunkAtWorldLocation(Vector3 position)
-    {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord(position, ChunkSize);
-        return chunks.ContainsKey(chunkCoord);
-    }
-
-    // Checks if a chunk exists at a block position
-    public bool HasChunkAtBlockLocation(Vector2Int blockPosition)
-    {
-        Vector2Int chunkCoord = ChunkUtilities.WorldToChunkCoord((Vector3Int)blockPosition, ChunkSize);
-        return chunks.ContainsKey(chunkCoord);
-    }
-
-    // Checks if tile maps are null
-    private bool HasValidTilemaps()
-    {
-        if (walls == null || floors == null)
-        {
-            Debug.LogError("ChunkManager is missing wall or floor Tilemap references.", this);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void QueueChunk(Vector2Int coordinate)
-    {
-        // Already waiting to load.
-        if (!queuedChunkSet.Add(coordinate))
-        {
-            return;
-        }
-
-        if (chunks.TryGetValue(coordinate, out Chunk chunk))
-        {
-            // Already visible.
-            if (chunk.state == ChunkState.rendered)
-            {
-                queuedChunkSet.Remove(coordinate);
-                return;
-            }
-
-            chunk.state = ChunkState.queued;
-        }
-        else
-        {
-            chunks.Add(
-                coordinate,
-                new Chunk(ChunkSize, ChunkState.queued)
-            );
-        }
-
-        queuedChunks.Enqueue(coordinate);
-    }
-    // processes chunk queue
-    private IEnumerator ProcessChunkQueue(bool render)
-    {
-        const double frameBudgetMs = 4.0;
-
-        var stopwatch =
-            System.Diagnostics.Stopwatch.StartNew();
-
-        while (queuedChunks.Count > 0)
-        {
-            stopwatch.Restart();
-
-            while (queuedChunks.Count > 0 &&
-                   stopwatch.Elapsed.TotalMilliseconds < frameBudgetMs)
-            {
-                Vector2Int coordinate = queuedChunks.Dequeue();
-                queuedChunkSet.Remove(coordinate);
-
-                if (!chunks.TryGetValue(coordinate, out Chunk chunk))
-                {
-                    continue;
-                }
-
-                // It left the loading area before being processed.
-                if (chunk.state == ChunkState.dequeue)
-                {
-                    chunk.state = ChunkState.saved;
-                    continue;
-                }
-
-                GetOrCreateChunk(coordinate, render);
-            }
-
-            yield return null;
-        }
-
-        loadingCoroutine = null;
-    }
-
-    public void AsyncCreateBox(Vector2Int chunkPosition1, Vector2Int chunkPosition2, bool render = true)
+    public void AsyncCreateBox(
+        Vector2Int firstPosition,
+        Vector2Int secondPosition,
+        bool render = true
+    )
     {
         Vector2Int start = Vector2Int.Min(
-            chunkPosition1,
-            chunkPosition2
+            firstPosition,
+            secondPosition
         );
 
         Vector2Int end = Vector2Int.Max(
-            chunkPosition1,
-            chunkPosition2
+            firstPosition,
+            secondPosition
         );
 
         for (int x = start.x; x <= end.x; x++)
@@ -402,25 +108,611 @@ public class ChunkManager : MonoBehaviour
             }
         }
 
-        if (loadingCoroutine == null)
+        StartLoadingCoroutine();
+    }
+
+    public void AsyncCreateBox(
+        Vector2Int center,
+        int radius,
+        bool render = true
+    )
+    {
+        Vector2Int radiusOffset = new(radius, radius);
+
+        AsyncCreateBox(
+            center - radiusOffset,
+            center + radiusOffset,
+            render
+        );
+    }
+
+    public Chunk GetOrCreateChunk(
+        Vector2Int chunkPosition,
+        bool render = false
+    )
+    {
+        if (!ValidateGenerationReferences())
         {
-            loadingCoroutine = StartCoroutine(
-                ProcessChunkQueue(render)
-            );
+            return null;
+        }
+
+        Chunk chunk = GetOrAddChunk(chunkPosition);
+
+        switch (chunk.State)
+        {
+            case ChunkState.Ungenerated:
+            case ChunkState.Queued:
+                chunk = GenerateChunk(chunkPosition, chunk);
+                break;
+
+            case ChunkState.Cancelled:
+                chunk.State = ChunkState.Ungenerated;
+                chunk = GenerateChunk(chunkPosition, chunk);
+                break;
+
+            case ChunkState.Generated:
+            case ChunkState.Rendered:
+                break;
+        }
+
+        if (render && chunk.State != ChunkState.Rendered)
+        {
+            RenderChunk(chunkPosition);
+        }
+
+        return chunk;
+    }
+
+    public void UnloadChunk(Vector2Int chunkPosition)
+    {
+        if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        {
+            return;
+        }
+
+        switch (chunk.State)
+        {
+            case ChunkState.Queued:
+                chunk.State = ChunkState.Cancelled;
+                return;
+
+            case ChunkState.Rendered:
+                UnRenderChunk(chunkPosition);
+                return;
+
+            case ChunkState.Ungenerated:
+            case ChunkState.Cancelled:
+            case ChunkState.Generated:
+                return;
         }
     }
-    public void AsyncCreateBox(Vector2Int chunkPosition, int radius, bool render = false)
+
+    public void UnloadAllChunks()
     {
-        Vector2Int start = new Vector2Int(
-            chunkPosition.x - radius,
-            chunkPosition.y - radius
+        List<Vector2Int> chunkPositions = new(chunks.Keys);
+
+        foreach (Vector2Int chunkPosition in chunkPositions)
+        {
+            UnloadChunk(chunkPosition);
+        }
+    }
+
+    public void DeleteChunk(Vector2Int chunkPosition)
+    {
+        if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        {
+            return;
+        }
+
+        if (chunk.State == ChunkState.Rendered)
+        {
+            UnRenderChunk(chunkPosition);
+        }
+
+        queuedChunkSet.Remove(chunkPosition);
+        chunks.Remove(chunkPosition);
+    }
+
+    public void DeleteAllChunks()
+    {
+        StopLoadingCoroutine();
+
+        queuedChunks.Clear();
+        queuedChunkSet.Clear();
+        chunks.Clear();
+
+        if (walls != null)
+        {
+            walls.ClearAllTiles();
+        }
+
+        if (floors != null)
+        {
+            floors.ClearAllTiles();
+        }
+    }
+
+    public bool HasChunkAtWorldLocation(Vector3 position)
+    {
+        Vector2Int chunkPosition =
+            ChunkUtilities.WorldToChunkCoord(
+                position,
+                ChunkSize
+            );
+
+        return chunks.ContainsKey(chunkPosition);
+    }
+
+    public bool HasChunkAtBlockLocation(Vector2Int blockPosition)
+    {
+        Vector2Int chunkPosition =
+            ChunkUtilities.WorldToChunkCoord(
+                (Vector2)blockPosition,
+                ChunkSize
+            );
+
+        return chunks.ContainsKey(chunkPosition);
+    }
+
+    public bool IsChunkGenerated(Vector2Int chunkPosition)
+    {
+        if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        {
+            return false;
+        }
+
+        return chunk.State == ChunkState.Generated ||
+               chunk.State == ChunkState.Rendered;
+    }
+
+    public bool IsChunkRendered(Vector2Int chunkPosition)
+    {
+        return chunks.TryGetValue(
+                   chunkPosition,
+                   out Chunk chunk
+               ) &&
+               chunk.State == ChunkState.Rendered;
+    }
+
+    public int GetWallIDAtLocation(Vector2 position)
+    {
+        if (!TryGetChunkAndLocalPosition(
+                position,
+                out Chunk chunk,
+                out Vector2Int localPosition
+            ))
+        {
+            return -1;
+        }
+
+        return chunk.GetWallTile(localPosition);
+    }
+
+    public int GetFloorIDAtLocation(Vector2 position)
+    {
+        if (!TryGetChunkAndLocalPosition(
+                position,
+                out Chunk chunk,
+                out Vector2Int localPosition
+            ))
+        {
+            return -1;
+        }
+
+        return chunk.GetFloorTile(localPosition);
+    }
+
+    public TileDataAsset GetWallDataAtLocation(Vector2 position)
+    {
+        int tileID = GetWallIDAtLocation(position);
+
+        if (tileID < 0 || GameDatabase == null)
+        {
+            return null;
+        }
+
+        return GetTileData(tileID);
+    }
+
+    public TileDataAsset GetFloorDataAtLocation(Vector2 position)
+    {
+        int tileID = GetFloorIDAtLocation(position);
+
+        if (tileID < 0 || GameDatabase == null)
+        {
+            return null;
+        }
+
+        return GetTileData(tileID);
+    }
+
+    private Chunk GetOrAddChunk(Vector2Int chunkPosition)
+    {
+        if (chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        {
+            return chunk;
+        }
+
+        chunk = new Chunk(
+            ChunkSize,
+            ChunkState.Ungenerated
         );
 
-        Vector2Int end = new Vector2Int(
-            chunkPosition.x + radius,
-            chunkPosition.y + radius
+        chunks.Add(chunkPosition, chunk);
+
+        return chunk;
+    }
+
+    private Chunk GenerateChunk(
+        Vector2Int chunkPosition,
+        Chunk chunk
+    )
+    {
+        Chunk generatedChunk =
+            generator.GenerateChunk(
+                chunkPosition,
+                chunk
+            );
+
+        if (generatedChunk == null)
+        {
+            UnityEngine.Debug.LogError(
+                $"Generator returned null for chunk {chunkPosition}.",
+                this
+            );
+
+            chunk.State = ChunkState.Ungenerated;
+            return chunk;
+        }
+
+        generatedChunk.State = ChunkState.Generated;
+
+        if (!ReferenceEquals(generatedChunk, chunk))
+        {
+            chunks[chunkPosition] = generatedChunk;
+        }
+
+        return generatedChunk;
+    }
+
+    private void QueueChunk(Vector2Int chunkPosition)
+    {
+        Chunk chunk = GetOrAddChunk(chunkPosition);
+
+        if (chunk.State == ChunkState.Rendered ||
+            chunk.State == ChunkState.Generated)
+        {
+            return;
+        }
+
+        if (!queuedChunkSet.Add(chunkPosition))
+        {
+            if (chunk.State == ChunkState.Cancelled)
+            {
+                chunk.State = ChunkState.Queued;
+            }
+
+            return;
+        }
+
+        chunk.State = ChunkState.Queued;
+        queuedChunks.Enqueue(chunkPosition);
+    }
+
+    public void QueueChunkForLoading(
+        Vector2Int chunkPosition,
+        bool render = true
+    )
+    {
+        QueueChunk(chunkPosition);
+        StartLoadingCoroutine();
+    }
+
+    private IEnumerator ProcessChunkQueue()
+    {
+        while (queuedChunks.Count > 0)
+        {
+            Vector2Int position = queuedChunks.Dequeue();
+            queuedChunkSet.Remove(position);
+
+            if (!chunks.TryGetValue(position, out Chunk chunk))
+            {
+                yield return null;
+                continue;
+            }
+
+            if (chunk.State == ChunkState.Cancelled)
+            {
+                chunk.State = ChunkState.Ungenerated;
+                yield return null;
+                continue;
+            }
+
+            GenerateChunk(position, chunk);
+
+            yield return null;
+
+            if (chunk.State == ChunkState.Generated)
+            {
+                RenderChunk(position);
+            }
+
+            yield return null;
+        }
+
+        loadingCoroutine = null;
+    }
+
+    private void StartLoadingCoroutine()
+    {
+        if (loadingCoroutine != null)
+        {
+            return;
+        }
+
+        loadingCoroutine = StartCoroutine(
+            ProcessChunkQueue()
+        );
+    }
+
+    private void StopLoadingCoroutine()
+    {
+        if (loadingCoroutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(loadingCoroutine);
+        loadingCoroutine = null;
+    }
+
+    private void RenderChunk(Vector2Int chunkPosition)
+    {
+        if (!chunks.TryGetValue(
+                chunkPosition,
+                out Chunk chunk
+            ))
+        {
+            UnityEngine.Debug.LogError(
+                $"Chunk {chunkPosition} does not exist.",
+                this
+            );
+
+            return;
+        }
+
+        if (chunk.State == ChunkState.Rendered)
+        {
+            return;
+        }
+
+        if (chunk.State != ChunkState.Generated)
+        {
+            UnityEngine.Debug.LogError(
+                $"Chunk {chunkPosition} cannot be rendered " +
+                $"from state {chunk.State}.",
+                this
+            );
+
+            return;
+        }
+
+        if (!HasValidTilemaps() || GameDatabase == null)
+        {
+            UnityEngine.Debug.LogError(
+                "ChunkManager is missing rendering references.",
+                this
+            );
+
+            return;
+        }
+
+        int cellCount = ChunkSize * ChunkSize;
+
+        Vector3Int[] positions =
+            new Vector3Int[cellCount];
+
+        TileBase[] wallTiles =
+            new TileBase[cellCount];
+
+        TileBase[] floorTiles =
+            new TileBase[cellCount];
+
+        int index = 0;
+
+        for (int y = 0; y < ChunkSize; y++)
+        {
+            for (int x = 0; x < ChunkSize; x++)
+            {
+                Vector2Int localPosition =
+                    new(x, y);
+
+                Vector2Int worldPosition =
+                    ChunkUtilities.LocalToWorldCoord(
+                        localPosition,
+                        chunkPosition,
+                        ChunkSize
+                    );
+
+                int wallTileID =
+                    chunk.GetWallTile(localPosition);
+
+                int floorTileID =
+                    chunk.GetFloorTile(localPosition);
+
+                TileDataAsset wallData = GetTileData(wallTileID);
+
+                TileDataAsset floorData = GetTileData(floorTileID);
+
+                positions[index] =
+                    new Vector3Int(
+                        worldPosition.x,
+                        worldPosition.y,
+                        0
+                    );
+
+                if (wallData != null)
+                {
+                    wallTiles[index] = wallData.Tile;
+
+                    if (wallData.IsTransparent &&
+                        floorData != null)
+                    {
+                        floorTiles[index] = floorData.Tile;
+                    }
+                }
+                else if (floorData != null)
+                {
+                    floorTiles[index] = floorData.Tile;
+                }
+
+                index++;
+            }
+        }
+
+        walls.SetTiles(positions, wallTiles);
+        floors.SetTiles(positions, floorTiles);
+
+        chunk.State = ChunkState.Rendered;
+    }
+
+    private void UnRenderChunk(Vector2Int chunkPosition)
+    {
+        if (!chunks.TryGetValue(
+                chunkPosition,
+                out Chunk chunk
+            ))
+        {
+            return;
+        }
+
+        if (chunk.State != ChunkState.Rendered)
+        {
+            return;
+        }
+
+        if (!HasValidTilemaps())
+        {
+            return;
+        }
+
+        int cellCount = ChunkSize * ChunkSize;
+
+        Vector3Int[] positions =
+            new Vector3Int[cellCount];
+
+        TileBase[] emptyTiles =
+            new TileBase[cellCount];
+
+        int index = 0;
+
+        for (int y = 0; y < ChunkSize; y++)
+        {
+            for (int x = 0; x < ChunkSize; x++)
+            {
+                Vector2Int worldPosition =
+                    ChunkUtilities.LocalToWorldCoord(
+                        new Vector2Int(x, y),
+                        chunkPosition,
+                        ChunkSize
+                    );
+
+                positions[index] =
+                    new Vector3Int(
+                        worldPosition.x,
+                        worldPosition.y,
+                        0
+                    );
+
+                index++;
+            }
+        }
+
+        walls.SetTiles(positions, emptyTiles);
+        floors.SetTiles(positions, emptyTiles);
+
+        chunk.State = ChunkState.Generated;
+    }
+
+    private bool TryGetChunkAndLocalPosition(
+        Vector2 position,
+        out Chunk chunk,
+        out Vector2Int localPosition
+    )
+    {
+        Vector2Int chunkPosition =
+            ChunkUtilities.WorldToChunkCoord(
+                position,
+                ChunkSize
+            );
+
+        localPosition =
+            ChunkUtilities.WorldToLocalCoord(
+                position,
+                ChunkSize
+            );
+
+        if (!chunks.TryGetValue(chunkPosition, out chunk))
+        {
+            UnityEngine.Debug.LogWarning(
+                $"No chunk exists at {chunkPosition}.",
+                this
+            );
+
+            return false;
+        }
+
+        if (chunk.State != ChunkState.Generated &&
+            chunk.State != ChunkState.Rendered)
+        {
+            UnityEngine.Debug.LogWarning(
+                $"Chunk {chunkPosition} is not generated.",
+                this
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool ValidateGenerationReferences()
+    {
+        if (generator == null)
+        {
+            UnityEngine.Debug.LogError(
+                "ChunkManager is missing a WorldGenerator.",
+                this
+            );
+
+            return false;
+        }
+
+        if (gameController == null)
+        {
+            UnityEngine.Debug.LogError(
+                "ChunkManager is missing a GameController.",
+                this
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool HasValidTilemaps()
+    {
+        if (walls != null && floors != null)
+        {
+            return true;
+        }
+
+        UnityEngine.Debug.LogError(
+            "ChunkManager is missing wall or floor Tilemaps.",
+            this
         );
 
-        AsyncCreateBox(start, end, render);
+        return false;
     }
 }

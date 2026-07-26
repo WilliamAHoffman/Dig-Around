@@ -1,89 +1,130 @@
+using System;
 using UnityEngine;
 
 public enum ChunkState
 {
-    rendered,
-    saved,
-    queued,
-    dequeue
+    Ungenerated,
+    Queued,
+    Cancelled,
+    Generated,
+    Rendered
 }
 
 public class Chunk
 {
-    public readonly int chunkSize;
-    private int[,] worldWallTiles;
-    private int[,] worldFloorTiles;
-    public ChunkState state;
+    public int ChunkSize { get; }
+    public ChunkState State { get; internal set; }
 
-    public Chunk(int size, ChunkState state = ChunkState.saved)
+    private readonly int[] worldWallTiles;
+    private readonly int[] worldFloorTiles;
+
+    public Chunk(
+        int size,
+        ChunkState state = ChunkState.Ungenerated
+    )
     {
-        chunkSize = size;
-
-        worldWallTiles = new int[size, size];
-        worldFloorTiles = new int[size, size];
-
-        this.state = state;
-    }
-
-    public bool InBounds(Vector2Int tileLocation)
-    {
-        return tileLocation.x >= 0 && tileLocation.x < chunkSize &&
-               tileLocation.y >= 0 && tileLocation.y < chunkSize;
-    }
-
-    public int GetWallTile(Vector2Int tileLocation)
-    {
-        if (!InBounds(tileLocation))
+        if (size <= 0)
         {
-            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            throw new ArgumentOutOfRangeException(
+                nameof(size),
+                size,
+                "Chunk size must be greater than zero."
+            );
+        }
+
+        ChunkSize = size;
+        State = state;
+
+        worldWallTiles = new int[size * size];
+        worldFloorTiles = new int[size * size];
+    }
+
+    private int Index(Vector2Int position)
+    {
+        return position.y * ChunkSize + position.x;
+    }
+
+    public bool InBounds(Vector2Int position)
+    {
+        return position.x >= 0 &&
+               position.x < ChunkSize &&
+               position.y >= 0 &&
+               position.y < ChunkSize;
+    }
+
+    public int GetWallTile(Vector2Int position)
+    {
+        if (!InBounds(position))
+        {
+            Debug.LogError(
+                $"Wall tile location out of bounds: {position}"
+            );
+
             return -1;
         }
 
-        return worldWallTiles[tileLocation.x, tileLocation.y];
+        return worldWallTiles[Index(position)];
     }
 
-    public void SetWallTile(Vector2Int tileLocation, int tile)
+    public void SetWallTile(Vector2Int position, int tile)
     {
-        if (!InBounds(tileLocation))
+        if (!InBounds(position))
         {
-            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            Debug.LogError(
+                $"Wall tile location out of bounds: {position}"
+            );
+
             return;
         }
 
-        worldWallTiles[tileLocation.x, tileLocation.y] = tile;
+        worldWallTiles[Index(position)] = tile;
     }
 
-    public int GetFloorTile(Vector2Int tileLocation)
+    public int GetFloorTile(Vector2Int position)
     {
-        if (!InBounds(tileLocation))
+        if (!InBounds(position))
         {
-            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            Debug.LogError(
+                $"Floor tile location out of bounds: {position}"
+            );
+
             return -1;
         }
 
-        return worldFloorTiles[tileLocation.x, tileLocation.y];
+        return worldFloorTiles[Index(position)];
     }
 
-    public void SetFloorTile(Vector2Int tileLocation, int tile)
+    public void SetFloorTile(Vector2Int position, int tile)
     {
-        if (!InBounds(tileLocation))
+        if (!InBounds(position))
         {
-            Debug.LogError($"Wall tile location out of bounds: {tileLocation}");
+            Debug.LogError(
+                $"Floor tile location out of bounds: {position}"
+            );
+
             return;
         }
 
-        worldFloorTiles[tileLocation.x, tileLocation.y] = tile;
+        worldFloorTiles[Index(position)] = tile;
     }
 
-    public void SetChunkCellValues(Vector2Int tileLocation, MapCell tile)
+    public void SetChunkCellValues(
+        Vector2Int position,
+        MapCell cell
+    )
     {
-        if (!InBounds(tileLocation))
+        if (!InBounds(position))
         {
-            Debug.LogError($"Tile location out of bounds: {tileLocation}");
+            Debug.LogError(
+                $"Tile location out of bounds: {position}"
+            );
+
             return;
         }
 
-        worldWallTiles[tileLocation.x, tileLocation.y] = tile.WallID;
-        worldFloorTiles[tileLocation.x, tileLocation.y] = tile.FloorID;
+        int index = Index(position);
+
+        worldWallTiles[index] = cell.WallID;
+        worldFloorTiles[index] = cell.FloorID;
     }
 }

@@ -12,12 +12,12 @@ public class WorldGenerator : ScriptableObject
 
     public Chunk GenerateChunk(Vector2Int chunkLocation, Chunk chunk)
     {
-        for (int x = 0; x < chunk.chunkSize; x++)
+        for (int x = 0; x < chunk.ChunkSize; x++)
         {
-            for (int y = 0; y < chunk.chunkSize; y++)
+            for (int y = 0; y < chunk.ChunkSize; y++)
             {
                 Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = localPos + chunkLocation * chunk.chunkSize;
+                Vector2Int worldPos = localPos + chunkLocation * chunk.ChunkSize;
                 GenerationResult result = GenerateLocation(worldPos);
 
                 chunk.SetChunkCellValues(localPos, result.MapCellValues());

@@ -2,11 +2,10 @@ using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum TilePlacementLayer
+public enum TileType
 {
-    Ground,
-    Structure,
-    Overlay
+    floor,
+    wall
 }
 
 [CreateAssetMenu(
@@ -18,7 +17,7 @@ public class TileDataAsset : DatabaseAsset
     public override Type RegistryType => typeof(TileDataAsset);
 
     [Header("Classification")]
-    [SerializeField] private TilePlacementLayer placementLayer;
+    [SerializeField] private TileType tileType;
 
     [Header("Rendering")]
     [SerializeField] private TileBase tile;
@@ -29,7 +28,7 @@ public class TileDataAsset : DatabaseAsset
     [SerializeField] private bool blocksMovement;
     [SerializeField] private bool blocksVision;
 
-    public TilePlacementLayer PlacementLayer => placementLayer;
+    public TileType TileType => tileType;
 
     public TileBase Tile => tile;
     public Color MapColor => mapColor;

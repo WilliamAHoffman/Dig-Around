@@ -4,15 +4,22 @@ using UnityEngine;
 public class ChunkLoader : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField, Min(0)] private int generateRange = 1;
-    [SerializeField, Min(0)] private int savedRange = 2;
+
+    [Header("Chunk Ranges")]
+    [SerializeField, Min(0)]
+    private int generateRange = 1;
+
+    [SerializeField, Min(0)]
+    private int savedRangeIncrease = 1;
 
     private readonly HashSet<Vector2Int> loadedChunks = new();
     private readonly HashSet<Vector2Int> requiredChunks = new();
-    private readonly HashSet<Vector2Int> chunksToUnload = new();
+    private readonly List<Vector2Int> chunksToUnload = new();
+    private readonly List<Vector2Int> chunksToLoad = new();
 
     private Vector2Int previousChunkPosition;
-    private int previousChunkRange = -1;
+    private int previousGenerateRange = -1;
+    private int previousSavedRangeIncrease = -1;
     private bool initialized;
 
     private ChunkManager ChunkManager =>
@@ -41,7 +48,8 @@ public class ChunkLoader : MonoBehaviour
 
         bool rangeChanged =
             !initialized ||
-            generateRange != previousChunkRange;
+            generateRange != previousGenerateRange ||
+            savedRangeIncrease != previousSavedRangeIncrease;
 
         if (!chunkChanged && !rangeChanged)
         {
@@ -49,7 +57,8 @@ public class ChunkLoader : MonoBehaviour
         }
 
         previousChunkPosition = currentChunkPosition;
-        previousChunkRange = generateRange;
+        previousGenerateRange = generateRange;
+        previousSavedRangeIncrease = savedRangeIncrease;
         initialized = true;
 
         UpdateLoadedChunks(currentChunkPosition);
@@ -66,63 +75,151 @@ public class ChunkLoader : MonoBehaviour
 
         requiredChunks.Clear();
         chunksToUnload.Clear();
+        chunksToLoad.Clear();
 
-        Vector2Int startLoad = new(
-            center.x - generateRange,
-            center.y - generateRange
+        int generateRangeSquared =
+            generateRange * generateRange;
+
+        int savedRange =
+            generateRange + savedRangeIncrease;
+
+        int savedRangeSquared =
+            savedRange * savedRange;
+
+        BuildRequiredChunkCircle(
+            center,
+            generateRange,
+            generateRangeSquared
         );
 
-        Vector2Int endLoad = new(
-            center.x + generateRange,
-            center.y + generateRange
+        FindChunksOutsideSavedRange(
+            center,
+            savedRangeSquared
         );
 
-        Vector2Int startSave = new(
-            center.x - savedRange,
-            center.y - savedRange
-        );
+        UnloadDistantChunks(chunkManager);
 
-        Vector2Int endSave = new(
-            center.x + savedRange,
-            center.y + savedRange
-        );
+        FindNewChunksToLoad();
 
-        for (int x = startLoad.x; x <= endLoad.x; x++)
-        {
-            for (int y = startLoad.y; y <= endLoad.y; y++)
+        chunksToLoad.Sort(
+            (first, second) =>
             {
-                requiredChunks.Add(new Vector2Int(x, y));
+                int firstDistance =
+                    SquaredDistance(first, center);
+
+                int secondDistance =
+                    SquaredDistance(second, center);
+
+                return firstDistance.CompareTo(
+                    secondDistance
+                );
+            }
+        );
+
+        foreach (Vector2Int chunkPosition in chunksToLoad)
+        {
+            loadedChunks.Add(chunkPosition);
+
+            chunkManager.QueueChunkForLoading(
+                chunkPosition
+            );
+        }
+    }
+
+    private void BuildRequiredChunkCircle(
+        Vector2Int center,
+        int radius,
+        int radiusSquared
+    )
+    {
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                int distanceSquared =
+                    x * x + y * y;
+
+                if (distanceSquared > radiusSquared)
+                {
+                    continue;
+                }
+
+                requiredChunks.Add(
+                    center + new Vector2Int(x, y)
+                );
             }
         }
+    }
 
-        // Do not modify a HashSet while iterating over it.
+    private void FindChunksOutsideSavedRange(
+        Vector2Int center,
+        int savedRangeSquared
+    )
+    {
         foreach (Vector2Int chunkPosition in loadedChunks)
         {
-            if (chunkPosition.x < startSave.x || chunkPosition.x > endSave.x || chunkPosition.y < startSave.y || chunkPosition.y > endSave.y)
+            int distanceSquared =
+                SquaredDistance(
+                    chunkPosition,
+                    center
+                );
+
+            if (distanceSquared > savedRangeSquared)
             {
                 chunksToUnload.Add(chunkPosition);
             }
         }
+    }
 
+    private void UnloadDistantChunks(
+        ChunkManager chunkManager
+    )
+    {
         foreach (Vector2Int chunkPosition in chunksToUnload)
         {
             chunkManager.UnloadChunk(chunkPosition);
             loadedChunks.Remove(chunkPosition);
         }
+    }
 
-        // Queue only newly required chunks instead of the entire box.
+    private void FindNewChunksToLoad()
+    {
         foreach (Vector2Int chunkPosition in requiredChunks)
         {
-            if (loadedChunks.Add(chunkPosition))
+            if (!loadedChunks.Contains(chunkPosition))
             {
-                chunkManager.QueueChunkForLoading(
-                    chunkPosition,
-                    render: true
-                );
+                chunksToLoad.Add(chunkPosition);
             }
         }
     }
-    
+
+    private static int SquaredDistance(
+        Vector2Int first,
+        Vector2Int second
+    )
+    {
+        int xDifference =
+            first.x - second.x;
+
+        int yDifference =
+            first.y - second.y;
+
+        return xDifference * xDifference +
+               yDifference * yDifference;
+    }
+
+    public void SetGenerateRange(int range)
+    {
+        generateRange = Mathf.Max(0, range);
+        initialized = false;
+    }
+
+    public void SetSavedRangeIncrease(int increase)
+    {
+        savedRangeIncrease = Mathf.Max(0, increase);
+        initialized = false;
+    }
+
     private void OnDisable()
     {
         ChunkManager chunkManager = ChunkManager;
@@ -138,25 +235,29 @@ public class ChunkLoader : MonoBehaviour
         loadedChunks.Clear();
         requiredChunks.Clear();
         chunksToUnload.Clear();
+        chunksToLoad.Clear();
 
         initialized = false;
-        previousChunkRange = -1;
+        previousGenerateRange = -1;
+        previousSavedRangeIncrease = -1;
     }
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        generateRange = Mathf.Max(0, generateRange);
-        savedRange = Mathf.Max(0, savedRange);
+        generateRange = Mathf.Max(
+            0,
+            generateRange
+        );
 
-        if(savedRange < generateRange)
-        {
-            savedRange = generateRange;
-        }
+        savedRangeIncrease = Mathf.Max(
+            0,
+            savedRangeIncrease
+        );
 
         if (Application.isPlaying)
         {
-            previousChunkRange = -1;
+            initialized = false;
         }
     }
 #endif

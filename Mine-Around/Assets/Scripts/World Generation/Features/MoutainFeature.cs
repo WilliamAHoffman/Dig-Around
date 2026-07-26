@@ -15,7 +15,7 @@ public class MountainFeature : GenerationFeature
     [Header("Rule")]
     [SerializeField] private GenerationRule rule;
 
-    public override GenerationResult Apply(Vector2Int location, float strength, GenerationResult result)
+    public override MapCell Apply(Vector2Int location, float strength, MapCell result)
     {
         if (densityNoise == null || rule == null)
             return result;

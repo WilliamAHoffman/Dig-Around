@@ -16,7 +16,7 @@ public class GenerationLayer : ScriptableObject
     [Header("Mode")]
     public GenerationLayerMode mode = GenerationLayerMode.PickBest;
 
-    public GenerationResult Generate(Vector2Int location, WorldSample worldSample, GenerationResult result)
+    public MapCell Generate(Vector2Int location, WorldSample worldSample, MapCell result)
     {
         if (features == null || features.Count == 0)
             return result;
@@ -34,7 +34,7 @@ public class GenerationLayer : ScriptableObject
         }
     }
 
-    private GenerationResult GenerateBest(Vector2Int location, WorldSample worldSample, GenerationResult result)
+    private MapCell GenerateBest(Vector2Int location, WorldSample worldSample, MapCell result)
     {
         GenerationFeature bestFeature = null;
         float bestScore = float.MinValue;
@@ -62,7 +62,7 @@ public class GenerationLayer : ScriptableObject
         return bestFeature.Apply(location, bestScore, result);
     }
 
-    private GenerationResult GenerateAll(Vector2Int location, WorldSample worldSample, GenerationResult result)
+    private MapCell GenerateAll(Vector2Int location, WorldSample worldSample, MapCell result)
     {
         foreach (GenerationFeature feature in features)
         {

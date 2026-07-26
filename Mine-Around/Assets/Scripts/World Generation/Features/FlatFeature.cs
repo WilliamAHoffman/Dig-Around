@@ -4,7 +4,7 @@ using UnityEngine;
 public class FlatFeature : GenerationFeature
 {
     [SerializeField] GenerationRule rule;
-    public override GenerationResult Apply(Vector2Int location, float strength, GenerationResult result)
+    public override MapCell Apply(Vector2Int location, float strength, MapCell result)
     {
         return rule.Apply(result);
     }

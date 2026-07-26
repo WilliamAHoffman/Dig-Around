@@ -125,7 +125,6 @@ public class ChunkManager : MonoBehaviour
             render
         );
     }
-
     public Chunk GetOrCreateChunk(
         Vector2Int chunkPosition,
         bool render = false
@@ -163,6 +162,30 @@ public class ChunkManager : MonoBehaviour
         return chunk;
     }
 
+    public void AsyncCreateRadius(
+        Vector2Int center,
+        int radius
+    )
+    {
+        int radiusSquared = radius * radius;
+
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                Vector2Int offset = new(x, y);
+
+                if (offset.sqrMagnitude > radiusSquared)
+                {
+                    continue;
+                }
+
+                QueueChunk(center + offset);
+            }
+        }
+
+        StartLoadingCoroutine();
+    }
     public void UnloadChunk(Vector2Int chunkPosition)
     {
         if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
@@ -379,8 +402,7 @@ public class ChunkManager : MonoBehaviour
     {
         Chunk chunk = GetOrAddChunk(chunkPosition);
 
-        if (chunk.State == ChunkState.Rendered ||
-            chunk.State == ChunkState.Generated)
+        if (chunk.State == ChunkState.Rendered)
         {
             return;
         }
@@ -400,8 +422,7 @@ public class ChunkManager : MonoBehaviour
     }
 
     public void QueueChunkForLoading(
-        Vector2Int chunkPosition,
-        bool render = true
+        Vector2Int chunkPosition
     )
     {
         QueueChunk(chunkPosition);

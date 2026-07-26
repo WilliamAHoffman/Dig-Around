@@ -12,40 +12,58 @@ public class WorldGenerator : ScriptableObject
 
     public Chunk GenerateChunk(Vector2Int chunkLocation, Chunk chunk)
     {
-        for (int x = 0; x < chunk.ChunkSize; x++)
-        {
-            for (int y = 0; y < chunk.ChunkSize; y++)
-            {
-                Vector2Int localPos = new Vector2Int(x, y);
-                Vector2Int worldPos = localPos + chunkLocation * chunk.ChunkSize;
-                GenerationResult result = GenerateLocation(worldPos);
+        int defaultTile = gameDatabase.GetDefaultAsset<TileDataAsset>().ID;
 
-                chunk.SetChunkCellValues(localPos, result.MapCellValues());
+        for (int y = 0; y < chunk.ChunkSize; y++)
+        {
+            for (int x = 0; x < chunk.ChunkSize; x++)
+            {
+                Vector2Int localPosition = new(x, y);
+
+                Vector2Int worldPosition =
+                    chunkLocation * chunk.ChunkSize +
+                    localPosition;
+
+                MapCell result = GenerateLocation(
+                    worldPosition,
+                    defaultTile,
+                    defaultTile
+                );
+
+                chunk.SetChunkCellValues(
+                    localPosition,
+                    result
+                );
             }
         }
 
         return chunk;
     }
 
-    private GenerationResult GenerateLocation(Vector2Int worldPos)
+    private MapCell GenerateLocation(
+        Vector2Int worldPosition,
+        int defaultFloor,
+        int defaultWall
+    )
     {
+        WorldSample worldSample = worldSampler.Sample(worldPosition);
 
-        if (worldSampler == null)
-        {
-            Debug.LogError("WorldGenerator has no WorldSampler assigned.", this);
-            return default;
-        }
-
-        WorldSample worldSample = worldSampler.Sample(worldPos);
-        GenerationResult result = new GenerationResult(gameDatabase.GetDefaultAsset<TileDataAsset>(), gameDatabase.GetDefaultAsset<TileDataAsset>());
-
-        if (worldLayers == null)
-            return result;
+        MapCell result = new MapCell(defaultFloor, defaultWall);
 
         foreach (GenerationLayer layer in worldLayers)
         {
-            result = layer.Generate(worldPos, worldSample, result);
+            if (layer == null)
+            {
+                continue;
+            }
+
+            result = layer.Generate(
+                worldPosition,
+                worldSample,
+                result
+            );
         }
+
         return result;
     }
 }

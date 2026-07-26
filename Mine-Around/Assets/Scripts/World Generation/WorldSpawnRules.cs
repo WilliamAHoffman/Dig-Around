@@ -9,8 +9,10 @@ public class WorldGenerationRule : ScriptableObject
     public float minSimilarity = 0.5f;
     public float Similarity(WorldSample worldSample)
     {
-        if (idealSample == null || idealSample == null || idealSample.targets.Count == 0)
+        if (idealSample == null || idealSample.targets == null || idealSample.targets.Count == 0)
+        {
             return 0f;
+        }
 
         float weightedDifference = 0f;
         float totalImportance = 0f;

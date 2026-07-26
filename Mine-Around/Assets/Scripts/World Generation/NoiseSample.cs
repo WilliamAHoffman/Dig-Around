@@ -5,29 +5,29 @@ using UnityEngine;
 //all go with NoiseSampler
 public enum WorldSampleType
 {
-    elevation,
-    temperature
+    Elevation,
+    Temperature
 }
 [Serializable]
-public class WorldSample
+public readonly struct WorldSample
 {
-    [SerializeField] public List<WorldSampleType> keys = new List<WorldSampleType>();
-    [SerializeField] public List<float> values = new List<float>();
+    public readonly float Elevation;
+    public readonly float Temperature;
 
-    public void Add(WorldSampleType type, float value)
+    public WorldSample(float elevation, float temperature)
     {
-        keys.Add(type);
-        values.Add(value);
+        Elevation = elevation;
+        Temperature = temperature;
     }
 
     public float GetValue(WorldSampleType type)
     {
-        if (!keys.Contains(type))
+        return type switch
         {
-            Debug.LogError("World sample does not contain this type");
-            return 0;
-        }
-        return values[keys.IndexOf(type)];
+            WorldSampleType.Elevation => Elevation,
+            WorldSampleType.Temperature => Temperature,
+            _ => 0f
+        };
     }
 }
 
@@ -38,9 +38,9 @@ public class TargetWorldSample
 
     public TargetWorldSampleEntry GetEntry(WorldSampleType type)
     {
-        foreach(TargetWorldSampleEntry tws in targets)
+        foreach (TargetWorldSampleEntry tws in targets)
         {
-            if(tws.type == type)
+            if (tws.type == type)
             {
                 return tws;
             }
@@ -52,9 +52,9 @@ public class TargetWorldSample
 
     public bool HasEntry(WorldSampleType type)
     {
-        foreach(TargetWorldSampleEntry tws in targets)
+        foreach (TargetWorldSampleEntry tws in targets)
         {
-            if(tws.type == type)
+            if (tws.type == type)
             {
                 return true;
             }

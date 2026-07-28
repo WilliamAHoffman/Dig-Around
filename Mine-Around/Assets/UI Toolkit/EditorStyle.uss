@@ -1,0 +1,13 @@
+:root {
+}
+
+.header {
+    width: auto;
+    height: auto;
+    font-size: 64px;
+    -unity-font-style: bold;
+    -unity-font-definition: url("project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=54f335835fa13c642b31d20ae309f4d1&type=3#NotInter-Regular");
+    -unity-text-outline-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    -unity-text-outline-width: 3px;
+}

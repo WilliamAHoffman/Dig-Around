@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/EditorStyle.uss?fileID=7433441132597879392&amp;guid=f39169aa991a1174fa87efb6473eea42&amp;type=3#EditorStyle"/>
+    <ui:Label text="World Editor" class="header"/>
+    <ui:ListView style="color: rgb(255, 255, 255); -unity-text-outline-width: 2px; -unity-text-outline-color: rgb(0, 0, 0); font-size: 32px;"/>
+</ui:UXML>

@@ -1,16 +1,22 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public sealed class PlayerDebugCommands : MonoBehaviour
 {
     [Header("Input")]
     [SerializeField] private InputActionReference teleportAction;
     [SerializeField] private InputActionReference toggleCollision;
+    [SerializeField] private InputActionReference toggleEditor;
 
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Collider2D playerCollider;
+    [SerializeField] private UIDocument worldEditor;
+
+    private bool editorOpened;
+    
 
     private void Awake()
     {
@@ -34,6 +40,9 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
         toggleCollision.action.performed += ToggleIntangible;
         toggleCollision.action.Enable();
+
+        toggleEditor.action.performed += ToggleEditor;
+        toggleEditor.action.Enable();
     }
 
     private void OnDisable()
@@ -43,6 +52,9 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
         toggleCollision.action.performed -= ToggleIntangible;
         toggleCollision.action.Disable();
+
+        toggleEditor.action.performed -= ToggleEditor;
+        toggleEditor.action.Disable();
     }
 
     public void SetIntangible(bool isIntangible)
@@ -56,6 +68,19 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         Debug.Log(playerCollider + " switched to: " + playerCollider.enabled);
     }
 
+    public void ToggleEditor(InputAction.CallbackContext context)
+    {
+        editorOpened = !editorOpened;
+        if (editorOpened)
+        {
+            worldEditor.rootVisualElement.style.display = DisplayStyle.Flex;
+        }
+        else
+        {
+            worldEditor.rootVisualElement.style.display = DisplayStyle.None;
+        }
+    }
+
     public void TeleportTo(Vector2 worldPosition)
     {
         playerMovement.Teleport(worldPosition);
@@ -63,6 +88,7 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
     private void OnTeleport(InputAction.CallbackContext context)
     {
+        if(editorOpened) return;
         if (Mouse.current == null)
         {
             return;

@@ -1,19 +1,21 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
 
 public class WorldEditorPopulate : MonoBehaviour
 {
     private UIDocument uiDocument;
     private ListView listView;
-    private List<string> listData;
+    [SerializeField] GameDatabase gameDatabase;
+    private List<TileDataAsset> listData;
 
     void OnEnable()
     {
         uiDocument = GetComponent<UIDocument>();
-        
-        // 1. Generate data for the list
-        listData = new List<string> { "Warrior", "Mage", "Rogue", "Paladin", "Cleric" };
+
+        listData = gameDatabase.GetAllAssetsOfType<TileDataAsset>();
 
         // 2. Locate the ListView inside the UXML
         listView = uiDocument.rootVisualElement.Q<ListView>();
@@ -28,7 +30,7 @@ public class WorldEditorPopulate : MonoBehaviour
         listView.bindItem = (visualElement, index) => 
         {
             var label = visualElement as Label;
-            label.text = listData[index];
+            label.text = listData[index].NameID;
             label.style.paddingLeft = 10; // Basic styling via code
             label.style.unityTextAlign = TextAnchor.MiddleLeft;
         };
@@ -42,7 +44,7 @@ public class WorldEditorPopulate : MonoBehaviour
         // Get the chosen item safely
         foreach (var item in selectedItems)
         {
-            Debug.Log($"Selected character class: {item}");
+            Debug.Log($"Selected tile: {item}");
         }
     }
 

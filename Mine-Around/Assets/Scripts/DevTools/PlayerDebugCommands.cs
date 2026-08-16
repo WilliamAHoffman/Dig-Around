@@ -4,19 +4,39 @@ using UnityEngine.UIElements;
 
 public sealed class PlayerDebugCommands : MonoBehaviour
 {
+    #region Input
+
     [Header("Input")]
-    [SerializeField] private InputActionReference teleportAction;
+    [SerializeField] private InputActionReference clickAction;
     [SerializeField] private InputActionReference toggleCollision;
     [SerializeField] private InputActionReference toggleEditor;
+
+    #endregion
+
+    #region References
 
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Collider2D playerCollider;
+    [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private UIDocument worldEditorList;
     [SerializeField] private WorldEditor worldEditor;
 
+    #endregion
+
+    #region State
+
     private bool editorOpened;
+    private bool clickStartedOnUI;
+
+    private Vector2Int? lastPlacedBlock;
+
+    private VisualElement editorPanel;
+
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -31,14 +51,29 @@ public sealed class PlayerDebugCommands : MonoBehaviour
             return;
         }
 
+        editorPanel = worldEditorList.rootVisualElement
+            .Q<VisualElement>("WorldEditorPanel");
+
+        if (editorPanel == null)
+        {
+            Debug.LogError(
+                "Could not find a VisualElement named 'WorldEditorPanel'.",
+                this
+            );
+        }
+
         editorOpened = false;
-        worldEditorList.rootVisualElement.style.display = DisplayStyle.None;
+        clickStartedOnUI = false;
+        lastPlacedBlock = null;
+
+        worldEditorList.rootVisualElement.style.display =
+            DisplayStyle.None;
     }
 
     private void OnEnable()
     {
-        teleportAction.action.performed += OnClick;
-        teleportAction.action.Enable();
+        clickAction.action.performed += OnClick;
+        clickAction.action.Enable();
 
         toggleCollision.action.performed += ToggleIntangible;
         toggleCollision.action.Enable();
@@ -49,10 +84,10 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
     private void OnDisable()
     {
-        if (teleportAction != null)
+        if (clickAction != null)
         {
-            teleportAction.action.performed -= OnClick;
-            teleportAction.action.Disable();
+            clickAction.action.performed -= OnClick;
+            clickAction.action.Disable();
         }
 
         if (toggleCollision != null)
@@ -68,14 +103,58 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (clickAction == null || Mouse.current == null)
+        {
+            return;
+        }
+
+        if (clickAction.action.WasPressedThisFrame())
+        {
+            Vector2 screenPosition =
+                Mouse.current.position.ReadValue();
+
+            clickStartedOnUI =
+                editorOpened &&
+                IsPointerOverEditorUI(screenPosition);
+
+            lastPlacedBlock = null;
+        }
+
+        if (clickAction.action.IsPressed())
+        {
+            if (editorOpened && !clickStartedOnUI)
+            {
+                PlaceBlocks();
+            }
+        }
+
+        if (clickAction.action.WasReleasedThisFrame())
+        {
+            clickStartedOnUI = false;
+            lastPlacedBlock = null;
+        }
+    }
+
+    #endregion
+
+    #region Collision
+
     public void SetIntangible(bool isIntangible)
     {
         playerCollider.enabled = !isIntangible;
+
+        UpdatePlayerTransparency();
     }
 
-    private void ToggleIntangible(InputAction.CallbackContext context)
+    private void ToggleIntangible(
+        InputAction.CallbackContext context
+    )
     {
         playerCollider.enabled = !playerCollider.enabled;
+
+        UpdatePlayerTransparency();
 
         Debug.Log(
             $"Player collider switched to: {playerCollider.enabled}",
@@ -83,7 +162,29 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         );
     }
 
-    private void ToggleEditor(InputAction.CallbackContext context)
+    private void UpdatePlayerTransparency()
+    {
+        if (playerRenderer == null)
+        {
+            return;
+        }
+
+        Color color = playerRenderer.color;
+
+        color.a = playerCollider.enabled
+            ? 1f
+            : 0.5f;
+
+        playerRenderer.color = color;
+    }
+
+    #endregion
+
+    #region Editor
+
+    private void ToggleEditor(
+        InputAction.CallbackContext context
+    )
     {
         editorOpened = !editorOpened;
 
@@ -91,24 +192,22 @@ public sealed class PlayerDebugCommands : MonoBehaviour
             editorOpened
                 ? DisplayStyle.Flex
                 : DisplayStyle.None;
+
+        clickStartedOnUI = false;
+        lastPlacedBlock = null;
     }
 
-    private void TeleportTo(Vector2 worldPosition)
+    private void PlaceBlocks()
     {
-        playerMovement.Teleport(worldPosition);
-    }
-
-    private void OnClick(InputAction.CallbackContext context)
-    {
-        if (Mouse.current == null)
+        if (!editorOpened || Mouse.current == null)
         {
             return;
         }
 
-        Vector2 screenPosition = Mouse.current.position.ReadValue();
+        Vector2 screenPosition =
+            Mouse.current.position.ReadValue();
 
-        // Don't place/edit cells when clicking on the editor UI.
-        if (editorOpened && IsPointerOverEditorUI(screenPosition))
+        if (IsPointerOverEditorUI(screenPosition))
         {
             return;
         }
@@ -116,54 +215,84 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         Vector3 worldPosition =
             playerCamera.ScreenToWorldPoint(screenPosition);
 
-        if (editorOpened)
-        {
-            Vector2Int blockPosition =
-                ChunkUtilities.WorldToBlockCoord(worldPosition);
+        Vector2Int blockPosition =
+            ChunkUtilities.WorldToBlockCoord(worldPosition);
 
-            worldEditor.SetSelectedCell(blockPosition);
-        }
-        else
+        if (lastPlacedBlock.HasValue &&
+            lastPlacedBlock.Value == blockPosition)
         {
-            TeleportTo(
-                new Vector2(
-                    worldPosition.x,
-                    worldPosition.y
-                )
-            );
+            return;
         }
+
+        worldEditor.SetSelectedCell(blockPosition);
+
+        lastPlacedBlock = blockPosition;
     }
 
-    private bool IsPointerOverEditorUI(Vector2 screenPosition)
+    private bool IsPointerOverEditorUI(
+        Vector2 screenPosition
+    )
     {
-        VisualElement root = worldEditorList.rootVisualElement;
-
-        if (root.panel == null)
+        if (!editorOpened ||
+            editorPanel == null ||
+            editorPanel.panel == null)
         {
             return false;
         }
 
         Vector2 panelPosition =
             RuntimePanelUtils.ScreenToPanel(
-                root.panel,
+                editorPanel.panel,
                 screenPosition
             );
 
-        VisualElement element =
-            root.panel.Pick(panelPosition);
-
-        return element != null &&
-               element != root;
+        return editorPanel.worldBound.Contains(panelPosition);
     }
+
+    #endregion
+
+    #region Teleport
+
+    private void TeleportTo(Vector2 worldPosition)
+    {
+        playerMovement.Teleport(worldPosition);
+    }
+
+    private void OnClick(
+        InputAction.CallbackContext context
+    )
+    {
+        if (Mouse.current == null || editorOpened)
+        {
+            return;
+        }
+
+        Vector2 screenPosition =
+            Mouse.current.position.ReadValue();
+
+        Vector3 worldPosition =
+            playerCamera.ScreenToWorldPoint(screenPosition);
+
+        TeleportTo(
+            new Vector2(
+                worldPosition.x,
+                worldPosition.y
+            )
+        );
+    }
+
+    #endregion
+
+    #region Validation
 
     private bool ValidateReferences()
     {
         bool isValid = true;
 
-        if (teleportAction == null)
+        if (clickAction == null)
         {
             Debug.LogError(
-                "Teleport action is not assigned.",
+                "ClickAction is not assigned.",
                 this
             );
 
@@ -220,6 +349,16 @@ public sealed class PlayerDebugCommands : MonoBehaviour
             isValid = false;
         }
 
+        if (playerRenderer == null)
+        {
+            Debug.LogError(
+                "Player renderer is not assigned.",
+                this
+            );
+
+            isValid = false;
+        }
+
         if (worldEditorList == null)
         {
             Debug.LogError(
@@ -242,4 +381,6 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
         return isValid;
     }
+
+    #endregion
 }

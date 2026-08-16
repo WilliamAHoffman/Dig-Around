@@ -726,8 +726,7 @@ public class ChunkManager : MonoBehaviour
             ChunkState.Rendered;
     }
 
-    private void UnRenderChunk(
-        Vector2Int chunkPosition)
+    private void UnRenderChunk(Vector2Int chunkPosition)
     {
         if (!chunks.TryGetValue(
                 chunkPosition,
@@ -741,8 +740,11 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        if (!HasValidTilemaps())
+        // During scene teardown / Play Mode shutdown,
+        // Tilemaps may already have been destroyed.
+        if (walls == null || floors == null)
         {
+            chunk.State = ChunkState.Generated;
             return;
         }
 

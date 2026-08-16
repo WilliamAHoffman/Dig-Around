@@ -2,19 +2,23 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-//all go with NoiseSampler
 public enum WorldSampleType
 {
     Elevation,
     Temperature
 }
+
+#region World Sample
+
 [Serializable]
 public readonly struct WorldSample
 {
     public readonly float Elevation;
     public readonly float Temperature;
 
-    public WorldSample(float elevation, float temperature)
+    public WorldSample(
+        float elevation,
+        float temperature)
     {
         Elevation = elevation;
         Temperature = temperature;
@@ -24,57 +28,100 @@ public readonly struct WorldSample
     {
         return type switch
         {
-            WorldSampleType.Elevation => Elevation,
-            WorldSampleType.Temperature => Temperature,
+            WorldSampleType.Elevation =>
+                Elevation,
+
+            WorldSampleType.Temperature =>
+                Temperature,
+
             _ => 0f
         };
     }
 }
 
+#endregion
+
+#region Target World Sample
+
 [Serializable]
 public class TargetWorldSample
 {
-    [SerializeField] public List<TargetWorldSampleEntry> targets = new List<TargetWorldSampleEntry>();
+    [SerializeField]
+    private List<TargetWorldSampleEntry> targets = new();
 
-    public TargetWorldSampleEntry GetEntry(WorldSampleType type)
+    public IReadOnlyList<TargetWorldSampleEntry> Targets =>
+        targets;
+
+    public bool TryGetEntry(
+        WorldSampleType type,
+        out TargetWorldSampleEntry entry)
     {
-        foreach (TargetWorldSampleEntry tws in targets)
+        if (targets != null)
         {
-            if (tws.type == type)
+            foreach (TargetWorldSampleEntry target in targets)
             {
-                return tws;
+                if (target.type != type)
+                {
+                    continue;
+                }
+
+                entry = target;
+                return true;
             }
         }
 
-        Debug.LogError("World sample does not contain this type! (returning: index 0)");
-        return targets[0];
+        entry = default;
+
+        return false;
+    }
+
+    public TargetWorldSampleEntry GetEntry(
+        WorldSampleType type)
+    {
+        if (TryGetEntry(type, out TargetWorldSampleEntry entry))
+        {
+            return entry;
+        }
+
+        Debug.LogError(
+            $"Target world sample does not contain {type}."
+        );
+
+        return default;
     }
 
     public bool HasEntry(WorldSampleType type)
     {
-        foreach (TargetWorldSampleEntry tws in targets)
-        {
-            if (tws.type == type)
-            {
-                return true;
-            }
-        }
-        Debug.LogError("World sample does not contain this type!");
-        return false;
+        return TryGetEntry(
+            type,
+            out _
+        );
     }
 }
+
+#endregion
+
+#region Sample Entries
 
 [Serializable]
 public struct WorldSampleEntry
 {
     public WorldSampleType type;
-    [Range(-1f, 1f)] public float value;
+
+    [Range(-1f, 1f)]
+    public float value;
 }
 
 [Serializable]
 public struct TargetWorldSampleEntry
 {
     public WorldSampleType type;
-    [Range(-1f, 1f)] public float value;
-    [Min(0f)] public float importance;
+
+    [Range(-1f, 1f)]
+    public float value;
+
+    [Min(0f)]
+    public float importance;
 }
+
+#endregion

@@ -1,43 +1,81 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GenerationRule", menuName = "World Generation/Generation Rule")]
+[CreateAssetMenu(
+    fileName = "GenerationRule",
+    menuName = "World Generation/Generation Rule"
+)]
 public class GenerationRule : ScriptableObject
 {
-    public List<TileDataAsset> requiredFloor = new();
-    public List<TileDataAsset> requiredWall = new();
-    public List<TileDataAsset> excludedFloor = new();
-    public List<TileDataAsset> excludedWall = new();
-    private List<int> requiredFloorID = null;
-    private List<int> requiredWallID = null;
-    private List<int> excludedFloorID = null;
-    private List<int> excludedWallID = null;
-    private bool Initialized = false;
+    #region Tile Restrictions
+
+    [Header("Required Tiles")]
+    [SerializeField]
+    private List<TileDataAsset> requiredFloor = new();
+
+    [SerializeField]
+    private List<TileDataAsset> requiredWall = new();
+
+    [Header("Excluded Tiles")]
+    [SerializeField]
+    private List<TileDataAsset> excludedFloor = new();
+
+    [SerializeField]
+    private List<TileDataAsset> excludedWall = new();
+
+    #endregion
+
+    #region Replacement
 
     [Header("Replacement")]
-    public TileDataAsset newFloor;
-    public TileDataAsset newWall;
+    [SerializeField]
+    private TileDataAsset newFloor;
 
-    private void CheckListInitialized()
+    [SerializeField]
+    private TileDataAsset newWall;
+
+    #endregion
+
+    #region Cached IDs
+
+    private readonly HashSet<int> requiredFloorIDs = new();
+    private readonly HashSet<int> requiredWallIDs = new();
+
+    private readonly HashSet<int> excludedFloorIDs = new();
+    private readonly HashSet<int> excludedWallIDs = new();
+
+    #endregion
+
+    #region Lifecycle
+
+    private void OnEnable()
     {
-        if(Initialized) return;
-
-        requiredFloor.ForEach(n => requiredFloorID.Add(n.ID));
-        requiredWall.ForEach(n => requiredWallID.Add(n.ID));
-        excludedFloor.ForEach(n => excludedFloorID.Add(n.ID));
-        excludedWall.ForEach(n => excludedWallID.Add(n.ID));
-        Initialized = true;
+        RebuildCache();
     }
+
+#if UNITY_EDITOR
+
+    private void OnValidate()
+    {
+        RebuildCache();
+    }
+
+#endif
+
+    #endregion
+
+    #region Application
+
     public MapCell Apply(MapCell result)
     {
-        CheckListInitialized();
-
-        if (CanReplaceFloor(result.FloorID) && newFloor)
+        if (newFloor != null &&
+            CanReplaceFloor(result.FloorID))
         {
             result.FloorID = newFloor.ID;
         }
 
-        if (CanReplaceWall(result.WallID) && newWall)
+        if (newWall != null &&
+            CanReplaceWall(result.WallID))
         {
             result.WallID = newWall.ID;
         }
@@ -45,31 +83,88 @@ public class GenerationRule : ScriptableObject
         return result;
     }
 
-    private bool CanReplaceFloor(int current)
+    #endregion
+
+    #region Replacement Rules
+
+    private bool CanReplaceFloor(int currentTileID)
     {
-        bool required =
-            requiredFloorID.Count == 0 ||
-            requiredFloorID.Contains(current);
+        bool meetsRequiredCondition =
+            requiredFloorIDs.Count == 0 ||
+            requiredFloorIDs.Contains(currentTileID);
 
-        bool excluded =
-            excludedFloorID.Contains(current);
+        bool isExcluded =
+            excludedFloorIDs.Contains(currentTileID);
 
-        return required &&
-               !excluded &&
-               newFloor != null;
+        return meetsRequiredCondition &&
+               !isExcluded;
     }
 
-    private bool CanReplaceWall(int current)
+    private bool CanReplaceWall(int currentTileID)
     {
-        bool required =
-            requiredWallID.Count == 0 ||
-            requiredWallID.Contains(current);
+        bool meetsRequiredCondition =
+            requiredWallIDs.Count == 0 ||
+            requiredWallIDs.Contains(currentTileID);
 
-        bool excluded =
-            excludedWallID.Contains(current);
+        bool isExcluded =
+            excludedWallIDs.Contains(currentTileID);
 
-        return required &&
-               !excluded &&
-               newFloor != null;
+        return meetsRequiredCondition &&
+               !isExcluded;
     }
+
+    #endregion
+
+    #region Cache
+
+    private void RebuildCache()
+    {
+        requiredFloorIDs.Clear();
+        requiredWallIDs.Clear();
+
+        excludedFloorIDs.Clear();
+        excludedWallIDs.Clear();
+
+        AddTileIDs(
+            requiredFloor,
+            requiredFloorIDs
+        );
+
+        AddTileIDs(
+            requiredWall,
+            requiredWallIDs
+        );
+
+        AddTileIDs(
+            excludedFloor,
+            excludedFloorIDs
+        );
+
+        AddTileIDs(
+            excludedWall,
+            excludedWallIDs
+        );
+    }
+
+    private static void AddTileIDs(
+        List<TileDataAsset> tiles,
+        HashSet<int> destination)
+    {
+        if (tiles == null)
+        {
+            return;
+        }
+
+        foreach (TileDataAsset tile in tiles)
+        {
+            if (tile == null)
+            {
+                continue;
+            }
+
+            destination.Add(tile.ID);
+        }
+    }
+
+    #endregion
 }

@@ -31,6 +31,9 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
             Destroy(GameObject);
         #endif
+
+        editorOpened = false;
+        worldEditor.rootVisualElement.style.display = DisplayStyle.None;
     }
 
     private void OnEnable()

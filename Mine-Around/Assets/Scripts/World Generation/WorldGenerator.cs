@@ -1,34 +1,79 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WorldGenerator", menuName = "World Generation/World Generator")]
+[CreateAssetMenu(
+    fileName = "WorldGenerator",
+    menuName = "World Generation/World Generator"
+)]
 public class WorldGenerator : ScriptableObject
 {
     [Header("Layers")]
-    [SerializeField] private List<GenerationLayer> worldLayers;
-    [Header("Noise Sample")]
-    [SerializeField] private WorldSampler worldSampler;
-    public GameDatabase gameDatabase;
+    [SerializeField]
+    private List<GenerationLayer> worldLayers = new();
 
-    public Chunk GenerateChunk(Vector2Int chunkLocation, Chunk chunk)
+    [Header("World Sampling")]
+    [SerializeField]
+    private WorldSampler worldSampler;
+
+    [Header("Database")]
+    [SerializeField]
+    private GameDatabase gameDatabase;
+
+    public Chunk GenerateChunk(
+        Vector2Int chunkPosition,
+        Chunk chunk)
     {
-        int defaultTile = gameDatabase.GetDefaultAsset<TileDataAsset>().ID;
+        if (!ValidateReferences())
+        {
+            return chunk;
+        }
+
+        if (chunk == null)
+        {
+            Debug.LogError(
+                "Cannot generate a null chunk.",
+                this
+            );
+
+            return null;
+        }
+
+        TileDataAsset defaultTile =
+            gameDatabase.GetDefaultAsset<TileDataAsset>();
+
+        if (defaultTile == null)
+        {
+            Debug.LogError(
+                "GameDatabase does not contain a default TileDataAsset.",
+                this
+            );
+
+            return chunk;
+        }
+
+        int defaultTileID =
+            defaultTile.ID;
 
         for (int y = 0; y < chunk.ChunkSize; y++)
         {
             for (int x = 0; x < chunk.ChunkSize; x++)
             {
-                Vector2Int localPosition = new(x, y);
+                Vector2Int localPosition =
+                    new(x, y);
 
                 Vector2Int worldPosition =
-                    chunkLocation * chunk.ChunkSize +
-                    localPosition;
+                    ChunkUtilities.LocalToWorldCoord(
+                        localPosition,
+                        chunkPosition,
+                        chunk.ChunkSize
+                    );
 
-                MapCell result = GenerateLocation(
-                    worldPosition,
-                    defaultTile,
-                    defaultTile
-                );
+                MapCell result =
+                    GenerateLocation(
+                        worldPosition,
+                        defaultTileID,
+                        defaultTileID
+                    );
 
                 chunk.SetCell(
                     localPosition,
@@ -40,15 +85,28 @@ public class WorldGenerator : ScriptableObject
         return chunk;
     }
 
+    #region Location Generation
+
     private MapCell GenerateLocation(
         Vector2Int worldPosition,
         int defaultFloor,
-        int defaultWall
-    )
+        int defaultWall)
     {
-        WorldSample worldSample = worldSampler.Sample(worldPosition);
+        WorldSample worldSample =
+            worldSampler.Sample(
+                worldPosition
+            );
 
-        MapCell result = new MapCell(defaultFloor, defaultWall);
+        MapCell result =
+            new(
+                defaultFloor,
+                defaultWall
+            );
+
+        if (worldLayers == null)
+        {
+            return result;
+        }
 
         foreach (GenerationLayer layer in worldLayers)
         {
@@ -66,4 +124,35 @@ public class WorldGenerator : ScriptableObject
 
         return result;
     }
+
+    #endregion
+
+    #region Validation
+
+    private bool ValidateReferences()
+    {
+        if (worldSampler == null)
+        {
+            Debug.LogError(
+                $"{name} is missing a WorldSampler.",
+                this
+            );
+
+            return false;
+        }
+
+        if (gameDatabase == null)
+        {
+            Debug.LogError(
+                $"{name} is missing a GameDatabase.",
+                this
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    #endregion
 }

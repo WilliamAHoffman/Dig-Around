@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GenerationLayer
   features:
   - {fileID: 11400000, guid: c7c2dd6988bb7484d8b8a4000a3dd548, type: 2}
-  mode: 0
+  mode: 1

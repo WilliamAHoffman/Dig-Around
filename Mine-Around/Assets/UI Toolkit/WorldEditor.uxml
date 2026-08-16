@@ -1,5 +1,10 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/EditorStyle.uss?fileID=7433441132597879392&amp;guid=f39169aa991a1174fa87efb6473eea42&amp;type=3#EditorStyle"/>
-    <ui:Label text="World Editor" class="header"/>
-    <ui:ListView style="color: rgb(255, 255, 255); -unity-text-outline-width: 2px; -unity-text-outline-color: rgb(0, 0, 0); font-size: 32px;"/>
+    <ui:Label text="World Editor" class="header" style="opacity: 0.5; -unity-font-style: bold; font-size: 128px; width: 916px;"/>
+    <ui:Label text="Wall" class="header" style="opacity: 0.5; font-size: 90px; width: 362px;"/>
+    <ui:ListView name="Walls" style="color: rgb(255, 255, 255); -unity-text-outline-width: 2px; -unity-text-outline-color: rgb(0, 0, 0); font-size: 32px; width: 344px;"/>
+    <ui:Toggle label="Place Walls" name="ToggleWalls" style="width: 259px; position: relative; flex-direction: row-reverse; margin-right: 4px; font-size: 32px; color: rgba(255, 255, 255, 0.48); -unity-text-outline-width: 1px; -unity-font-style: bold; -unity-text-outline-color: rgb(0, 0, 0); padding-right: 1px;"/>
+    <ui:Label text="Floor" class="header" style="opacity: 0.5; white-space: nowrap; align-self: auto; font-size: 90px; width: 356px;"/>
+    <ui:ListView name="Floors" style="color: rgb(255, 255, 255); -unity-text-outline-width: 2px; -unity-text-outline-color: rgb(0, 0, 0); font-size: 32px; width: 344px;"/>
+    <ui:Toggle label="Place Floors" name="ToggleFloors" style="width: 269px; position: relative; flex-direction: row-reverse; margin-right: 4px; font-size: 32px; color: rgba(255, 255, 255, 0.48); -unity-text-outline-width: 1px; -unity-font-style: bold; -unity-text-outline-color: rgb(0, 0, 0); padding-right: 1px;"/>
 </ui:UXML>

@@ -790,7 +790,6 @@ public class ChunkManager : MonoBehaviour
             positions,
             emptyTiles
         );
-
         chunk.State =
             ChunkState.Generated;
     }
@@ -906,5 +905,154 @@ public class ChunkManager : MonoBehaviour
         return false;
     }
 
+    #endregion
+
+    #region Tile Placement
+
+    public bool SetWallAtWorldPosition(
+    Vector2Int worldPosition,
+    int tileID)
+    {
+        if (!TryGetChunkAndLocalPosition(
+                worldPosition,
+                out Chunk chunk,
+                out Vector2Int localPosition))
+        {
+            return false;
+        }
+
+        chunk.SetWallTile(
+            localPosition,
+            tileID
+        );
+
+        UpdateWallTile(
+            worldPosition,
+            tileID
+        );
+
+        return true;
+    }
+
+    private void UpdateWallTile(
+    Vector2Int worldPosition,
+    int tileID)
+    {
+        if (walls == null)
+        {
+            return;
+        }
+
+        if (TryGetChunkAndLocalPosition(
+                worldPosition,
+                out Chunk chunk,
+                out Vector2Int localPosition))
+        {
+            if (chunk.State != ChunkState.Rendered)
+            {
+                return;
+            }
+        }
+
+
+        TileDataAsset tileData =
+            GetTileData(tileID);
+
+        Vector3Int tilePosition =
+            new(
+                worldPosition.x,
+                worldPosition.y,
+                0
+            );
+
+        walls.SetTile(
+            tilePosition,
+            tileData != null
+                ? tileData.Tile
+                : null
+        );
+    }
+
+    public bool BreakWallAtWorldPosition(
+    Vector2Int worldPosition)
+    {
+        return SetWallAtWorldPosition(
+            worldPosition,
+            -1
+        );
+    }
+
+    private void UpdateFloorTile(
+    Vector2Int worldPosition,
+    int tileID)
+    {
+        if (floors == null)
+        {
+            return;
+        }
+
+        if (TryGetChunkAndLocalPosition(
+                worldPosition,
+                out Chunk chunk,
+                out Vector2Int localPosition))
+        {
+            if (chunk.State != ChunkState.Rendered)
+            {
+                return;
+            }
+        }
+
+
+        TileDataAsset tileData =
+            GetTileData(tileID);
+
+        Vector3Int tilePosition =
+            new(
+                worldPosition.x,
+                worldPosition.y,
+                0
+            );
+
+        floors.SetTile(
+            tilePosition,
+            tileData != null
+                ? tileData.Tile
+                : null
+        );
+    }
+
+    public bool BreakFloorAtWorldPosition(
+    Vector2Int worldPosition)
+    {
+        return SetFloorAtWorldPosition(
+            worldPosition,
+            -1
+        );
+    }
+
+    public bool SetFloorAtWorldPosition(
+    Vector2Int worldPosition,
+    int tileID)
+    {
+        if (!TryGetChunkAndLocalPosition(
+                worldPosition,
+                out Chunk chunk,
+                out Vector2Int localPosition))
+        {
+            return false;
+        }
+
+        chunk.SetFloorTile(
+            localPosition,
+            tileID
+        );
+
+        UpdateFloorTile(
+            worldPosition,
+            tileID
+        );
+
+        return true;
+    }
     #endregion
 }

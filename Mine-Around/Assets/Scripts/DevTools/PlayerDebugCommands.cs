@@ -13,32 +13,31 @@ public sealed class PlayerDebugCommands : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Collider2D playerCollider;
-    [SerializeField] private UIDocument worldEditor;
+    [SerializeField] private UIDocument worldEditorList;
+    [SerializeField] private WorldEditor worldEditor;
 
     private bool editorOpened;
-    
 
     private void Awake()
     {
+#if !UNITY_EDITOR && !DEVELOPMENT_BUILD
+        Destroy(gameObject);
+        return;
+#endif
+
         if (!ValidateReferences())
         {
             enabled = false;
+            return;
         }
-    }
-
-    void Start()
-    {
-        #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
-            Destroy(GameObject);
-        #endif
 
         editorOpened = false;
-        worldEditor.rootVisualElement.style.display = DisplayStyle.None;
+        worldEditorList.rootVisualElement.style.display = DisplayStyle.None;
     }
 
     private void OnEnable()
     {
-        teleportAction.action.performed += OnTeleport;
+        teleportAction.action.performed += OnClick;
         teleportAction.action.Enable();
 
         toggleCollision.action.performed += ToggleIntangible;
@@ -50,14 +49,23 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
     private void OnDisable()
     {
-        teleportAction.action.performed -= OnTeleport;
-        teleportAction.action.Disable();
+        if (teleportAction != null)
+        {
+            teleportAction.action.performed -= OnClick;
+            teleportAction.action.Disable();
+        }
 
-        toggleCollision.action.performed -= ToggleIntangible;
-        toggleCollision.action.Disable();
+        if (toggleCollision != null)
+        {
+            toggleCollision.action.performed -= ToggleIntangible;
+            toggleCollision.action.Disable();
+        }
 
-        toggleEditor.action.performed -= ToggleEditor;
-        toggleEditor.action.Disable();
+        if (toggleEditor != null)
+        {
+            toggleEditor.action.performed -= ToggleEditor;
+            toggleEditor.action.Disable();
+        }
     }
 
     public void SetIntangible(bool isIntangible)
@@ -65,42 +73,87 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         playerCollider.enabled = !isIntangible;
     }
 
-    public void ToggleIntangible(InputAction.CallbackContext context)
+    private void ToggleIntangible(InputAction.CallbackContext context)
     {
         playerCollider.enabled = !playerCollider.enabled;
-        Debug.Log(playerCollider + " switched to: " + playerCollider.enabled);
+
+        Debug.Log(
+            $"Player collider switched to: {playerCollider.enabled}",
+            this
+        );
     }
 
-    public void ToggleEditor(InputAction.CallbackContext context)
+    private void ToggleEditor(InputAction.CallbackContext context)
     {
         editorOpened = !editorOpened;
-        if (editorOpened)
-        {
-            worldEditor.rootVisualElement.style.display = DisplayStyle.Flex;
-        }
-        else
-        {
-            worldEditor.rootVisualElement.style.display = DisplayStyle.None;
-        }
+
+        worldEditorList.rootVisualElement.style.display =
+            editorOpened
+                ? DisplayStyle.Flex
+                : DisplayStyle.None;
     }
 
-    public void TeleportTo(Vector2 worldPosition)
+    private void TeleportTo(Vector2 worldPosition)
     {
         playerMovement.Teleport(worldPosition);
     }
 
-    private void OnTeleport(InputAction.CallbackContext context)
+    private void OnClick(InputAction.CallbackContext context)
     {
-        if(editorOpened) return;
         if (Mouse.current == null)
         {
             return;
         }
 
         Vector2 screenPosition = Mouse.current.position.ReadValue();
-        Vector3 worldPosition = playerCamera.ScreenToWorldPoint(screenPosition);
 
-        TeleportTo(new Vector2(worldPosition.x, worldPosition.y));
+        // Don't place/edit cells when clicking on the editor UI.
+        if (editorOpened && IsPointerOverEditorUI(screenPosition))
+        {
+            return;
+        }
+
+        Vector3 worldPosition =
+            playerCamera.ScreenToWorldPoint(screenPosition);
+
+        if (editorOpened)
+        {
+            Vector2Int blockPosition =
+                ChunkUtilities.WorldToBlockCoord(worldPosition);
+
+            worldEditor.SetSelectedCell(blockPosition);
+        }
+        else
+        {
+            TeleportTo(
+                new Vector2(
+                    worldPosition.x,
+                    worldPosition.y
+                )
+            );
+        }
+    }
+
+    private bool IsPointerOverEditorUI(Vector2 screenPosition)
+    {
+        VisualElement root = worldEditorList.rootVisualElement;
+
+        if (root.panel == null)
+        {
+            return false;
+        }
+
+        Vector2 panelPosition =
+            RuntimePanelUtils.ScreenToPanel(
+                root.panel,
+                screenPosition
+            );
+
+        VisualElement element =
+            root.panel.Pick(panelPosition);
+
+        return element != null &&
+               element != root;
     }
 
     private bool ValidateReferences()
@@ -109,32 +162,81 @@ public sealed class PlayerDebugCommands : MonoBehaviour
 
         if (teleportAction == null)
         {
-            Debug.LogError("Teleport action is not assigned.", this);
+            Debug.LogError(
+                "Teleport action is not assigned.",
+                this
+            );
+
             isValid = false;
         }
 
         if (toggleCollision == null)
         {
-            Debug.LogError("ToggleCollision is not assigned.", this);
+            Debug.LogError(
+                "ToggleCollision action is not assigned.",
+                this
+            );
+
             isValid = false;
         }
 
+        if (toggleEditor == null)
+        {
+            Debug.LogError(
+                "ToggleEditor action is not assigned.",
+                this
+            );
+
+            isValid = false;
+        }
 
         if (playerCamera == null)
         {
-            Debug.LogError("Player camera is not assigned.", this);
+            Debug.LogError(
+                "Player camera is not assigned.",
+                this
+            );
+
             isValid = false;
         }
 
         if (playerMovement == null)
         {
-            Debug.LogError("Player movement is not assigned.", this);
+            Debug.LogError(
+                "Player movement is not assigned.",
+                this
+            );
+
             isValid = false;
         }
 
         if (playerCollider == null)
         {
-            Debug.LogError("Player collider is not assigned.", this);
+            Debug.LogError(
+                "Player collider is not assigned.",
+                this
+            );
+
+            isValid = false;
+        }
+
+        if (worldEditorList == null)
+        {
+            Debug.LogError(
+                "World editor UIDocument is not assigned.",
+                this
+            );
+
+            isValid = false;
+        }
+
+        if (worldEditor == null)
+        {
+            Debug.LogError(
+                "WorldEditor is not assigned.",
+                this
+            );
+
             isValid = false;
         }
 

@@ -8,6 +8,8 @@ using UnityEngine;
 )]
 public sealed class GameDatabase : ScriptableObject
 {
+    #region Serialized Data
+
     [Header("Registered Assets")]
     [SerializeField]
     private List<DatabaseAsset> allAssets = new();
@@ -16,16 +18,22 @@ public sealed class GameDatabase : ScriptableObject
     [SerializeField]
     private List<DatabaseAsset> defaultAssets = new();
 
+    #endregion
+
+    #region Runtime Lookups
+
     /*
      * Registry category
-     *     ↓
-     * Numeric ID → asset
+     *      ↓
+     * Numeric ID → Asset
      *
-     * TileData:
-     *     1 → Grass
+     * Example:
      *
-     * BiomeData:
-     *     1 → Plains
+     * TileDataAsset
+     *      1 → Grass
+     *
+     * BiomeDataAsset
+     *      1 → Plains
      */
     private readonly Dictionary<
         Type,
@@ -34,8 +42,8 @@ public sealed class GameDatabase : ScriptableObject
 
     /*
      * Registry category
-     *     ↓
-     * String ID → asset
+     *      ↓
+     * Name ID → Asset
      */
     private readonly Dictionary<
         Type,
@@ -44,8 +52,8 @@ public sealed class GameDatabase : ScriptableObject
 
     /*
      * Exact runtime type
-     *     ↓
-     * All assets whose concrete C# type exactly matches
+     *      ↓
+     * Assets whose concrete C# type exactly matches
      */
     private readonly Dictionary<
         Type,
@@ -54,8 +62,8 @@ public sealed class GameDatabase : ScriptableObject
 
     /*
      * Registry category
-     *     ↓
-     * Default asset for that category
+     *      ↓
+     * Default asset
      */
     private readonly Dictionary<
         Type,
@@ -64,14 +72,26 @@ public sealed class GameDatabase : ScriptableObject
 
     private bool initialized;
 
+    #endregion
+
+    #region Lifecycle
+
     private void OnEnable()
     {
-        // Runtime dictionaries are not serialized by Unity.
+        // Unity does not serialize these runtime dictionaries,
+        // so they must be rebuilt after the ScriptableObject reloads.
         initialized = false;
     }
 
+    #endregion
+
+    #region Initialization
+
     /// <summary>
     /// Rebuilds all runtime lookup tables from the serialized asset lists.
+    ///
+    /// It is recommended to call this once during game startup.
+    /// Public lookup methods will still initialize lazily if necessary.
     /// </summary>
     public void Initialize()
     {
@@ -89,13 +109,21 @@ public sealed class GameDatabase : ScriptableObject
     private void EnsureInitialized()
     {
         if (!initialized)
+        {
             Initialize();
+        }
     }
+
+    #endregion
+
+    #region Asset Registration
 
     private void BuildAssetLookups()
     {
         if (allAssets == null)
+        {
             return;
+        }
 
         for (int index = 0; index < allAssets.Count; index++)
         {
@@ -112,18 +140,29 @@ public sealed class GameDatabase : ScriptableObject
             }
 
             if (!ValidateAssetIdentity(asset))
+            {
                 continue;
+            }
 
-            Type registryType = asset.RegistryType;
+            Type registryType =
+                asset.RegistryType;
 
-            if (!ValidateRegistryType(asset, registryType))
+            if (!ValidateRegistryType(
+                    asset,
+                    registryType))
+            {
                 continue;
+            }
 
             Dictionary<int, DatabaseAsset> idRegistry =
-                GetOrCreateIDRegistry(registryType);
+                GetOrCreateIDRegistry(
+                    registryType
+                );
 
             Dictionary<string, DatabaseAsset> nameRegistry =
-                GetOrCreateNameRegistry(registryType);
+                GetOrCreateNameRegistry(
+                    registryType
+                );
 
             if (idRegistry.TryGetValue(
                     asset.ID,
@@ -155,16 +194,25 @@ public sealed class GameDatabase : ScriptableObject
                 continue;
             }
 
-            idRegistry.Add(asset.ID, asset);
-            nameRegistry.Add(asset.NameID, asset);
+            idRegistry.Add(
+                asset.ID,
+                asset
+            );
+
+            nameRegistry.Add(
+                asset.NameID,
+                asset
+            );
 
             AddToExactTypeLookup(asset);
 
+            // Asset is fully registered before Initialize is called.
             asset.Initialize();
         }
     }
 
-    private bool ValidateAssetIdentity(DatabaseAsset asset)
+    private bool ValidateAssetIdentity(
+        DatabaseAsset asset)
     {
         if (asset.ID < 0)
         {
@@ -204,7 +252,8 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        if (!typeof(DatabaseAsset).IsAssignableFrom(registryType))
+        if (!typeof(DatabaseAsset)
+                .IsAssignableFrom(registryType))
         {
             Debug.LogError(
                 $"Registry type '{registryType.Name}' on asset " +
@@ -215,7 +264,8 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        if (!registryType.IsAssignableFrom(asset.GetType()))
+        if (!registryType
+                .IsAssignableFrom(asset.GetType()))
         {
             Debug.LogError(
                 $"Asset '{asset.name}' is of type " +
@@ -230,60 +280,85 @@ public sealed class GameDatabase : ScriptableObject
         return true;
     }
 
-    private Dictionary<int, DatabaseAsset> GetOrCreateIDRegistry(
-        Type registryType)
+    private Dictionary<int, DatabaseAsset>
+        GetOrCreateIDRegistry(Type registryType)
     {
         if (!idLookups.TryGetValue(
                 registryType,
                 out Dictionary<int, DatabaseAsset> registry))
         {
-            registry = new Dictionary<int, DatabaseAsset>();
-            idLookups.Add(registryType, registry);
+            registry =
+                new Dictionary<int, DatabaseAsset>();
+
+            idLookups.Add(
+                registryType,
+                registry
+            );
         }
 
         return registry;
     }
 
-    private Dictionary<string, DatabaseAsset> GetOrCreateNameRegistry(
-        Type registryType)
+    private Dictionary<string, DatabaseAsset>
+        GetOrCreateNameRegistry(Type registryType)
     {
         if (!nameLookups.TryGetValue(
                 registryType,
                 out Dictionary<string, DatabaseAsset> registry))
         {
-            registry = new Dictionary<string, DatabaseAsset>(
-                StringComparer.Ordinal
-            );
+            registry =
+                new Dictionary<string, DatabaseAsset>(
+                    StringComparer.Ordinal
+                );
 
-            nameLookups.Add(registryType, registry);
+            nameLookups.Add(
+                registryType,
+                registry
+            );
         }
 
         return registry;
     }
 
-    private void AddToExactTypeLookup(DatabaseAsset asset)
+    private void AddToExactTypeLookup(
+        DatabaseAsset asset)
     {
-        Type exactType = asset.GetType();
+        Type exactType =
+            asset.GetType();
 
         if (!exactTypeLookups.TryGetValue(
                 exactType,
                 out List<DatabaseAsset> assets))
         {
-            assets = new List<DatabaseAsset>();
-            exactTypeLookups.Add(exactType, assets);
+            assets =
+                new List<DatabaseAsset>();
+
+            exactTypeLookups.Add(
+                exactType,
+                assets
+            );
         }
 
         assets.Add(asset);
     }
 
+    #endregion
+
+    #region Defaults
+
     private void BuildDefaultLookups()
     {
         if (defaultAssets == null)
-            return;
-
-        for (int index = 0; index < defaultAssets.Count; index++)
         {
-            DatabaseAsset defaultAsset = defaultAssets[index];
+            return;
+        }
+
+        for (int index = 0;
+             index < defaultAssets.Count;
+             index++)
+        {
+            DatabaseAsset defaultAsset =
+                defaultAssets[index];
 
             if (defaultAsset == null)
             {
@@ -295,10 +370,15 @@ public sealed class GameDatabase : ScriptableObject
                 continue;
             }
 
-            Type registryType = defaultAsset.RegistryType;
+            Type registryType =
+                defaultAsset.RegistryType;
 
-            if (!ValidateRegistryType(defaultAsset, registryType))
+            if (!ValidateRegistryType(
+                    defaultAsset,
+                    registryType))
+            {
                 continue;
+            }
 
             if (!IsRegistered(defaultAsset))
             {
@@ -311,26 +391,35 @@ public sealed class GameDatabase : ScriptableObject
                 continue;
             }
 
+            // A registry should have exactly one default.
+            // Do not let list order silently decide which one wins.
             if (defaultLookups.TryGetValue(
                     registryType,
-                    out DatabaseAsset previousDefault))
+                    out DatabaseAsset existingDefault))
             {
-                Debug.LogWarning(
-                    $"Multiple defaults were assigned to registry " +
-                    $"'{registryType.Name}'. " +
-                    $"'{defaultAsset.NameID}' replaced " +
-                    $"'{previousDefault.NameID}'.",
-                    this
+                Debug.LogError(
+                    $"Multiple default assets are configured for " +
+                    $"registry '{registryType.Name}'. " +
+                    $"'{existingDefault.NameID}' is already the default; " +
+                    $"'{defaultAsset.NameID}' was ignored.",
+                    defaultAsset
                 );
+
+                continue;
             }
 
-            defaultLookups[registryType] = defaultAsset;
+            defaultLookups.Add(
+                registryType,
+                defaultAsset
+            );
         }
     }
 
-    private bool IsRegistered(DatabaseAsset asset)
+    private bool IsRegistered(
+        DatabaseAsset asset)
     {
-        Type registryType = asset.RegistryType;
+        Type registryType =
+            asset.RegistryType;
 
         if (!idLookups.TryGetValue(
                 registryType,
@@ -339,22 +428,32 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        return registry.TryGetValue(asset.ID, out DatabaseAsset found) &&
+        return registry.TryGetValue(
+                   asset.ID,
+                   out DatabaseAsset found
+               ) &&
                found == asset;
     }
 
+    #endregion
+
+    #region ID Lookup
+
     /// <summary>
-    /// Returns an asset from the registry category represented by T.
+    /// Returns an asset from registry category T.
     ///
-    /// Example:
-    /// GetAssetByID&lt;TileData&gt;(1)
-    /// GetAssetByID&lt;BiomeData&gt;(1)
+    /// T represents the registry category, not necessarily
+    /// the asset's exact concrete runtime type.
     /// </summary>
     public T GetAssetByID<T>(int id)
         where T : DatabaseAsset
     {
-        if (TryGetAssetByID(id, out T asset))
+        if (TryGetAssetByID(
+                id,
+                out T asset))
+        {
             return asset;
+        }
 
         Debug.LogWarning(
             $"Asset ID {id} could not be found in registry " +
@@ -365,14 +464,17 @@ public sealed class GameDatabase : ScriptableObject
         return null;
     }
 
-    public bool TryGetAssetByID<T>(int id, out T asset)
+    public bool TryGetAssetByID<T>(
+        int id,
+        out T asset)
         where T : DatabaseAsset
     {
         EnsureInitialized();
 
         asset = null;
 
-        Type registryType = typeof(T);
+        Type registryType =
+            typeof(T);
 
         if (!idLookups.TryGetValue(
                 registryType,
@@ -381,15 +483,21 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        if (!registry.TryGetValue(id, out DatabaseAsset found))
+        if (!registry.TryGetValue(
+                id,
+                out DatabaseAsset found))
+        {
             return false;
+        }
 
         asset = found as T;
+
         return asset != null;
     }
 
     /// <summary>
-    /// Performs a lookup when the registry category is only known at runtime.
+    /// Performs an ID lookup when the registry category
+    /// is only known at runtime.
     /// </summary>
     public bool TryGetAssetByID(
         Type registryType,
@@ -401,7 +509,9 @@ public sealed class GameDatabase : ScriptableObject
         asset = null;
 
         if (registryType == null)
+        {
             return false;
+        }
 
         if (!idLookups.TryGetValue(
                 registryType,
@@ -410,14 +520,26 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        return registry.TryGetValue(id, out asset);
+        return registry.TryGetValue(
+            id,
+            out asset
+        );
     }
 
-    public T GetAssetByName<T>(string nameID)
+    #endregion
+
+    #region Name Lookup
+
+    public T GetAssetByName<T>(
+        string nameID)
         where T : DatabaseAsset
     {
-        if (TryGetAssetByName(nameID, out T asset))
+        if (TryGetAssetByName(
+                nameID,
+                out T asset))
+        {
             return asset;
+        }
 
         Debug.LogWarning(
             $"Asset '{nameID}' could not be found in registry " +
@@ -438,9 +560,12 @@ public sealed class GameDatabase : ScriptableObject
         asset = null;
 
         if (string.IsNullOrWhiteSpace(nameID))
+        {
             return false;
+        }
 
-        Type registryType = typeof(T);
+        Type registryType =
+            typeof(T);
 
         if (!nameLookups.TryGetValue(
                 registryType,
@@ -449,10 +574,15 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        if (!registry.TryGetValue(nameID, out DatabaseAsset found))
+        if (!registry.TryGetValue(
+                nameID,
+                out DatabaseAsset found))
+        {
             return false;
+        }
 
         asset = found as T;
+
         return asset != null;
     }
 
@@ -478,8 +608,15 @@ public sealed class GameDatabase : ScriptableObject
             return false;
         }
 
-        return registry.TryGetValue(nameID, out asset);
+        return registry.TryGetValue(
+            nameID,
+            out asset
+        );
     }
+
+    #endregion
+
+    #region Existence Queries
 
     public bool HasAssetByID<T>(int id)
         where T : DatabaseAsset
@@ -488,27 +625,37 @@ public sealed class GameDatabase : ScriptableObject
 
         return idLookups.TryGetValue(
                    typeof(T),
-                   out Dictionary<int, DatabaseAsset> registry) &&
+                   out Dictionary<int, DatabaseAsset> registry
+               ) &&
                registry.ContainsKey(id);
     }
 
-    public bool HasAssetByName<T>(string nameID)
+    public bool HasAssetByName<T>(
+        string nameID)
         where T : DatabaseAsset
     {
         EnsureInitialized();
 
         if (string.IsNullOrWhiteSpace(nameID))
+        {
             return false;
+        }
 
         return nameLookups.TryGetValue(
                    typeof(T),
-                   out Dictionary<string, DatabaseAsset> registry) &&
+                   out Dictionary<string, DatabaseAsset> registry
+               ) &&
                registry.ContainsKey(nameID);
     }
 
+    #endregion
+
+    #region Collection Queries
+
     /// <summary>
     /// Returns every asset registered under category T.
-    /// Subclasses are included because they share T's registry.
+    ///
+    /// Subclasses are included when they share T's registry.
     /// </summary>
     public List<T> GetAllAssetsOfType<T>()
         where T : DatabaseAsset
@@ -524,10 +671,13 @@ public sealed class GameDatabase : ScriptableObject
             return result;
         }
 
-        foreach (DatabaseAsset asset in registry.Values)
+        foreach (DatabaseAsset asset
+                 in registry.Values)
         {
             if (asset is T typedAsset)
+            {
                 result.Add(typedAsset);
+            }
         }
 
         return result;
@@ -551,10 +701,16 @@ public sealed class GameDatabase : ScriptableObject
         }
 
         foreach (DatabaseAsset asset in assets)
+        {
             result.Add((T)asset);
+        }
 
         return result;
     }
+
+    #endregion
+
+    #region Default Lookup
 
     /// <summary>
     /// Returns the default asset for registry category T.
@@ -564,7 +720,8 @@ public sealed class GameDatabase : ScriptableObject
     {
         EnsureInitialized();
 
-        Type registryType = typeof(T);
+        Type registryType =
+            typeof(T);
 
         if (defaultLookups.TryGetValue(
                 registryType,
@@ -581,4 +738,6 @@ public sealed class GameDatabase : ScriptableObject
 
         return null;
     }
+
+    #endregion
 }

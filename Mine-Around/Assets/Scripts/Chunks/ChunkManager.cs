@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class ChunkManager : MonoBehaviour
 {
+    #region Inspector References
+
     [Header("Tilemaps")]
     [SerializeField] private Tilemap walls;
     [SerializeField] private Tilemap floors;
@@ -16,37 +17,43 @@ public class ChunkManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameController gameController;
 
+    #endregion
+
+    #region Runtime Data
+
     private readonly Dictionary<Vector2Int, Chunk> chunks = new();
 
     private readonly Queue<Vector2Int> queuedChunks = new();
     private readonly HashSet<Vector2Int> queuedChunkSet = new();
 
-    private Coroutine loadingCoroutine;
-
-    public int ChunkSize => gameController.GameVariables.chunkSize;
-    public GameDatabase GameDatabase => gameController.GameDatabase;
+    private readonly Dictionary<Vector2Int, bool> renderRequests = new();
 
     private readonly Dictionary<int, TileDataAsset> tileCache = new();
 
-    private TileDataAsset GetTileData(int id)
-    {
-        if (tileCache.TryGetValue(id, out TileDataAsset data))
-        {
-            return data;
-        }
+    private Coroutine loadingCoroutine;
 
-        data = GameDatabase.GetAssetByID<TileDataAsset>(id);
-        tileCache[id] = data;
+    #endregion
 
-        return data;
-    }
+    #region Properties
+
+    public int ChunkSize => gameController.GameVariables.chunkSize;
+
+    public GameDatabase GameDatabase => gameController.GameDatabase;
+
+    #endregion
+
+    #region Synchronous Creation
 
     public void CreateBox(
         Vector2Int firstPosition,
         Vector2Int secondPosition,
-        bool render = false
-    )
+        bool render = false)
     {
+        if (!ValidateGenerationReferences())
+        {
+            return;
+        }
+
         Vector2Int start = Vector2Int.Min(
             firstPosition,
             secondPosition
@@ -72,10 +79,10 @@ public class ChunkManager : MonoBehaviour
     public void CreateBox(
         Vector2Int center,
         int radius,
-        bool render = false
-    )
+        bool render = false)
     {
-        Vector2Int radiusOffset = new(radius, radius);
+        Vector2Int radiusOffset =
+            new(radius, radius);
 
         CreateBox(
             center - radiusOffset,
@@ -84,12 +91,48 @@ public class ChunkManager : MonoBehaviour
         );
     }
 
+    public Chunk GetOrCreateChunk(
+        Vector2Int chunkPosition,
+        bool render = false)
+    {
+        if (!ValidateGenerationReferences())
+        {
+            return null;
+        }
+
+        Chunk chunk = GetOrAddChunk(chunkPosition);
+
+        if (chunk.State == ChunkState.Ungenerated)
+        {
+            chunk = GenerateChunk(
+                chunkPosition,
+                chunk
+            );
+        }
+
+        if (render &&
+            chunk.State == ChunkState.Generated)
+        {
+            RenderChunk(chunkPosition);
+        }
+
+        return chunk;
+    }
+
+    #endregion
+
+    #region Asynchronous Creation
+
     public void AsyncCreateBox(
         Vector2Int firstPosition,
         Vector2Int secondPosition,
-        bool render = true
-    )
+        bool render = true)
     {
+        if (!ValidateGenerationReferences())
+        {
+            return;
+        }
+
         Vector2Int start = Vector2Int.Min(
             firstPosition,
             secondPosition
@@ -104,7 +147,10 @@ public class ChunkManager : MonoBehaviour
         {
             for (int y = start.y; y <= end.y; y++)
             {
-                QueueChunk(new Vector2Int(x, y));
+                QueueChunk(
+                    new Vector2Int(x, y),
+                    render
+                );
             }
         }
 
@@ -114,10 +160,10 @@ public class ChunkManager : MonoBehaviour
     public void AsyncCreateBox(
         Vector2Int center,
         int radius,
-        bool render = true
-    )
+        bool render = true)
     {
-        Vector2Int radiusOffset = new(radius, radius);
+        Vector2Int radiusOffset =
+            new(radius, radius);
 
         AsyncCreateBox(
             center - radiusOffset,
@@ -125,48 +171,17 @@ public class ChunkManager : MonoBehaviour
             render
         );
     }
-    public Chunk GetOrCreateChunk(
-        Vector2Int chunkPosition,
-        bool render = false
-    )
-    {
-        if (!ValidateGenerationReferences())
-        {
-            return null;
-        }
-
-        Chunk chunk = GetOrAddChunk(chunkPosition);
-
-        switch (chunk.State)
-        {
-            case ChunkState.Ungenerated:
-            case ChunkState.Queued:
-                chunk = GenerateChunk(chunkPosition, chunk);
-                break;
-
-            case ChunkState.Cancelled:
-                chunk.State = ChunkState.Ungenerated;
-                chunk = GenerateChunk(chunkPosition, chunk);
-                break;
-
-            case ChunkState.Generated:
-            case ChunkState.Rendered:
-                break;
-        }
-
-        if (render && chunk.State != ChunkState.Rendered)
-        {
-            RenderChunk(chunkPosition);
-        }
-
-        return chunk;
-    }
 
     public void AsyncCreateRadius(
         Vector2Int center,
-        int radius
-    )
+        int radius,
+        bool render = true)
     {
+        if (!ValidateGenerationReferences())
+        {
+            return;
+        }
+
         int radiusSquared = radius * radius;
 
         for (int x = -radius; x <= radius; x++)
@@ -180,59 +195,260 @@ public class ChunkManager : MonoBehaviour
                     continue;
                 }
 
-                QueueChunk(center + offset);
+                QueueChunk(
+                    center + offset,
+                    render
+                );
             }
         }
 
         StartLoadingCoroutine();
     }
-    public void UnloadChunk(Vector2Int chunkPosition)
+
+    public void QueueChunkForLoading(
+        Vector2Int chunkPosition,
+        bool render = true)
     {
-        if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        if (!ValidateGenerationReferences())
         {
             return;
         }
 
-        switch (chunk.State)
+        QueueChunk(
+            chunkPosition,
+            render
+        );
+
+        StartLoadingCoroutine();
+    }
+
+    #endregion
+
+    #region Queue Management
+
+    private void QueueChunk(
+        Vector2Int chunkPosition,
+        bool render)
+    {
+        Chunk chunk = GetOrAddChunk(chunkPosition);
+
+        if (chunk.State == ChunkState.Rendered)
         {
-            case ChunkState.Queued:
-                chunk.State = ChunkState.Cancelled;
-                return;
+            return;
+        }
 
-            case ChunkState.Rendered:
-                UnRenderChunk(chunkPosition);
-                return;
+        if (queuedChunkSet.Add(chunkPosition))
+        {
+            queuedChunks.Enqueue(chunkPosition);
+            renderRequests[chunkPosition] = render;
 
-            case ChunkState.Ungenerated:
-            case ChunkState.Cancelled:
-            case ChunkState.Generated:
-                return;
+            return;
+        }
+
+        // Upgrade an existing request from generation-only
+        // to generation + render.
+        if (render)
+        {
+            renderRequests[chunkPosition] = true;
+        }
+    }
+
+    private IEnumerator ProcessChunkQueue()
+    {
+        while (queuedChunks.Count > 0)
+        {
+            Vector2Int chunkPosition =
+                queuedChunks.Dequeue();
+
+            // A cancelled/deleted request remains physically in Queue<T>,
+            // but is ignored because it is no longer in the active set.
+            if (!queuedChunkSet.Remove(chunkPosition))
+            {
+                continue;
+            }
+
+            bool shouldRender =
+                renderRequests.TryGetValue(
+                    chunkPosition,
+                    out bool requestedRender
+                ) &&
+                requestedRender;
+
+            renderRequests.Remove(chunkPosition);
+
+            if (!chunks.TryGetValue(
+                    chunkPosition,
+                    out Chunk chunk))
+            {
+                yield return null;
+                continue;
+            }
+
+            if (chunk.State == ChunkState.Ungenerated)
+            {
+                chunk = GenerateChunk(
+                    chunkPosition,
+                    chunk
+                );
+
+                yield return null;
+            }
+
+            if (shouldRender &&
+                chunk.State == ChunkState.Generated)
+            {
+                RenderChunk(chunkPosition);
+
+                yield return null;
+            }
+        }
+
+        loadingCoroutine = null;
+    }
+
+    private void CancelQueuedChunk(
+        Vector2Int chunkPosition)
+    {
+        queuedChunkSet.Remove(chunkPosition);
+        renderRequests.Remove(chunkPosition);
+    }
+
+    private void StartLoadingCoroutine()
+    {
+        if (loadingCoroutine != null)
+        {
+            return;
+        }
+
+        loadingCoroutine =
+            StartCoroutine(ProcessChunkQueue());
+    }
+
+    private void StopLoadingCoroutine()
+    {
+        if (loadingCoroutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(loadingCoroutine);
+
+        loadingCoroutine = null;
+    }
+
+    #endregion
+
+    #region Generation
+
+    private Chunk GetOrAddChunk(
+        Vector2Int chunkPosition)
+    {
+        if (chunks.TryGetValue(
+                chunkPosition,
+                out Chunk chunk))
+        {
+            return chunk;
+        }
+
+        chunk = new Chunk(
+            ChunkSize,
+            ChunkState.Ungenerated
+        );
+
+        chunks.Add(
+            chunkPosition,
+            chunk
+        );
+
+        return chunk;
+    }
+
+    private Chunk GenerateChunk(
+        Vector2Int chunkPosition,
+        Chunk chunk)
+    {
+        Chunk generatedChunk =
+            generator.GenerateChunk(
+                chunkPosition,
+                chunk
+            );
+
+        if (generatedChunk == null)
+        {
+            Debug.LogError(
+                $"Generator returned null for chunk {chunkPosition}.",
+                this
+            );
+
+            chunk.State = ChunkState.Ungenerated;
+
+            return chunk;
+        }
+
+        generatedChunk.State =
+            ChunkState.Generated;
+
+        if (!ReferenceEquals(
+                generatedChunk,
+                chunk))
+        {
+            chunks[chunkPosition] =
+                generatedChunk;
+        }
+
+        return generatedChunk;
+    }
+
+    #endregion
+
+    #region Unloading / Deletion
+
+    public void UnloadChunk(
+        Vector2Int chunkPosition)
+    {
+        if (!chunks.TryGetValue(
+                chunkPosition,
+                out Chunk chunk))
+        {
+            return;
+        }
+
+        CancelQueuedChunk(chunkPosition);
+
+        if (chunk.State == ChunkState.Rendered)
+        {
+            UnRenderChunk(chunkPosition);
         }
     }
 
     public void UnloadAllChunks()
     {
-        List<Vector2Int> chunkPositions = new(chunks.Keys);
+        List<Vector2Int> positions =
+            new(chunks.Keys);
 
-        foreach (Vector2Int chunkPosition in chunkPositions)
+        foreach (Vector2Int position in positions)
         {
-            UnloadChunk(chunkPosition);
+            UnloadChunk(position);
         }
     }
 
-    public void DeleteChunk(Vector2Int chunkPosition)
+    public void DeleteChunk(
+        Vector2Int chunkPosition)
     {
-        if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        if (!chunks.TryGetValue(
+                chunkPosition,
+                out Chunk chunk))
         {
             return;
         }
+
+        CancelQueuedChunk(chunkPosition);
 
         if (chunk.State == ChunkState.Rendered)
         {
             UnRenderChunk(chunkPosition);
         }
 
-        queuedChunkSet.Remove(chunkPosition);
         chunks.Remove(chunkPosition);
     }
 
@@ -242,7 +458,10 @@ public class ChunkManager : MonoBehaviour
 
         queuedChunks.Clear();
         queuedChunkSet.Clear();
+        renderRequests.Clear();
+
         chunks.Clear();
+        tileCache.Clear();
 
         if (walls != null)
         {
@@ -255,7 +474,12 @@ public class ChunkManager : MonoBehaviour
         }
     }
 
-    public bool HasChunkAtWorldLocation(Vector3 position)
+    #endregion
+
+    #region Chunk Queries
+
+    public bool HasChunkAtWorldLocation(
+        Vector3 position)
     {
         Vector2Int chunkPosition =
             ChunkUtilities.WorldToChunkCoord(
@@ -266,7 +490,8 @@ public class ChunkManager : MonoBehaviour
         return chunks.ContainsKey(chunkPosition);
     }
 
-    public bool HasChunkAtBlockLocation(Vector2Int blockPosition)
+    public bool HasChunkAtBlockLocation(
+        Vector2Int blockPosition)
     {
         Vector2Int chunkPosition =
             ChunkUtilities.WorldToChunkCoord(
@@ -277,9 +502,12 @@ public class ChunkManager : MonoBehaviour
         return chunks.ContainsKey(chunkPosition);
     }
 
-    public bool IsChunkGenerated(Vector2Int chunkPosition)
+    public bool IsChunkGenerated(
+        Vector2Int chunkPosition)
     {
-        if (!chunks.TryGetValue(chunkPosition, out Chunk chunk))
+        if (!chunks.TryGetValue(
+                chunkPosition,
+                out Chunk chunk))
         {
             return false;
         }
@@ -288,7 +516,8 @@ public class ChunkManager : MonoBehaviour
                chunk.State == ChunkState.Rendered;
     }
 
-    public bool IsChunkRendered(Vector2Int chunkPosition)
+    public bool IsChunkRendered(
+        Vector2Int chunkPosition)
     {
         return chunks.TryGetValue(
                    chunkPosition,
@@ -297,13 +526,23 @@ public class ChunkManager : MonoBehaviour
                chunk.State == ChunkState.Rendered;
     }
 
-    public int GetWallIDAtLocation(Vector2 position)
+    public bool IsChunkQueued(
+        Vector2Int chunkPosition)
+    {
+        return queuedChunkSet.Contains(chunkPosition);
+    }
+
+    #endregion
+
+    #region Tile Queries
+
+    public int GetWallIDAtLocation(
+        Vector2 position)
     {
         if (!TryGetChunkAndLocalPosition(
                 position,
                 out Chunk chunk,
-                out Vector2Int localPosition
-            ))
+                out Vector2Int localPosition))
         {
             return -1;
         }
@@ -311,13 +550,13 @@ public class ChunkManager : MonoBehaviour
         return chunk.GetWallTile(localPosition);
     }
 
-    public int GetFloorIDAtLocation(Vector2 position)
+    public int GetFloorIDAtLocation(
+        Vector2 position)
     {
         if (!TryGetChunkAndLocalPosition(
                 position,
                 out Chunk chunk,
-                out Vector2Int localPosition
-            ))
+                out Vector2Int localPosition))
         {
             return -1;
         }
@@ -325,176 +564,57 @@ public class ChunkManager : MonoBehaviour
         return chunk.GetFloorTile(localPosition);
     }
 
-    public TileDataAsset GetWallDataAtLocation(Vector2 position)
+    public TileDataAsset GetWallDataAtLocation(
+        Vector2 position)
     {
-        int tileID = GetWallIDAtLocation(position);
+        return GetTileData(
+            GetWallIDAtLocation(position)
+        );
+    }
 
-        if (tileID < 0 || GameDatabase == null)
+    public TileDataAsset GetFloorDataAtLocation(
+        Vector2 position)
+    {
+        return GetTileData(
+            GetFloorIDAtLocation(position)
+        );
+    }
+
+    private TileDataAsset GetTileData(int id)
+    {
+        if (id < 0 ||
+            GameDatabase == null)
         {
             return null;
         }
 
-        return GetTileData(tileID);
-    }
-
-    public TileDataAsset GetFloorDataAtLocation(Vector2 position)
-    {
-        int tileID = GetFloorIDAtLocation(position);
-
-        if (tileID < 0 || GameDatabase == null)
+        if (tileCache.TryGetValue(
+                id,
+                out TileDataAsset data))
         {
-            return null;
+            return data;
         }
 
-        return GetTileData(tileID);
+        data =
+            GameDatabase.GetAssetByID<TileDataAsset>(id);
+
+        tileCache[id] = data;
+
+        return data;
     }
 
-    private Chunk GetOrAddChunk(Vector2Int chunkPosition)
-    {
-        if (chunks.TryGetValue(chunkPosition, out Chunk chunk))
-        {
-            return chunk;
-        }
+    #endregion
 
-        chunk = new Chunk(
-            ChunkSize,
-            ChunkState.Ungenerated
-        );
+    #region Rendering
 
-        chunks.Add(chunkPosition, chunk);
-
-        return chunk;
-    }
-
-    private Chunk GenerateChunk(
-        Vector2Int chunkPosition,
-        Chunk chunk
-    )
-    {
-        Chunk generatedChunk =
-            generator.GenerateChunk(
-                chunkPosition,
-                chunk
-            );
-
-        if (generatedChunk == null)
-        {
-            UnityEngine.Debug.LogError(
-                $"Generator returned null for chunk {chunkPosition}.",
-                this
-            );
-
-            chunk.State = ChunkState.Ungenerated;
-            return chunk;
-        }
-
-        generatedChunk.State = ChunkState.Generated;
-
-        if (!ReferenceEquals(generatedChunk, chunk))
-        {
-            chunks[chunkPosition] = generatedChunk;
-        }
-
-        return generatedChunk;
-    }
-
-    private void QueueChunk(Vector2Int chunkPosition)
-    {
-        Chunk chunk = GetOrAddChunk(chunkPosition);
-
-        if (chunk.State == ChunkState.Rendered)
-        {
-            return;
-        }
-
-        if (!queuedChunkSet.Add(chunkPosition))
-        {
-            if (chunk.State == ChunkState.Cancelled)
-            {
-                chunk.State = ChunkState.Queued;
-            }
-
-            return;
-        }
-
-        chunk.State = ChunkState.Queued;
-        queuedChunks.Enqueue(chunkPosition);
-    }
-
-    public void QueueChunkForLoading(
-        Vector2Int chunkPosition
-    )
-    {
-        QueueChunk(chunkPosition);
-        StartLoadingCoroutine();
-    }
-
-    private IEnumerator ProcessChunkQueue()
-    {
-        while (queuedChunks.Count > 0)
-        {
-            Vector2Int position = queuedChunks.Dequeue();
-            queuedChunkSet.Remove(position);
-
-            if (!chunks.TryGetValue(position, out Chunk chunk))
-            {
-                yield return null;
-                continue;
-            }
-
-            if (chunk.State == ChunkState.Cancelled)
-            {
-                chunk.State = ChunkState.Ungenerated;
-                yield return null;
-                continue;
-            }
-
-            GenerateChunk(position, chunk);
-
-            yield return null;
-
-            if (chunk.State == ChunkState.Generated)
-            {
-                RenderChunk(position);
-            }
-
-            yield return null;
-        }
-
-        loadingCoroutine = null;
-    }
-
-    private void StartLoadingCoroutine()
-    {
-        if (loadingCoroutine != null)
-        {
-            return;
-        }
-
-        loadingCoroutine = StartCoroutine(
-            ProcessChunkQueue()
-        );
-    }
-
-    private void StopLoadingCoroutine()
-    {
-        if (loadingCoroutine == null)
-        {
-            return;
-        }
-
-        StopCoroutine(loadingCoroutine);
-        loadingCoroutine = null;
-    }
-
-    private void RenderChunk(Vector2Int chunkPosition)
+    private void RenderChunk(
+        Vector2Int chunkPosition)
     {
         if (!chunks.TryGetValue(
                 chunkPosition,
-                out Chunk chunk
-            ))
+                out Chunk chunk))
         {
-            UnityEngine.Debug.LogError(
+            Debug.LogError(
                 $"Chunk {chunkPosition} does not exist.",
                 this
             );
@@ -509,7 +629,7 @@ public class ChunkManager : MonoBehaviour
 
         if (chunk.State != ChunkState.Generated)
         {
-            UnityEngine.Debug.LogError(
+            Debug.LogError(
                 $"Chunk {chunkPosition} cannot be rendered " +
                 $"from state {chunk.State}.",
                 this
@@ -518,17 +638,13 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        if (!HasValidTilemaps() || GameDatabase == null)
+        if (!HasValidRenderingReferences())
         {
-            UnityEngine.Debug.LogError(
-                "ChunkManager is missing rendering references.",
-                this
-            );
-
             return;
         }
 
-        int cellCount = ChunkSize * ChunkSize;
+        int cellCount =
+            ChunkSize * ChunkSize;
 
         Vector3Int[] positions =
             new Vector3Int[cellCount];
@@ -561,9 +677,11 @@ public class ChunkManager : MonoBehaviour
                 int floorTileID =
                     chunk.GetFloorTile(localPosition);
 
-                TileDataAsset wallData = GetTileData(wallTileID);
+                TileDataAsset wallData =
+                    GetTileData(wallTileID);
 
-                TileDataAsset floorData = GetTileData(floorTileID);
+                TileDataAsset floorData =
+                    GetTileData(floorTileID);
 
                 positions[index] =
                     new Vector3Int(
@@ -574,35 +692,46 @@ public class ChunkManager : MonoBehaviour
 
                 if (wallData != null)
                 {
-                    wallTiles[index] = wallData.Tile;
+                    wallTiles[index] =
+                        wallData.Tile;
 
                     if (wallData.IsTransparent &&
                         floorData != null)
                     {
-                        floorTiles[index] = floorData.Tile;
+                        floorTiles[index] =
+                            floorData.Tile;
                     }
                 }
                 else if (floorData != null)
                 {
-                    floorTiles[index] = floorData.Tile;
+                    floorTiles[index] =
+                        floorData.Tile;
                 }
 
                 index++;
             }
         }
 
-        walls.SetTiles(positions, wallTiles);
-        floors.SetTiles(positions, floorTiles);
+        walls.SetTiles(
+            positions,
+            wallTiles
+        );
 
-        chunk.State = ChunkState.Rendered;
+        floors.SetTiles(
+            positions,
+            floorTiles
+        );
+
+        chunk.State =
+            ChunkState.Rendered;
     }
 
-    private void UnRenderChunk(Vector2Int chunkPosition)
+    private void UnRenderChunk(
+        Vector2Int chunkPosition)
     {
         if (!chunks.TryGetValue(
                 chunkPosition,
-                out Chunk chunk
-            ))
+                out Chunk chunk))
         {
             return;
         }
@@ -617,7 +746,8 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        int cellCount = ChunkSize * ChunkSize;
+        int cellCount =
+            ChunkSize * ChunkSize;
 
         Vector3Int[] positions =
             new Vector3Int[cellCount];
@@ -649,17 +779,28 @@ public class ChunkManager : MonoBehaviour
             }
         }
 
-        walls.SetTiles(positions, emptyTiles);
-        floors.SetTiles(positions, emptyTiles);
+        walls.SetTiles(
+            positions,
+            emptyTiles
+        );
 
-        chunk.State = ChunkState.Generated;
+        floors.SetTiles(
+            positions,
+            emptyTiles
+        );
+
+        chunk.State =
+            ChunkState.Generated;
     }
+
+    #endregion
+
+    #region Position Helpers
 
     private bool TryGetChunkAndLocalPosition(
         Vector2 position,
         out Chunk chunk,
-        out Vector2Int localPosition
-    )
+        out Vector2Int localPosition)
     {
         Vector2Int chunkPosition =
             ChunkUtilities.WorldToChunkCoord(
@@ -673,9 +814,11 @@ public class ChunkManager : MonoBehaviour
                 ChunkSize
             );
 
-        if (!chunks.TryGetValue(chunkPosition, out chunk))
+        if (!chunks.TryGetValue(
+                chunkPosition,
+                out chunk))
         {
-            UnityEngine.Debug.LogWarning(
+            Debug.LogWarning(
                 $"No chunk exists at {chunkPosition}.",
                 this
             );
@@ -683,10 +826,9 @@ public class ChunkManager : MonoBehaviour
             return false;
         }
 
-        if (chunk.State != ChunkState.Generated &&
-            chunk.State != ChunkState.Rendered)
+        if (chunk.State == ChunkState.Ungenerated)
         {
-            UnityEngine.Debug.LogWarning(
+            Debug.LogWarning(
                 $"Chunk {chunkPosition} is not generated.",
                 this
             );
@@ -697,11 +839,25 @@ public class ChunkManager : MonoBehaviour
         return true;
     }
 
+    #endregion
+
+    #region Validation
+
     private bool ValidateGenerationReferences()
     {
+        if (gameController == null)
+        {
+            Debug.LogError(
+                "ChunkManager is missing a GameController.",
+                this
+            );
+
+            return false;
+        }
+
         if (generator == null)
         {
-            UnityEngine.Debug.LogError(
+            Debug.LogError(
                 "ChunkManager is missing a WorldGenerator.",
                 this
             );
@@ -709,10 +865,20 @@ public class ChunkManager : MonoBehaviour
             return false;
         }
 
-        if (gameController == null)
+        return true;
+    }
+
+    private bool HasValidRenderingReferences()
+    {
+        if (!HasValidTilemaps())
         {
-            UnityEngine.Debug.LogError(
-                "ChunkManager is missing a GameController.",
+            return false;
+        }
+
+        if (GameDatabase == null)
+        {
+            Debug.LogError(
+                "ChunkManager is missing a GameDatabase.",
                 this
             );
 
@@ -724,16 +890,19 @@ public class ChunkManager : MonoBehaviour
 
     private bool HasValidTilemaps()
     {
-        if (walls != null && floors != null)
+        if (walls != null &&
+            floors != null)
         {
             return true;
         }
 
-        UnityEngine.Debug.LogError(
+        Debug.LogError(
             "ChunkManager is missing wall or floor Tilemaps.",
             this
         );
 
         return false;
     }
+
+    #endregion
 }

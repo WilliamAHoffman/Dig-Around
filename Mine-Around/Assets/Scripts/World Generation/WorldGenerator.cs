@@ -30,7 +30,7 @@ public class WorldGenerator : ScriptableObject
                     defaultTile
                 );
 
-                chunk.SetChunkCellValues(
+                chunk.SetCell(
                     localPosition,
                     result
                 );

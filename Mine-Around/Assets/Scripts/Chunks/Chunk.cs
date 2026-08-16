@@ -4,8 +4,6 @@ using UnityEngine;
 public enum ChunkState
 {
     Ungenerated,
-    Queued,
-    Cancelled,
     Generated,
     Rendered
 }
@@ -13,15 +11,15 @@ public enum ChunkState
 public class Chunk
 {
     public int ChunkSize { get; }
+
     public ChunkState State { get; internal set; }
 
-    private readonly int[] worldWallTiles;
-    private readonly int[] worldFloorTiles;
+    private readonly int[] wallTiles;
+    private readonly int[] floorTiles;
 
     public Chunk(
         int size,
-        ChunkState state = ChunkState.Ungenerated
-    )
+        ChunkState state = ChunkState.Ungenerated)
     {
         if (size <= 0)
         {
@@ -35,14 +33,92 @@ public class Chunk
         ChunkSize = size;
         State = state;
 
-        worldWallTiles = new int[size * size];
-        worldFloorTiles = new int[size * size];
+        int cellCount = size * size;
+
+        wallTiles = new int[cellCount];
+        floorTiles = new int[cellCount];
+
+        Array.Fill(wallTiles, -1);
+        Array.Fill(floorTiles, -1);
     }
 
-    private int Index(Vector2Int position)
+    #region Tile Access
+
+    public int GetWallTile(Vector2Int position)
     {
-        return position.y * ChunkSize + position.x;
+        if (!TryGetIndex(
+                position,
+                out int index,
+                "Wall tile"))
+        {
+            return -1;
+        }
+
+        return wallTiles[index];
     }
+
+    public void SetWallTile(
+        Vector2Int position,
+        int tileID)
+    {
+        if (!TryGetIndex(
+                position,
+                out int index,
+                "Wall tile"))
+        {
+            return;
+        }
+
+        wallTiles[index] = tileID;
+    }
+
+    public int GetFloorTile(Vector2Int position)
+    {
+        if (!TryGetIndex(
+                position,
+                out int index,
+                "Floor tile"))
+        {
+            return -1;
+        }
+
+        return floorTiles[index];
+    }
+
+    public void SetFloorTile(
+        Vector2Int position,
+        int tileID)
+    {
+        if (!TryGetIndex(
+                position,
+                out int index,
+                "Floor tile"))
+        {
+            return;
+        }
+
+        floorTiles[index] = tileID;
+    }
+
+    public void SetCell(
+        Vector2Int position,
+        MapCell cell)
+    {
+        if (!TryGetIndex(
+                position,
+                out int index,
+                "Cell"))
+        {
+            return;
+        }
+
+        wallTiles[index] = cell.WallID;
+        floorTiles[index] = cell.FloorID;
+    }
+
+    #endregion
+
+    #region Bounds / Indexing
 
     public bool InBounds(Vector2Int position)
     {
@@ -52,79 +128,29 @@ public class Chunk
                position.y < ChunkSize;
     }
 
-    public int GetWallTile(Vector2Int position)
+    private int GetIndex(Vector2Int position)
     {
-        if (!InBounds(position))
-        {
-            Debug.LogError(
-                $"Wall tile location out of bounds: {position}"
-            );
-
-            return -1;
-        }
-
-        return worldWallTiles[Index(position)];
+        return position.y * ChunkSize + position.x;
     }
 
-    public void SetWallTile(Vector2Int position, int tile)
-    {
-        if (!InBounds(position))
-        {
-            Debug.LogError(
-                $"Wall tile location out of bounds: {position}"
-            );
-
-            return;
-        }
-
-        worldWallTiles[Index(position)] = tile;
-    }
-
-    public int GetFloorTile(Vector2Int position)
-    {
-        if (!InBounds(position))
-        {
-            Debug.LogError(
-                $"Floor tile location out of bounds: {position}"
-            );
-
-            return -1;
-        }
-
-        return worldFloorTiles[Index(position)];
-    }
-
-    public void SetFloorTile(Vector2Int position, int tile)
-    {
-        if (!InBounds(position))
-        {
-            Debug.LogError(
-                $"Floor tile location out of bounds: {position}"
-            );
-
-            return;
-        }
-
-        worldFloorTiles[Index(position)] = tile;
-    }
-
-    public void SetChunkCellValues(
+    private bool TryGetIndex(
         Vector2Int position,
-        MapCell cell
-    )
+        out int index,
+        string context)
     {
         if (!InBounds(position))
         {
             Debug.LogError(
-                $"Tile location out of bounds: {position}"
+                $"{context} location out of bounds: {position}"
             );
 
-            return;
+            index = -1;
+            return false;
         }
 
-        int index = Index(position);
-
-        worldWallTiles[index] = cell.WallID;
-        worldFloorTiles[index] = cell.FloorID;
+        index = GetIndex(position);
+        return true;
     }
+
+    #endregion
 }

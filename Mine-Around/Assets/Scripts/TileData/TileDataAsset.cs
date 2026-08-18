@@ -27,11 +27,11 @@ public class TileDataAsset : DatabaseAsset
     public bool BlocksMovement => blocksMovement;
     public bool BlocksVision => blocksVision;
 
-    public TileBase GetTile(Vector2Int position, int seed)
+    public TileBase GetTile(Vector2Int position)
     {
-        int randomSeed = GameRandomness.Hash(seed, position.x, position.y);
+        int randomSeed = GameRandomness.Hash(GetObjectSeed(), position.x, position.y);
 
-        TileBase selected = WeightedRandomSelector.GetWeightedRandom(
+        TileBase selected = WeightedRandomSelector.GetWeightedRandom<Tile>(
             tiles,
             randomSeed
         );

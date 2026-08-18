@@ -18,7 +18,7 @@ public static class GameRandomness
         }
     }
 
-    public static int Hash(int seed, int x, int y, int salt = 5)
+    public static int Hash(int seed, int x, int y, int salt = 1)
     {
         unchecked
         {

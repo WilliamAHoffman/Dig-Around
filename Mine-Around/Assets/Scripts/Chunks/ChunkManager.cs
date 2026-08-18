@@ -693,19 +693,19 @@ public class ChunkManager : MonoBehaviour
                 if (wallData != null)
                 {
                     wallTiles[index] =
-                        wallData.GetTile(worldPosition, gameController.GameVariables.worldSeed);
+                        wallData.GetTile(worldPosition);
 
                     if (wallData.IsTransparent &&
                         floorData != null)
                     {
                         floorTiles[index] =
-                            floorData.GetTile(worldPosition, gameController.GameVariables.worldSeed);
+                            floorData.GetTile(worldPosition);
                     }
                 }
                 else if (floorData != null)
                 {
                     floorTiles[index] =
-                        floorData.GetTile(worldPosition, gameController.GameVariables.worldSeed);
+                        floorData.GetTile(worldPosition);
                 }
 
                 index++;
@@ -794,6 +794,50 @@ public class ChunkManager : MonoBehaviour
             ChunkState.Generated;
     }
 
+    private void RenderCell(Vector2Int worldPosition)
+    {
+        if (TryGetChunkAndLocalPosition(
+                worldPosition,
+                out Chunk chunk,
+                out Vector2Int localPosition))
+        {
+            if (chunk.State != ChunkState.Rendered)
+            {
+                return;
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        TileDataAsset wallData = GetWallDataAtLocation(worldPosition);
+        TileDataAsset floorData = GetFloorDataAtLocation(worldPosition);
+
+        Vector3Int tilePosition =
+            new(
+                worldPosition.x,
+                worldPosition.y,
+                0
+            );
+
+        walls.SetTile(
+            tilePosition,
+            wallData != null
+                ? wallData.GetTile(worldPosition)
+                : null
+        );
+
+        if (IsTransparentWall(worldPosition))
+        {
+            floors.SetTile(
+            tilePosition,
+            floorData != null
+                ? floorData.GetTile(worldPosition)
+                : null);
+        }
+    }
+
     #endregion
 
     #region Position Helpers
@@ -835,6 +879,17 @@ public class ChunkManager : MonoBehaviour
             );
 
             return false;
+        }
+
+        return true;
+    }
+
+    private bool IsTransparentWall(Vector2Int position)
+    {
+        TileDataAsset wall = GetWallDataAtLocation(position);
+        if (wall)
+        {
+            return wall.IsTransparent;
         }
 
         return true;
@@ -926,54 +981,14 @@ public class ChunkManager : MonoBehaviour
             tileID
         );
 
-        UpdateWallTile(
-            worldPosition,
-            tileID
+        RenderCell(
+            worldPosition
         );
 
         return true;
     }
 
-    private void UpdateWallTile(
-    Vector2Int worldPosition,
-    int tileID)
-    {
-        if (walls == null)
-        {
-            return;
-        }
-
-        if (TryGetChunkAndLocalPosition(
-                worldPosition,
-                out Chunk chunk,
-                out Vector2Int localPosition))
-        {
-            if (chunk.State != ChunkState.Rendered)
-            {
-                return;
-            }
-        }
-
-
-        TileDataAsset tileData =
-            GetTileData(tileID);
-
-        Vector3Int tilePosition =
-            new(
-                worldPosition.x,
-                worldPosition.y,
-                0
-            );
-
-        walls.SetTile(
-            tilePosition,
-            tileData != null
-                ? tileData.GetTile(worldPosition, gameController.GameVariables.worldSeed)
-                : null
-        );
-    }
-
-    public bool BreakWallAtWorldPosition(
+    public bool RemoveWallAtWorldPosition(
     Vector2Int worldPosition)
     {
         return SetWallAtWorldPosition(
@@ -982,46 +997,7 @@ public class ChunkManager : MonoBehaviour
         );
     }
 
-    private void UpdateFloorTile(
-    Vector2Int worldPosition,
-    int tileID)
-    {
-        if (floors == null)
-        {
-            return;
-        }
-
-        if (TryGetChunkAndLocalPosition(
-                worldPosition,
-                out Chunk chunk,
-                out Vector2Int localPosition))
-        {
-            if (chunk.State != ChunkState.Rendered)
-            {
-                return;
-            }
-        }
-
-
-        TileDataAsset tileData =
-            GetTileData(tileID);
-
-        Vector3Int tilePosition =
-            new(
-                worldPosition.x,
-                worldPosition.y,
-                0
-            );
-
-        floors.SetTile(
-            tilePosition,
-            tileData != null
-                ? tileData.GetTile(worldPosition, gameController.GameVariables.worldSeed)
-                : null
-        );
-    }
-
-    public bool BreakFloorAtWorldPosition(
+    public bool RemoveFloorAtWorldPosition(
     Vector2Int worldPosition)
     {
         return SetFloorAtWorldPosition(
@@ -1047,9 +1023,8 @@ public class ChunkManager : MonoBehaviour
             tileID
         );
 
-        UpdateFloorTile(
-            worldPosition,
-            tileID
+        RenderCell(
+            worldPosition
         );
 
         return true;

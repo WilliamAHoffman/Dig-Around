@@ -17,6 +17,16 @@ MonoBehaviour:
   displayName: Stone
   rngOverride: {fileID: 0}
   developerNotes: 
-  tile: {fileID: 11400000, guid: d49fcf674ce46e846b86ec4cb9676b59, type: 2}
-  isTransparent: 0
+  tiles:
+  - weight: 100
+    item: {fileID: 11400000, guid: c54ee8b1266076940923937d28f87ce0, type: 2}
+  - weight: 3
+    item: {fileID: 11400000, guid: 1c9b7e75f1258d143909b0f52426184d, type: 2}
+  - weight: 3
+    item: {fileID: 11400000, guid: 797307494505b8d459b61f3d9dfc3639, type: 2}
+  - weight: 2
+    item: {fileID: 11400000, guid: a46f47236928dc1409e159965d42862e, type: 2}
   mapColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  isTransparent: 0
+  blocksMovement: 0
+  blocksVision: 0

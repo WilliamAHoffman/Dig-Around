@@ -17,6 +17,10 @@ MonoBehaviour:
   displayName: Water
   rngOverride: {fileID: 0}
   developerNotes: 
-  tile: {fileID: 11400000, guid: fa8bf23545e5a164da7191fec49d261f, type: 2}
-  isTransparent: 0
+  tiles:
+  - weight: 1
+    item: {fileID: 11400000, guid: f558b783e7383b5428333eb7194b05ae, type: 2}
   mapColor: {r: 0, g: 0.7490196, b: 1, a: 1}
+  isTransparent: 0
+  blocksMovement: 0
+  blocksVision: 0

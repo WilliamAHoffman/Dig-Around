@@ -17,6 +17,10 @@ MonoBehaviour:
   displayName: Air
   rngOverride: {fileID: 0}
   developerNotes: 
-  tile: {fileID: 0}
-  isTransparent: 1
+  tiles:
+  - weight: 1
+    item: {fileID: 0}
   mapColor: {r: 0.21568629, g: 0.21568629, b: 0.21568629, a: 0}
+  isTransparent: 1
+  blocksMovement: 0
+  blocksVision: 0

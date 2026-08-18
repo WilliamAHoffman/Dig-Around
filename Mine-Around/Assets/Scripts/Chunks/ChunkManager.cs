@@ -693,19 +693,19 @@ public class ChunkManager : MonoBehaviour
                 if (wallData != null)
                 {
                     wallTiles[index] =
-                        wallData.Tile;
+                        wallData.GetTile(worldPosition, gameController.GameVariables.worldSeed);
 
                     if (wallData.IsTransparent &&
                         floorData != null)
                     {
                         floorTiles[index] =
-                            floorData.Tile;
+                            floorData.GetTile(worldPosition, gameController.GameVariables.worldSeed);
                     }
                 }
                 else if (floorData != null)
                 {
                     floorTiles[index] =
-                        floorData.Tile;
+                        floorData.GetTile(worldPosition, gameController.GameVariables.worldSeed);
                 }
 
                 index++;
@@ -968,7 +968,7 @@ public class ChunkManager : MonoBehaviour
         walls.SetTile(
             tilePosition,
             tileData != null
-                ? tileData.Tile
+                ? tileData.GetTile(worldPosition, gameController.GameVariables.worldSeed)
                 : null
         );
     }
@@ -1016,7 +1016,7 @@ public class ChunkManager : MonoBehaviour
         floors.SetTile(
             tilePosition,
             tileData != null
-                ? tileData.Tile
+                ? tileData.GetTile(worldPosition, gameController.GameVariables.worldSeed)
                 : null
         );
     }

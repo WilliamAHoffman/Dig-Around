@@ -1,12 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
-public enum TileType
-{
-    floor,
-    wall
-}
+using System.Linq;
 
 [CreateAssetMenu(
     fileName = "TileDataAsset",
@@ -16,11 +12,8 @@ public class TileDataAsset : DatabaseAsset
 {
     public override Type RegistryType => typeof(TileDataAsset);
 
-    [Header("Classification")]
-    [SerializeField] private TileType tileType;
-
     [Header("Rendering")]
-    [SerializeField] private TileBase tile;
+    [SerializeField] private List<WeightedItem<Tile>> tiles;
     [SerializeField] private Color mapColor = Color.white;
     [SerializeField] private bool isTransparent;
 
@@ -28,15 +21,23 @@ public class TileDataAsset : DatabaseAsset
     [SerializeField] private bool blocksMovement;
     [SerializeField] private bool blocksVision;
 
-    public TileType TileType => tileType;
-
-    public TileBase Tile => tile;
     public Color MapColor => mapColor;
     public bool IsTransparent => isTransparent;
 
     public bool BlocksMovement => blocksMovement;
     public bool BlocksVision => blocksVision;
 
+    public TileBase GetTile(Vector2Int position, int seed)
+    {
+        int randomSeed = GameRandomness.Hash(seed, position.x, position.y);
+
+        TileBase selected = WeightedRandomSelector.GetWeightedRandom(
+            tiles,
+            randomSeed
+        );
+
+        return selected;
+    }
     public virtual void OnPlaced(TileContext context)
     {
     }

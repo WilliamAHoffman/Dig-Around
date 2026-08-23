@@ -11,17 +11,17 @@ public class GenerationRule : ScriptableObject
 
     [Header("Required Tiles")]
     [SerializeField]
-    private List<TileDataAsset> requiredFloor = new();
+    private List<BloxelBase> requiredFloor = new();
 
     [SerializeField]
-    private List<TileDataAsset> requiredWall = new();
+    private List<BloxelBase> requiredWall = new();
 
     [Header("Excluded Tiles")]
     [SerializeField]
-    private List<TileDataAsset> excludedFloor = new();
+    private List<BloxelBase> excludedFloor = new();
 
     [SerializeField]
-    private List<TileDataAsset> excludedWall = new();
+    private List<BloxelBase> excludedWall = new();
 
     #endregion
 
@@ -29,10 +29,10 @@ public class GenerationRule : ScriptableObject
 
     [Header("Replacement")]
     [SerializeField]
-    private TileDataAsset newFloor;
+    private BloxelBase newFloor;
 
     [SerializeField]
-    private TileDataAsset newWall;
+    private BloxelBase newWall;
 
     #endregion
 
@@ -147,7 +147,7 @@ public class GenerationRule : ScriptableObject
     }
 
     private static void AddTileIDs(
-        List<TileDataAsset> tiles,
+        List<BloxelBase> tiles,
         HashSet<int> destination)
     {
         if (tiles == null)
@@ -155,7 +155,7 @@ public class GenerationRule : ScriptableObject
             return;
         }
 
-        foreach (TileDataAsset tile in tiles)
+        foreach (BloxelBase tile in tiles)
         {
             if (tile == null)
             {

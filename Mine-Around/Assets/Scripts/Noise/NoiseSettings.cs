@@ -4,8 +4,7 @@ using System;
 [CreateAssetMenu(fileName = "NoiseSettings", menuName = "WorldDataObject/NoiseSettings")]
 public class NoiseSettings : DatabaseAsset
 {
-    public override Type RegistryType => typeof(NoiseSettings);
-
+    public override string pathName => "noise:";
     [SerializeField] GameVariables gameVariables;
     private int WorldSeed => gameVariables.worldSeed; 
     private FastNoiseLite noise;

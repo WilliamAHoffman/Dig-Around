@@ -16,8 +16,7 @@ public class WorldGenerator : ScriptableObject
     private WorldSampler worldSampler;
 
     [Header("Database")]
-    [SerializeField]
-    private GameDatabase gameDatabase;
+    [SerializeField] private GameDatabase<BloxelBase> bloxelDataBase ;
 
     public Chunk GenerateChunk(
         Vector2Int chunkPosition,
@@ -38,8 +37,8 @@ public class WorldGenerator : ScriptableObject
             return null;
         }
 
-        TileDataAsset defaultTile =
-            gameDatabase.GetDefaultAsset<TileDataAsset>();
+        BloxelBase defaultTile =
+            bloxelDataBase.DefaultAsset;
 
         if (defaultTile == null)
         {
@@ -141,7 +140,7 @@ public class WorldGenerator : ScriptableObject
             return false;
         }
 
-        if (gameDatabase == null)
+        if (bloxelDataBase == null)
         {
             Debug.LogError(
                 $"{name} is missing a GameDatabase.",

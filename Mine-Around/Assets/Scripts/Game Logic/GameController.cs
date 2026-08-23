@@ -8,7 +8,8 @@ public class GameController : MonoBehaviour
     public ChunkManager ChunkManager;
     public GameManager GameManager;
     public GameVariables GameVariables;
-    public GameDatabase GameDatabase;
+    public GameDatabase<BloxelBase> BloxelDatabase;
+    public GameDatabase<NoiseSettings> NoiseDatabase;
 
     private void Awake()
     {
@@ -20,9 +21,12 @@ public class GameController : MonoBehaviour
 
         Instance = this;
 
-        if(!ChunkManager || !GameManager || !GameDatabase || !GameVariables)
+        if(!ChunkManager || !GameManager || !BloxelDatabase || !GameVariables || !NoiseDatabase)
         {
             Debug.LogError("One or more singletons are not set!", this);
         }
+
+        GameDatabaseFiller.PrepareDatabase(BloxelDatabase);
+        GameDatabaseFiller.PrepareDatabase(NoiseDatabase);
     }
 }

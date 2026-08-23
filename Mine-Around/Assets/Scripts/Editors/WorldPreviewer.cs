@@ -94,8 +94,8 @@ public class WorldPreviewer : MonoBehaviour
             {
                 Vector2Int worldPos = new(start.x * ChunkSize + x, start.y * ChunkSize + y);
 
-                TileDataAsset floor = ChunkManager.GetFloorDataAtLocation(worldPos);
-                TileDataAsset wall = ChunkManager.GetWallDataAtLocation(worldPos);
+                BloxelBase floor = ChunkManager.GetFloorDataAtLocation(worldPos);
+                BloxelBase wall = ChunkManager.GetWallDataAtLocation(worldPos);
 
                 int index = y * width + x;
 

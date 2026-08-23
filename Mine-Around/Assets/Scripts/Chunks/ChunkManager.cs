@@ -28,7 +28,7 @@ public class ChunkManager : MonoBehaviour
 
     private readonly Dictionary<Vector2Int, bool> renderRequests = new();
 
-    private readonly Dictionary<int, TileDataAsset> tileCache = new();
+    private readonly Dictionary<int, BloxelBase> tileCache = new();
 
     private Coroutine loadingCoroutine;
 
@@ -38,7 +38,7 @@ public class ChunkManager : MonoBehaviour
 
     public int ChunkSize => gameController.GameVariables.chunkSize;
 
-    public GameDatabase GameDatabase => gameController.GameDatabase;
+    public GameDatabase<BloxelBase> BloxelDatabase => gameController.BloxelDatabase;
 
     #endregion
 
@@ -564,7 +564,7 @@ public class ChunkManager : MonoBehaviour
         return chunk.GetFloorTile(localPosition);
     }
 
-    public TileDataAsset GetWallDataAtLocation(
+    public BloxelBase GetWallDataAtLocation(
         Vector2 position)
     {
         return GetTileData(
@@ -572,7 +572,7 @@ public class ChunkManager : MonoBehaviour
         );
     }
 
-    public TileDataAsset GetFloorDataAtLocation(
+    public BloxelBase GetFloorDataAtLocation(
         Vector2 position)
     {
         return GetTileData(
@@ -580,23 +580,23 @@ public class ChunkManager : MonoBehaviour
         );
     }
 
-    private TileDataAsset GetTileData(int id)
+    private BloxelBase GetTileData(int id)
     {
         if (id < 0 ||
-            GameDatabase == null)
+            BloxelDatabase == null)
         {
             return null;
         }
 
         if (tileCache.TryGetValue(
                 id,
-                out TileDataAsset data))
+                out BloxelBase data))
         {
             return data;
         }
 
         data =
-            GameDatabase.GetAssetByID<TileDataAsset>(id);
+            BloxelDatabase.GetByIdOrDefault(id);
 
         tileCache[id] = data;
 
@@ -677,10 +677,10 @@ public class ChunkManager : MonoBehaviour
                 int floorTileID =
                     chunk.GetFloorTile(localPosition);
 
-                TileDataAsset wallData =
+                BloxelBase wallData =
                     GetTileData(wallTileID);
 
-                TileDataAsset floorData =
+                BloxelBase floorData =
                     GetTileData(floorTileID);
 
                 positions[index] =
@@ -811,8 +811,8 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        TileDataAsset wallData = GetWallDataAtLocation(worldPosition);
-        TileDataAsset floorData = GetFloorDataAtLocation(worldPosition);
+        BloxelBase wallData = GetWallDataAtLocation(worldPosition);
+        BloxelBase floorData = GetFloorDataAtLocation(worldPosition);
 
         Vector3Int tilePosition =
             new(
@@ -886,7 +886,7 @@ public class ChunkManager : MonoBehaviour
 
     private bool IsTransparentWall(Vector2Int position)
     {
-        TileDataAsset wall = GetWallDataAtLocation(position);
+        BloxelBase wall = GetWallDataAtLocation(position);
         if (wall)
         {
             return wall.IsTransparent;
@@ -931,7 +931,7 @@ public class ChunkManager : MonoBehaviour
             return false;
         }
 
-        if (GameDatabase == null)
+        if (BloxelDatabase == null)
         {
             Debug.LogError(
                 "ChunkManager is missing a GameDatabase.",

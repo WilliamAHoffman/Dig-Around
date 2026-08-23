@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameController gameController;
     public ChunkManager ChunkManager => gameController.ChunkManager;
     public GameVariables GameVariables => gameController.GameVariables;
-    public GameDatabase GameDatabase => gameController.GameDatabase;
+    public GameDatabase<BloxelBase> BloxelDatabase => gameController.BloxelDatabase;
 
     public WorldGenerator worldGenerator;
     private void Start()
@@ -41,10 +41,6 @@ public class GameManager : MonoBehaviour
     {
 
         if (randomSeed) GameVariables.SetNewWorldSeed();
-
-        //ChunkManager.DeleteAllChunks();
-
-        GameDatabase.Initialize();
     }
 
     public void DeleteWorld()

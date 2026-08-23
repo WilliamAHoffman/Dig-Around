@@ -5,12 +5,10 @@ public abstract class DatabaseAsset : ScriptableObject
 {
     [Header("Identity")]
     [SerializeField] private string nameID;
-    [SerializeField] private int id = -1;
     [SerializeField] private string displayName;
+    [SerializeField] private int id = -1;
     [SerializeField] private BasicSeed rngOverride;
-
-    [TextArea(3, 5)]
-    [SerializeField] private string developerNotes;
+    public abstract string pathName{ get;}
 
     /// <summary>
     /// Permanent human-readable identifier used by the database.
@@ -18,7 +16,7 @@ public abstract class DatabaseAsset : ScriptableObject
     /// Treat this as stable once the asset is used in released content,
     /// especially because it may affect deterministic randomness.
     /// </summary>
-    public string NameID => nameID;
+    public string NameID => pathName + nameID;
 
     /// <summary>
     /// Numeric registry identifier.
@@ -32,13 +30,6 @@ public abstract class DatabaseAsset : ScriptableObject
             ? nameID
             : displayName;
 
-    /// <summary>
-    /// Defines which database registry owns this asset's
-    /// integer and string identifiers.
-    ///
-    /// Multiple concrete asset types may share the same registry.
-    /// </summary>
-    public abstract Type RegistryType { get; }
 
     /// <summary>
     /// Returns the deterministic seed associated with this asset.

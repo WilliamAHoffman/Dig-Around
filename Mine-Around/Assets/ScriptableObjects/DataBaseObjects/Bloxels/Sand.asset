@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fddfb814f1146b4cacf529fb5340906, type: 3}
+  m_Name: Sand
+  m_EditorClassIdentifier: Assembly-CSharp::BloxelBase
+  nameID: sand
+  displayName: Sand
+  id: 3
+  rngOverride: {fileID: 0}
+  tiles:
+  - weight: 100
+    item: {fileID: 11400000, guid: 2b727f8849fb8eb419f7454cc94817b4, type: 2}
+  - weight: 10
+    item: {fileID: 11400000, guid: 4bff66994a7fc5747b7c14a19b5f9fe2, type: 2}
+  - weight: 10
+    item: {fileID: 11400000, guid: 57df38cc77de1e3458364b6ce07e04f8, type: 2}
+  - weight: 10
+    item: {fileID: 11400000, guid: a93af6dddd9231547b12c3fa6820f3d0, type: 2}
+  - weight: 10
+    item: {fileID: 11400000, guid: 1d4761c876a72ee4ab95a9fa358b05ac, type: 2}
+  - weight: 10
+    item: {fileID: 11400000, guid: ca628231f7890804e8a29020ce185d5b, type: 2}
+  - weight: 10
+    item: {fileID: 11400000, guid: db37cae1c739e2145b1003c72c3239d8, type: 2}
+  mapColor: {r: 0.854902, g: 0.8313726, b: 0.36862746, a: 1}
+  isTransparent: 0

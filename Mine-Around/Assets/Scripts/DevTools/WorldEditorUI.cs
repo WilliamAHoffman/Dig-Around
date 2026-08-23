@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,10 +10,10 @@ public class WorldEditorUI : MonoBehaviour
     private Toggle wallToggle;
     private Toggle floorToggle;
 
-    [SerializeField] private GameDatabase gameDatabase;
+    [SerializeField] private GameDatabase<BloxelBase> tileDataBase;
     [SerializeField] private WorldEditor worldEditor;
 
-    private List<TileDataAsset> tiles;
+    private IReadOnlyList<BloxelBase> tiles;
 
     private ListView walls;
     private ListView floors;
@@ -22,7 +23,7 @@ public class WorldEditorUI : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
 
-        tiles = gameDatabase.GetAllAssetsOfType<TileDataAsset>();
+        tiles = tileDataBase.Assets;
 
         wallToggle = root.Q<Toggle>("ToggleWalls");
         floorToggle = root.Q<Toggle>("ToggleFloors");
@@ -33,8 +34,8 @@ public class WorldEditorUI : MonoBehaviour
         walls = root.Q<ListView>("Walls");
         floors = root.Q<ListView>("Floors");
 
-        walls.itemsSource = tiles;
-        floors.itemsSource = tiles;
+        walls.itemsSource = new List<BloxelBase>(tiles);
+        floors.itemsSource = new List<BloxelBase>(tiles);
 
         walls.makeItem = () => new Label();
         floors.makeItem = () => new Label();
@@ -73,7 +74,7 @@ public class WorldEditorUI : MonoBehaviour
 
     private void OnFloorSelected(IEnumerable<object> selectedItems)
     {
-        var selectedFloor = floors.selectedItem as TileDataAsset;
+        var selectedFloor = floors.selectedItem as BloxelBase;
 
         if (selectedFloor == null)
             return;
@@ -83,7 +84,7 @@ public class WorldEditorUI : MonoBehaviour
 
     private void OnWallSelected(IEnumerable<object> selectedItems)
     {
-        var selectedWall = walls.selectedItem as TileDataAsset;
+        var selectedWall = walls.selectedItem as BloxelBase;
 
         if (selectedWall == null)
             return;

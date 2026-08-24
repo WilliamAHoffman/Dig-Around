@@ -6,9 +6,9 @@ public abstract class DatabaseAsset : ScriptableObject
     [Header("Identity")]
     [SerializeField] private string nameID;
     [SerializeField] private string displayName;
-    [SerializeField] private int id = -1;
     [SerializeField] private BasicSeed rngOverride;
     public abstract string pathName{ get;}
+    public int ID { get; set; }
 
     /// <summary>
     /// Permanent human-readable identifier used by the database.
@@ -17,13 +17,6 @@ public abstract class DatabaseAsset : ScriptableObject
     /// especially because it may affect deterministic randomness.
     /// </summary>
     public string NameID => pathName + nameID;
-
-    /// <summary>
-    /// Numeric registry identifier.
-    ///
-    /// Treat this as permanent if it is stored in save data.
-    /// </summary>
-    public int ID => id;
 
     public string DisplayName =>
         string.IsNullOrWhiteSpace(displayName)

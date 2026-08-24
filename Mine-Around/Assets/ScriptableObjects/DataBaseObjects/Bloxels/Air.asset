@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TileDataAsset
   nameID: air
   displayName: Air
-  id: 0
   rngOverride: {fileID: 0}
-  tiles:
+  floorTiles:
+  - weight: 0
+    item: {fileID: 0}
+  wallTiles:
   - weight: 1
     item: {fileID: 0}
   mapColor: {r: 0.21568629, g: 0.21568629, b: 0.21568629, a: 0}

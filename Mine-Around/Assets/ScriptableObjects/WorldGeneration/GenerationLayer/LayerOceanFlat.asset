@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: LayerOceanFlat
   m_EditorClassIdentifier: Assembly-CSharp::GenerationLayer
   features:
+  - {fileID: 11400000, guid: d2835c2beb15807479df869612309844, type: 2}
   - {fileID: 11400000, guid: a4956e3959bb6f04bbdb3cb5f9250d51, type: 2}
+  - {fileID: 11400000, guid: d66fd7e6f44c80342b00055af0687ab5, type: 2}
   mode: 1

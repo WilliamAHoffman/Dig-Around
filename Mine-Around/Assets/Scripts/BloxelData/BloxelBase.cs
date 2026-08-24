@@ -13,19 +13,31 @@ public class BloxelBase : DatabaseAsset
     public override string pathName => "bloxel:";
 
     [Header("Rendering")]
-    [SerializeField] private List<WeightedItem<Tile>> tiles;
+    [SerializeField] private List<WeightedItem<Tile>> floorTiles;
+    [SerializeField] private List<WeightedItem<Tile>> wallTiles;
     [SerializeField] private Color mapColor = Color.white;
     [SerializeField] private bool isTransparent;
 
     public Color MapColor => mapColor;
     public bool IsTransparent => isTransparent;
 
-    public TileBase GetTile(Vector2Int position)
+    public TileBase GetWallTile(Vector2Int position)
     {
         int randomSeed = GameRandomness.Hash(GetObjectSeed(), position.x, position.y);
 
         TileBase selected = WeightedRandomSelector.GetWeightedRandom<Tile>(
-            tiles,
+            wallTiles,
+            randomSeed
+        );
+
+        return selected;
+    }
+    public TileBase GetFloorTile(Vector2Int position)
+    {
+        int randomSeed = GameRandomness.Hash(GetObjectSeed(), position.x, position.y);
+
+        TileBase selected = WeightedRandomSelector.GetWeightedRandom<Tile>(
+            floorTiles,
             randomSeed
         );
 

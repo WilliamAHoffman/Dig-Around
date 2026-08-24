@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,11 +23,8 @@ public static class GameDatabaseFiller
 
         List<DatabaseAsset> assets = FindCompatibleAssets(typeof(T));
 
-        Undo.RecordObject(database, "Fill Game Database");
-
         SerializedObject serializedDatabase = new(database);
-        SerializedProperty assetsProperty =
-            serializedDatabase.FindProperty("assets");
+        SerializedProperty assetsProperty = serializedDatabase.FindProperty("assets");
 
         if (assetsProperty == null || !assetsProperty.isArray)
         {
@@ -41,8 +39,8 @@ public static class GameDatabaseFiller
 
         for (int index = 0; index < assets.Count; index++)
         {
-            assetsProperty.GetArrayElementAtIndex(index).objectReferenceValue =
-                assets[index];
+            assets[index].ID = index;
+            assetsProperty.GetArrayElementAtIndex(index).objectReferenceValue = assets[index];
         }
 
         serializedDatabase.ApplyModifiedProperties();
@@ -71,7 +69,7 @@ public static class GameDatabaseFiller
             if (asset == null || !assetType.IsInstanceOfType(asset))
                 continue;
 
-            ValidateIdentity(asset, path, seenIds, seenNames);
+            ValidateIdentity(asset, path, seenNames);
             assets.Add(asset);
         }
 
@@ -82,17 +80,8 @@ public static class GameDatabaseFiller
     private static void ValidateIdentity(
         DatabaseAsset asset,
         string path,
-        Dictionary<int, DatabaseAsset> seenIds,
         Dictionary<string, DatabaseAsset> seenNames)
     {
-        if (!seenIds.TryAdd(asset.ID, asset))
-        {
-            Debug.LogError(
-                $"Duplicate ID {asset.ID}: '{asset.name}' conflicts with " +
-                $"'{seenIds[asset.ID].name}'. Path: {path}",
-                asset);
-        }
-
         if (string.IsNullOrWhiteSpace(asset.NameID))
         {
             Debug.LogWarning(
@@ -111,11 +100,7 @@ public static class GameDatabaseFiller
 
     private static int CompareAssets(DatabaseAsset left, DatabaseAsset right)
     {
-        int idComparison = left.ID.CompareTo(right.ID);
-
-        return idComparison != 0
-            ? idComparison
-            : string.Compare(left.NameID, right.NameID, StringComparison.Ordinal);
+        return string.Compare(left.NameID, right.NameID, StringComparison.Ordinal);
     }
 }
 

@@ -14,6 +14,8 @@ public static class WeightedRandomSelector
     {
         if (items == null || items.Count == 0)
             throw new ArgumentException("The list cannot be empty.");
+        
+        if(items.Count == 1) return items[0].item;
 
         int totalWeight = 0;
 

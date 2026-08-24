@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db0e8b93dbc9f9843b05fe14b9074e08, type: 3}
-  m_Name: BasicOcean
+  m_Name: WarmPlains
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
     targets:
-    - type: 0
-      value: -0.9
+    - type: 1
+      value: 0
       importance: 1
-  minSimilarity: 0.2
-  rule: {fileID: 11400000, guid: 5bba7cc2ae7c5134dbb5e761877da694, type: 2}
+    - type: 0
+      value: -0
+      importance: 1
+  minSimilarity: 0.1
+  rule: {fileID: 11400000, guid: 815f2f0cb5600784c9dcf393d41e2421, type: 2}

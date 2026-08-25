@@ -19,13 +19,12 @@ public class BloxelBase : DatabaseAsset
     public Color MapColor => mapColor;
     public bool IsTransparent => isTransparent;
 
-    public TileBase GetLayerTile(Vector2Int position, TileMapLayer tileMapLayer)
+    public TileBase GetLayerTile(Vector2Int position, BloxelLayer bloxelLayer)
     {
-        BloxelLayerProperties properties = SelectLayer(tileMapLayer);
+        BloxelLayerProperties properties = SelectLayer(bloxelLayer);
 
         if(properties == null)
         {
-            Debug.LogError("Bloxel does not contain this layer", this);
             return null;
         }
 
@@ -39,29 +38,29 @@ public class BloxelBase : DatabaseAsset
         return selected;
     }
 
-    private BloxelLayerProperties SelectLayer(TileMapLayer tileMapLayer)
+    private BloxelLayerProperties SelectLayer(BloxelLayer tileMapLayer)
     {
         switch (tileMapLayer)
         {
-            case TileMapLayer.Floor:
+            case BloxelLayer.Floor:
                 return floorProperties;
-            case TileMapLayer.Wall:
+            case BloxelLayer.Wall:
                 return wallProperties;
         }
 
         return null;
     }
 
-    public bool SupportsLayer(TileMapLayer tileMapLayer)
+    public bool SupportsLayer(BloxelLayer bloxelLayer)
     {
-        switch (tileMapLayer)
+        switch (bloxelLayer)
         {
-            case TileMapLayer.Floor:
+            case BloxelLayer.Floor:
                 return floorProperties;
-            case TileMapLayer.Wall:
+            case BloxelLayer.Wall:
                 return wallProperties;
         }
-
+        
         return false;
     }
 

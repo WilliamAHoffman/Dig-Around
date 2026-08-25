@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum ChunkState
@@ -14,8 +15,8 @@ public class Chunk
 
     public ChunkState State { get; internal set; }
 
-    private readonly int[] wallTiles;
-    private readonly int[] floorTiles;
+    private readonly int[] wallBloxelIDs;
+    private readonly int[] floorBloxelIDs;
 
     public Chunk(
         int size,
@@ -35,16 +36,30 @@ public class Chunk
 
         int cellCount = size * size;
 
-        wallTiles = new int[cellCount];
-        floorTiles = new int[cellCount];
+        wallBloxelIDs = new int[cellCount];
+        floorBloxelIDs = new int[cellCount];
 
-        Array.Fill(wallTiles, -1);
-        Array.Fill(floorTiles, -1);
+        Array.Fill(wallBloxelIDs, -1);
+        Array.Fill(floorBloxelIDs, -1);
     }
 
     #region Tile Access
 
-    public int GetWallTile(Vector2Int position)
+    private int[] GetLayerInfo(BloxelLayer bloxelLayer)
+    {
+        switch (bloxelLayer)
+        {
+            case BloxelLayer.Floor:
+                return floorBloxelIDs;
+            case BloxelLayer.Wall:
+                return wallBloxelIDs;
+        }
+
+        Debug.LogError("Unsupported layer type: " + bloxelLayer);
+        return null;
+    }
+
+    public int GetBloxelID(Vector2Int position, BloxelLayer bloxelLayer)
     {
         if (!TryGetIndex(
                 position,
@@ -54,12 +69,13 @@ public class Chunk
             return -1;
         }
 
-        return wallTiles[index];
+        return GetLayerInfo(bloxelLayer)[index];
     }
 
-    public void SetWallTile(
+    public void SetBloxelID(
         Vector2Int position,
-        int tileID)
+        int tileID,
+        BloxelLayer bloxelLayer)
     {
         if (!TryGetIndex(
                 position,
@@ -69,35 +85,8 @@ public class Chunk
             return;
         }
 
-        wallTiles[index] = tileID;
-    }
 
-    public int GetFloorTile(Vector2Int position)
-    {
-        if (!TryGetIndex(
-                position,
-                out int index,
-                "Floor tile"))
-        {
-            return -1;
-        }
-
-        return floorTiles[index];
-    }
-
-    public void SetFloorTile(
-        Vector2Int position,
-        int tileID)
-    {
-        if (!TryGetIndex(
-                position,
-                out int index,
-                "Floor tile"))
-        {
-            return;
-        }
-
-        floorTiles[index] = tileID;
+        GetLayerInfo(bloxelLayer)[index] = tileID;
     }
 
     public void SetCell(
@@ -112,8 +101,8 @@ public class Chunk
             return;
         }
 
-        wallTiles[index] = cell.WallID;
-        floorTiles[index] = cell.FloorID;
+        wallBloxelIDs[index] = cell.WallID;
+        floorBloxelIDs[index] = cell.FloorID;
     }
 
     #endregion

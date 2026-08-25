@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -13,7 +13,9 @@ public class WorldEditorUI : MonoBehaviour
     [SerializeField] private GameDatabase<BloxelBase> tileDataBase;
     [SerializeField] private WorldEditor worldEditor;
 
-    private IReadOnlyList<BloxelBase> tiles;
+    private List<BloxelBase> tiles;
+    private List<BloxelBase> wallTiles;
+    private List<BloxelBase> floorTiles;
 
     private ListView walls;
     private ListView floors;
@@ -23,7 +25,7 @@ public class WorldEditorUI : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         var root = uiDocument.rootVisualElement;
 
-        tiles = tileDataBase.Assets;
+        tiles = new List<BloxelBase>(tileDataBase.Assets);
 
         wallToggle = root.Q<Toggle>("ToggleWalls");
         floorToggle = root.Q<Toggle>("ToggleFloors");
@@ -34,32 +36,62 @@ public class WorldEditorUI : MonoBehaviour
         walls = root.Q<ListView>("Walls");
         floors = root.Q<ListView>("Floors");
 
-        walls.itemsSource = new List<BloxelBase>(tiles);
-        floors.itemsSource = new List<BloxelBase>(tiles);
-
-        walls.makeItem = () => new Label();
-        floors.makeItem = () => new Label();
-
-        walls.bindItem = (visualElement, index) =>
-        {
-            var label = visualElement as Label;
-
-            label.text = tiles[index].NameID;
-            label.style.paddingLeft = 10;
-            label.style.unityTextAlign = TextAnchor.MiddleLeft;
-        };
-
-        floors.bindItem = (visualElement, index) =>
-        {
-            var label = visualElement as Label;
-
-            label.text = tiles[index].NameID;
-            label.style.paddingLeft = 10;
-            label.style.unityTextAlign = TextAnchor.MiddleLeft;
-        };
+        ConfigureLists();
 
         walls.selectionChanged += OnWallSelected;
         floors.selectionChanged += OnFloorSelected;
+    }
+
+    private void ConfigureLists()
+    {
+        wallTiles = tiles
+            .Where(tile =>
+                tile != null &&
+                tile.SupportsLayer(BloxelLayer.Wall))
+            .ToList();
+
+        floorTiles = tiles
+            .Where(tile =>
+                tile != null &&
+                tile.SupportsLayer(BloxelLayer.Floor))
+            .ToList();
+
+        ConfigureListView(walls, wallTiles);
+        ConfigureListView(floors, floorTiles);
+
+        walls.selectionChanged += OnWallSelected;
+        floors.selectionChanged += OnFloorSelected;
+    }
+
+    private static void ConfigureListView(
+    ListView listView,
+    List<BloxelBase> source)
+    {
+        listView.itemsSource = source;
+
+        listView.makeItem = () =>
+        {
+            var label = new Label();
+
+            label.style.paddingLeft = 10;
+            label.style.unityTextAlign = TextAnchor.MiddleLeft;
+
+            return label;
+        };
+
+        listView.bindItem = (element, index) =>
+        {
+            var label = (Label)element;
+            BloxelBase bloxel = source[index];
+
+            label.text = bloxel.NameID;
+        };
+
+        listView.unbindItem = (element, index) =>
+        {
+            // Prevent recycled elements from retaining old text.
+            ((Label)element).text = string.Empty;
+        };
     }
 
     private void OnWallToggleChanged(ChangeEvent<bool> evt)

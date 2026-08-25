@@ -94,8 +94,8 @@ public class WorldPreviewer : MonoBehaviour
             {
                 Vector2Int worldPos = new(start.x * ChunkSize + x, start.y * ChunkSize + y);
 
-                BloxelBase floor = ChunkManager.GetFloorDataAtLocation(worldPos);
-                BloxelBase wall = ChunkManager.GetWallDataAtLocation(worldPos);
+                BloxelBase floor = ChunkManager.GetBloxelDataAtLocation(worldPos, BloxelLayer.Floor);
+                BloxelBase wall = ChunkManager.GetBloxelDataAtLocation(worldPos, BloxelLayer.Wall);
 
                 int index = y * width + x;
 

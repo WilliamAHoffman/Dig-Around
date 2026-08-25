@@ -537,8 +537,9 @@ public class ChunkManager : MonoBehaviour
 
     #region Tile Queries
 
-    public int GetWallIDAtLocation(
-        Vector2 position)
+    public int GetBloxelIDAtLocation(
+        Vector2 position,
+        BloxelLayer layer)
     {
         if (!TryGetChunkAndLocalPosition(
                 position,
@@ -548,36 +549,14 @@ public class ChunkManager : MonoBehaviour
             return -1;
         }
 
-        return chunk.GetWallTile(localPosition);
+        return chunk.GetBloxelID(localPosition, layer);
     }
-
-    public int GetFloorIDAtLocation(
-        Vector2 position)
-    {
-        if (!TryGetChunkAndLocalPosition(
-                position,
-                out Chunk chunk,
-                out Vector2Int localPosition))
-        {
-            return -1;
-        }
-
-        return chunk.GetFloorTile(localPosition);
-    }
-
-    public BloxelBase GetWallDataAtLocation(
-        Vector2 position)
+    public BloxelBase GetBloxelDataAtLocation(
+        Vector2 position,
+        BloxelLayer layer)
     {
         return GetTileData(
-            GetWallIDAtLocation(position)
-        );
-    }
-
-    public BloxelBase GetFloorDataAtLocation(
-        Vector2 position)
-    {
-        return GetTileData(
-            GetFloorIDAtLocation(position)
+            GetBloxelIDAtLocation(position, layer)
         );
     }
 
@@ -673,10 +652,10 @@ public class ChunkManager : MonoBehaviour
                     );
 
                 int wallTileID =
-                    chunk.GetWallTile(localPosition);
+                    chunk.GetBloxelID(localPosition, BloxelLayer.Wall);
 
                 int floorTileID =
-                    chunk.GetFloorTile(localPosition);
+                    chunk.GetBloxelID(localPosition, BloxelLayer.Floor);
 
                 BloxelBase wallData =
                     GetTileData(wallTileID);
@@ -694,19 +673,19 @@ public class ChunkManager : MonoBehaviour
                 if (wallData != null)
                 {
                     wallTiles[index] =
-                        wallData.GetLayerTile(worldPosition, TileMapLayer.Wall);
+                        wallData.GetLayerTile(worldPosition, BloxelLayer.Wall);
 
                     if (wallData.IsTransparent &&
                         floorData != null)
                     {
                         floorTiles[index] =
-                            floorData.GetLayerTile(worldPosition, TileMapLayer.Floor);
+                            floorData.GetLayerTile(worldPosition, BloxelLayer.Floor);
                     }
                 }
                 else if (floorData != null)
                 {
                     floorTiles[index] =
-                        floorData.GetLayerTile(worldPosition, TileMapLayer.Floor);
+                        floorData.GetLayerTile(worldPosition, BloxelLayer.Floor);
                 }
 
                 index++;
@@ -812,8 +791,8 @@ public class ChunkManager : MonoBehaviour
             return;
         }
 
-        BloxelBase wallData = GetWallDataAtLocation(worldPosition);
-        BloxelBase floorData = GetFloorDataAtLocation(worldPosition);
+        BloxelBase wallData = GetBloxelDataAtLocation(worldPosition, BloxelLayer.Wall);
+        BloxelBase floorData = GetBloxelDataAtLocation(worldPosition, BloxelLayer.Floor);
 
         Vector3Int tilePosition =
             new(
@@ -825,7 +804,7 @@ public class ChunkManager : MonoBehaviour
         walls.SetTile(
             tilePosition,
             wallData != null
-                ? wallData.GetLayerTile(worldPosition, TileMapLayer.Wall)
+                ? wallData.GetLayerTile(worldPosition, BloxelLayer.Wall)
                 : null
         );
 
@@ -834,7 +813,7 @@ public class ChunkManager : MonoBehaviour
             floors.SetTile(
             tilePosition,
             floorData != null
-                ? floorData.GetLayerTile(worldPosition, TileMapLayer.Floor)
+                ? floorData.GetLayerTile(worldPosition, BloxelLayer.Floor)
                 : null);
         }
     }
@@ -887,7 +866,7 @@ public class ChunkManager : MonoBehaviour
 
     private bool IsTransparentWall(Vector2Int position)
     {
-        BloxelBase wall = GetWallDataAtLocation(position);
+        BloxelBase wall = GetBloxelDataAtLocation(position, BloxelLayer.Wall);
         if (wall)
         {
             return wall.IsTransparent;
@@ -965,9 +944,10 @@ public class ChunkManager : MonoBehaviour
 
     #region Tile Placement
 
-    public bool SetWallAtWorldPosition(
+    public bool SetBloxelAtWorldPosition(
     Vector2Int worldPosition,
-    int tileID)
+    int tileID,
+    BloxelLayer layer)
     {
         if (!TryGetChunkAndLocalPosition(
                 worldPosition,
@@ -977,9 +957,12 @@ public class ChunkManager : MonoBehaviour
             return false;
         }
 
-        chunk.SetWallTile(
+        if(!gameController.BloxelDatabase.Assets[tileID].SupportsLayer(layer)) return false;
+
+        chunk.SetBloxelID(
             localPosition,
-            tileID
+            tileID,
+            layer
         );
 
         RenderCell(
@@ -989,46 +972,15 @@ public class ChunkManager : MonoBehaviour
         return true;
     }
 
-    public bool RemoveWallAtWorldPosition(
-    Vector2Int worldPosition)
-    {
-        return SetWallAtWorldPosition(
-            worldPosition,
-            -1
-        );
-    }
-
-    public bool RemoveFloorAtWorldPosition(
-    Vector2Int worldPosition)
-    {
-        return SetFloorAtWorldPosition(
-            worldPosition,
-            -1
-        );
-    }
-
-    public bool SetFloorAtWorldPosition(
+    public bool RemoveBloxelAtWorldPosition(
     Vector2Int worldPosition,
-    int tileID)
+    BloxelLayer layer)
     {
-        if (!TryGetChunkAndLocalPosition(
-                worldPosition,
-                out Chunk chunk,
-                out Vector2Int localPosition))
-        {
-            return false;
-        }
-
-        chunk.SetFloorTile(
-            localPosition,
-            tileID
+        return SetBloxelAtWorldPosition(
+            worldPosition,
+            -1,
+            layer
         );
-
-        RenderCell(
-            worldPosition
-        );
-
-        return true;
     }
     #endregion
 }

@@ -14,11 +14,11 @@ public class WorldEditor : MonoBehaviour
         Debug.Log("tried placement: " + position);
         if(selectedWall != -1 && toggleWalls)
         {
-            chunkManager.SetWallAtWorldPosition(position, selectedWall);
+            chunkManager.SetBloxelAtWorldPosition(position, selectedWall, BloxelLayer.Wall);
         }
         if(selectedFloor != -1 && toggleFloors)
         {
-            chunkManager.SetFloorAtWorldPosition(position, selectedFloor);
+            chunkManager.SetBloxelAtWorldPosition(position, selectedFloor, BloxelLayer.Floor);
         }
         return;
     }

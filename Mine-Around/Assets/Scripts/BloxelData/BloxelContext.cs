@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-public enum TileMapLayer
+public enum BloxelLayer
 {
     Floor,
     Wall,
@@ -11,13 +11,13 @@ public sealed class BloxelContext
 {
     public Tilemap Map { get; }
     public Vector2Int Position { get; }
-    public TileMapLayer Layer { get; }
+    public BloxelLayer Layer { get; }
     public GameObject Actor { get; }
 
     public BloxelContext(
         Tilemap map,
         Vector2Int position,
-        TileMapLayer layer,
+        BloxelLayer layer,
         GameObject actor)
     {
         Map = map;

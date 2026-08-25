@@ -15,9 +15,7 @@ MonoBehaviour:
   nameID: deep_water
   displayName: Deep Water
   rngOverride: {fileID: 0}
-  floorTiles:
-  - weight: 0
-    item: {fileID: 11400000, guid: 4fcd63e5a1b4f40488e1f322dcff5db4, type: 2}
-  wallTiles: []
+  floorProperties: {fileID: 11400000, guid: 80f7809e568505b44a95cc19c0d9d590, type: 2}
+  wallProperties: {fileID: 0}
   mapColor: {r: 0, g: 0.19356918, b: 1, a: 1}
   isTransparent: 0

@@ -15,9 +15,7 @@ MonoBehaviour:
   nameID: water
   displayName: Water
   rngOverride: {fileID: 0}
-  floorTiles:
-  - weight: 0
-    item: {fileID: 11400000, guid: f558b783e7383b5428333eb7194b05ae, type: 2}
-  wallTiles: []
+  floorProperties: {fileID: 11400000, guid: 6bb6193941a2af245b0c5bee70718732, type: 2}
+  wallProperties: {fileID: 0}
   mapColor: {r: 0, g: 0.7490196, b: 1, a: 1}
   isTransparent: 0

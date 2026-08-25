@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41d7ffe847bb27043b3b7351605c1593, type: 3}
+  m_Name: DirtWall
+  m_EditorClassIdentifier: Assembly-CSharp::BloxelWallProperties
+  tiles:
+  - weight: 100
+    item: {fileID: 11400000, guid: dfbf498dcb859cb4ea0c6846aa51e4a8, type: 2}
+  - weight: 5
+    item: {fileID: 11400000, guid: 32c199add0875074680eb88521153927, type: 2}
+  - weight: 5
+    item: {fileID: 11400000, guid: 56862466e93788045ae5228baf33b9d8, type: 2}
+  - weight: 5
+    item: {fileID: 11400000, guid: 4d08723f331b0154996b65f643be6265, type: 2}

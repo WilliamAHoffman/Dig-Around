@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c8baefb78557264ca3c0de6bcb55aa1, type: 3}
+  m_Name: GrassFloor
+  m_EditorClassIdentifier: Assembly-CSharp::BloxelFloorProperties
+  tiles:
+  - weight: 100
+    item: {fileID: 11400000, guid: ebe1da58a7dccca4eb66c1041d8e3f53, type: 2}
+  - weight: 5
+    item: {fileID: 11400000, guid: c376432b5fdd9af4094ce9864802ac45, type: 2}
+  - weight: 5
+    item: {fileID: 11400000, guid: 41be1aa5bccabc34a8c9f1cca396897a, type: 2}
+  - weight: 5
+    item: {fileID: 11400000, guid: 1579ab17424cb574e8a4d29ac1000ce9, type: 2}

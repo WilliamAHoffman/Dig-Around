@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 public enum TileMapLayer
 {
-    Ground,
-    Structure,
-    Overlay
+    Floor,
+    Wall,
+    Object
 }
 
 public sealed class BloxelContext

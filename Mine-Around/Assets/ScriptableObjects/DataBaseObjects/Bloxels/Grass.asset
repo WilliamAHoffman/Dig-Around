@@ -15,15 +15,7 @@ MonoBehaviour:
   nameID: grass
   displayName: Grass
   rngOverride: {fileID: 0}
-  floorTiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: ebe1da58a7dccca4eb66c1041d8e3f53, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: c376432b5fdd9af4094ce9864802ac45, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: 41be1aa5bccabc34a8c9f1cca396897a, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: 1579ab17424cb574e8a4d29ac1000ce9, type: 2}
-  wallTiles: []
+  floorProperties: {fileID: 11400000, guid: c591d1c8d444dca4394d44e01e36452c, type: 2}
+  wallProperties: {fileID: 0}
   mapColor: {r: 0, g: 1, b: 0, a: 1}
   isTransparent: 0

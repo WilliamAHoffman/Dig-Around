@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -693,19 +694,19 @@ public class ChunkManager : MonoBehaviour
                 if (wallData != null)
                 {
                     wallTiles[index] =
-                        wallData.GetWallTile(worldPosition);
+                        wallData.GetLayerTile(worldPosition, TileMapLayer.Wall);
 
                     if (wallData.IsTransparent &&
                         floorData != null)
                     {
                         floorTiles[index] =
-                            floorData.GetFloorTile(worldPosition);
+                            floorData.GetLayerTile(worldPosition, TileMapLayer.Floor);
                     }
                 }
                 else if (floorData != null)
                 {
                     floorTiles[index] =
-                        floorData.GetFloorTile(worldPosition);
+                        floorData.GetLayerTile(worldPosition, TileMapLayer.Floor);
                 }
 
                 index++;
@@ -824,7 +825,7 @@ public class ChunkManager : MonoBehaviour
         walls.SetTile(
             tilePosition,
             wallData != null
-                ? wallData.GetWallTile(worldPosition)
+                ? wallData.GetLayerTile(worldPosition, TileMapLayer.Wall)
                 : null
         );
 
@@ -833,7 +834,7 @@ public class ChunkManager : MonoBehaviour
             floors.SetTile(
             tilePosition,
             floorData != null
-                ? floorData.GetFloorTile(worldPosition)
+                ? floorData.GetLayerTile(worldPosition, TileMapLayer.Floor)
                 : null);
         }
     }

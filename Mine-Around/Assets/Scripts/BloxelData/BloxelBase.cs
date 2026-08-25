@@ -1,57 +1,62 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using System.Linq;
 
 [CreateAssetMenu(
-    fileName = "TileDataAsset",
-    menuName = "World Data/Bloxel"
+    fileName = "BloxelBase",
+    menuName = "World Data/Bloxels/BloxelBase"
 )]
 public class BloxelBase : DatabaseAsset
 {
     public override string pathName => "bloxel:";
 
+    [SerializeField] private BloxelFloorProperties floorProperties;
+    [SerializeField] private BloxelWallProperties wallProperties;
+
     [Header("Rendering")]
-    [SerializeField] private List<WeightedItem<Tile>> floorTiles;
-    [SerializeField] private List<WeightedItem<Tile>> wallTiles;
     [SerializeField] private Color mapColor = Color.white;
     [SerializeField] private bool isTransparent;
 
     public Color MapColor => mapColor;
     public bool IsTransparent => isTransparent;
 
-    public TileBase GetWallTile(Vector2Int position)
+    public TileBase GetLayerTile(Vector2Int position, TileMapLayer tileMapLayer)
     {
+        BloxelLayerProperties properties = SelectLayer(tileMapLayer);
+
+        if(properties == null)
+        {
+            Debug.LogError("Bloxel does not contain this layer", this);
+            return null;
+        }
+
         int randomSeed = GameRandomness.Hash(GetObjectSeed(), position.x, position.y);
 
-        TileBase selected = WeightedRandomSelector.GetWeightedRandom<Tile>(
-            wallTiles,
+        TileBase selected = WeightedRandomSelector.GetWeightedRandom<TileBase>(
+            properties.tiles,
             randomSeed
         );
 
         return selected;
     }
-    public TileBase GetFloorTile(Vector2Int position)
+
+    private BloxelLayerProperties SelectLayer(TileMapLayer tileMapLayer)
     {
-        int randomSeed = GameRandomness.Hash(GetObjectSeed(), position.x, position.y);
+        switch (tileMapLayer)
+        {
+            case TileMapLayer.Floor:
+                return floorProperties;
+            case TileMapLayer.Wall:
+                return wallProperties;
+        }
 
-        TileBase selected = WeightedRandomSelector.GetWeightedRandom<Tile>(
-            floorTiles,
-            randomSeed
-        );
-
-        return selected;
+        return null;
     }
+
     public virtual void OnPlaced(BloxelContext context)
     {
     }
 
     public virtual void OnBroken(BloxelContext context)
-    {
-    }
-
-    public virtual void OnInteract(BloxelContext context)
     {
     }
 

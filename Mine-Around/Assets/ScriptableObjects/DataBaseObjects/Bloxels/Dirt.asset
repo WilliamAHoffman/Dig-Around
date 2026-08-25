@@ -15,23 +15,7 @@ MonoBehaviour:
   nameID: dirt
   displayName: Dirt
   rngOverride: {fileID: 0}
-  floorTiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: 946cf56362beff94b9d0fa7f4fccf7ee, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: acf9bff6f15d6d944a3ed17b8f30e418, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: 8059cf49350ff6b45b341d47cba6581c, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: 6c42304a5afa1644c8aca9e1b3812a21, type: 2}
-  wallTiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: c54ee8b1266076940923937d28f87ce0, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: 1c9b7e75f1258d143909b0f52426184d, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: 797307494505b8d459b61f3d9dfc3639, type: 2}
-  - weight: 10
-    item: {fileID: 11400000, guid: a46f47236928dc1409e159965d42862e, type: 2}
+  floorProperties: {fileID: 11400000, guid: 4abcf1d0dea52784d83a9e12e49daa58, type: 2}
+  wallProperties: {fileID: 11400000, guid: 399c96238aba10046b875204138b1b34, type: 2}
   mapColor: {r: 0.627451, g: 0.3215686, b: 0.1764706, a: 1}
   isTransparent: 0

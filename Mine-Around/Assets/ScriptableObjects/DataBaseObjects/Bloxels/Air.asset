@@ -15,11 +15,7 @@ MonoBehaviour:
   nameID: air
   displayName: Air
   rngOverride: {fileID: 0}
-  floorTiles:
-  - weight: 0
-    item: {fileID: 0}
-  wallTiles:
-  - weight: 1
-    item: {fileID: 0}
+  floorProperties: {fileID: 11400000, guid: 01e3de19ae653294b99c5652c4054d81, type: 2}
+  wallProperties: {fileID: 11400000, guid: df70508a36bb41543b982047ceabc359, type: 2}
   mapColor: {r: 0.21568629, g: 0.21568629, b: 0.21568629, a: 0}
   isTransparent: 1

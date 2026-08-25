@@ -52,6 +52,19 @@ public class BloxelBase : DatabaseAsset
         return null;
     }
 
+    public bool SupportsLayer(TileMapLayer tileMapLayer)
+    {
+        switch (tileMapLayer)
+        {
+            case TileMapLayer.Floor:
+                return floorProperties;
+            case TileMapLayer.Wall:
+                return wallProperties;
+        }
+
+        return false;
+    }
+
     public virtual void OnPlaced(BloxelContext context)
     {
     }

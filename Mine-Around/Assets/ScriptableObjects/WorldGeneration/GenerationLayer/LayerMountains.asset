@@ -15,4 +15,4 @@ MonoBehaviour:
   features:
   - {fileID: 11400000, guid: ae75e4a93d9cd824ca92100a7a42e563, type: 2}
   - {fileID: 11400000, guid: c90f9da2ea1d57744afafc372b000d3d, type: 2}
-  mode: 1
+  mode: 0

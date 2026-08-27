@@ -15,7 +15,7 @@ MonoBehaviour:
   idealSample:
     targets:
     - type: 0
-      value: -1
+      value: -0.8
       importance: 1
-  minSimilarity: 0.4
+  minPercentSimilarity: 0.9
   rule: {fileID: 11400000, guid: 596f1fac89c9b85459dc0ad58b571c23, type: 2}

@@ -11,11 +11,10 @@ public class WorldGenerationRule : ScriptableObject
     private TargetWorldSample idealSample;
 
     [Header("Requirements")]
-    [SerializeField, Range(0f, 1f)]
-    private float minSimilarity = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float minPercentSimilarity = 0.5f;
 
     public float MinSimilarity =>
-        minSimilarity;
+        minPercentSimilarity;
 
     public float Similarity(WorldSample worldSample)
     {
@@ -70,6 +69,6 @@ public class WorldGenerationRule : ScriptableObject
         WorldSample worldSample)
     {
         return Similarity(worldSample) >=
-               minSimilarity;
+               minPercentSimilarity;
     }
 }

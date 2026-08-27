@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: WorldGenerator
   m_EditorClassIdentifier: Assembly-CSharp::WorldGenerator
   worldLayers:
+  - {fileID: 11400000, guid: f21a37c61d5e6ea4c8ea1d24d884061f, type: 2}
   - {fileID: 11400000, guid: 7df3914c26ef3c248b31c9bb1530127a, type: 2}
   - {fileID: 11400000, guid: 1b9384bf932b248429232e3d0b580306, type: 2}
   - {fileID: 11400000, guid: 1adaff42d801097439ce8f524267d7b3, type: 2}

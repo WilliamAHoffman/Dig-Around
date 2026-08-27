@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: elevation
   displayName: elevation
-  id: 0
   rngOverride: {fileID: 0}
   gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   noiseType: 0

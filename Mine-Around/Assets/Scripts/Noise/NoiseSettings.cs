@@ -77,7 +77,7 @@ public class NoiseSettings : DatabaseAsset
     public void ApplyNoiseSettings(FastNoiseLite noise)
     {
         noise.SetNoiseType(noiseType);
-        noise.SetFrequency(frequency);
+        noise.SetFrequency(frequency * gameVariables.worldFrequencyScale);
 
         noise.SetFractalType(fractalType);
         noise.SetFractalOctaves(Mathf.Max(1, fractalOctaves));
@@ -95,7 +95,7 @@ public class NoiseSettings : DatabaseAsset
     {
         noise.SetDomainWarpType(domainWarpType);
         noise.SetDomainWarpAmp(domainWarpAmp);
-        noise.SetFrequency(domainWarpFrequency);
+        noise.SetFrequency(domainWarpFrequency * gameVariables.worldFrequencyScale);
 
         noise.SetFractalType(domainWarpFractal);
         noise.SetFractalOctaves(Mathf.Max(1, domainWarpOctaves));

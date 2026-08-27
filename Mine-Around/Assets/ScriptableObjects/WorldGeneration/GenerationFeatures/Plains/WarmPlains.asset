@@ -14,11 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlatFeature
   idealSample:
     targets:
-    - type: 1
-      value: 0
-      importance: 1
     - type: 0
       value: -0
       importance: 1
-  minSimilarity: 0.1
+  minPercentSimilarity: 0.9
   rule: {fileID: 11400000, guid: 815f2f0cb5600784c9dcf393d41e2421, type: 2}

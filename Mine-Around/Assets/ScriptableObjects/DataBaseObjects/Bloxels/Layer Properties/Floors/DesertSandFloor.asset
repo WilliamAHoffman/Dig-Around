@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BloxelFloorProperties
   tiles:
   - weight: 100
-    item: {fileID: 11400000, guid: 2b727f8849fb8eb419f7454cc94817b4, type: 2}
+    item: {fileID: 11400000, guid: af956eb54be5c6c438c2fd96d8dad8a5, type: 2}

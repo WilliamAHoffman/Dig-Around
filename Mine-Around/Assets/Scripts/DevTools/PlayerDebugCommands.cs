@@ -22,7 +22,6 @@ public sealed class PlayerDebugCommands : MonoBehaviour
     [SerializeField] private SpriteRenderer playerRenderer;
     [SerializeField] private UIDocument worldEditorList;
     [SerializeField] private WorldEditor worldEditor;
-    [SerializeField] private WorldSampler worldSampler;
 
     #endregion
 
@@ -274,13 +273,6 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         Vector3 worldPosition =
             playerCamera.ScreenToWorldPoint(screenPosition);
 
-        if(editorOpened){
-            Vector2Int blockPos = ChunkUtilities.WorldToBlockCoord(worldPosition);
-            WorldSample worldSample = worldSampler.Sample(blockPos);
-            Debug.Log("temperature: " + worldSample.Temperature + " elevation: " + worldSample.Elevation + " at: " + blockPos);
-            return;
-        }
-
 
         TeleportTo(
             new Vector2(
@@ -388,15 +380,6 @@ public sealed class PlayerDebugCommands : MonoBehaviour
             isValid = false;
         }
 
-        if (worldSampler == null)
-        {
-            Debug.LogError(
-                "WorldSampler is not assigned.",
-                this
-            );
-
-            isValid = false;
-        }
 
         return isValid;
     }

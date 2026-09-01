@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
   subLayers: []
   noise: {fileID: 0}
-  floor: {fileID: 11400000, guid: f7d4a659fd2be5d4bb136b58082ae54b, type: 2}
-  wall: {fileID: 0}
+  baseDecor: {fileID: 11400000, guid: 53b5f1a541341cf48864874c262404fe, type: 2}

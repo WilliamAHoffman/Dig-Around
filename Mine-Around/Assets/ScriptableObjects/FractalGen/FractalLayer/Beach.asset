@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: Beach
   m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
   subLayers: []
-  noise: {fileID: 11400000, guid: 2482d21d7ca41ea449f51ffc95695699, type: 2}
-  minimumForBase: 0
-  floor: {fileID: 11400000, guid: ac708c1745093604d8155e7b113de653, type: 2}
-  wall: {fileID: 0}
+  noise: {fileID: 11400000, guid: 7f48231e7f285dd4a97bf212317e7e18, type: 2}
+  baseDecor: {fileID: 0}

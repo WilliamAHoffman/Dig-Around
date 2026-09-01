@@ -9,46 +9,43 @@ public class FactalWorldLayer : ScriptableObject
 {
     [SerializeField] private List<SerializablePair<RangedFloat, FactalWorldLayer>> subLayers;
     [SerializeField] private NoiseSettings noise;
-    [SerializeField] private BloxelBase floor;
-    [SerializeField] private BloxelBase wall;
-    
+    [SerializeField] private FractalDecorator baseDecor;
+
     public MapCell Generate(
         Vector2Int location,
         MapCell result)
     {
+        //bool modified = false;
 
-        if(noise == null)
+        if (baseDecor)
         {
-            return Apply(result);
+            result = baseDecor.PlaceLayers(result, location);
+        }
+
+        if (!noise)
+        {
+            return result;
         }
 
         float sample = noise.Sample(location.x, location.y);
 
-        if (subLayers == null || subLayers.Count == 0)
-        {
-            return Apply(result);
-        }
+        int selectedIndex = -1;
+        float highestValidThreshold = float.NegativeInfinity;
 
-        int lowestIndex = 0;
-        for(int i = 0; i < subLayers.Count; i++)
+        for (int i = 0; i < subLayers.Count; i++)
         {
-            if(subLayers[i].left.val < sample && subLayers[i].left.val > subLayers[lowestIndex].left.val)
+            float threshold = subLayers[i].left.val;
+
+            if (threshold < sample && threshold > highestValidThreshold)
             {
-                lowestIndex = i;
+                highestValidThreshold = threshold;
+                selectedIndex = i;
             }
         }
 
-        return subLayers[lowestIndex].right.Generate(location, result);
-
-    }
-
-    private MapCell Apply(MapCell result)
-    {
-        if(floor){
-            result.FloorID = floor.ID;
-        }
-        if(wall){
-            result.WallID = wall.ID;
+        if (selectedIndex >= 0)
+        {
+            return subLayers[selectedIndex].right.Generate(location, result);
         }
 
         return result;

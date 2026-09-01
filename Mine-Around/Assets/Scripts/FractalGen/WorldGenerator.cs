@@ -63,12 +63,8 @@ public class WorldGenerator : ScriptableObject
                         chunkPosition,
                         chunk.ChunkSize
                     );
-
-                MapCell result =
-                    GenerateLocation(
-                        worldPosition,
-                        defaultTileID,
-                        defaultTileID
+                    MapCell result = GenerateLocation(
+                        worldPosition, defaultTileID
                     );
 
                 chunk.SetCell(
@@ -85,15 +81,10 @@ public class WorldGenerator : ScriptableObject
 
     private MapCell GenerateLocation(
         Vector2Int worldPosition,
-        int defaultFloor,
-        int defaultWall)
+        int defaultTileID)
     {
 
-        MapCell result =
-            new(
-                defaultFloor,
-                defaultWall
-            );
+        MapCell result = new(defaultTileID,defaultTileID);
 
         if (worldLayers == null)
         {

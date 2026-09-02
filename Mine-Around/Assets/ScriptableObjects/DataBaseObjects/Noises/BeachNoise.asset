@@ -17,19 +17,19 @@ MonoBehaviour:
   rngOverride: {fileID: 0}
   gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   noiseType: 0
-  frequency: 0.01
+  frequency: 0.001
   offsetX: 9101
   offsetY: 9102
-  fractalType: 0
-  fractalOctaves: 3
-  fractalLacunarity: 2
+  fractalType: 1
+  fractalOctaves: 5
+  fractalLacunarity: 3
   fractalGain: 0.5
   fractalWeightedStrength: 0
   fractalPingPongStrength: 2
-  cellularDistanceFunction: 1
+  cellularDistanceFunction: 3
   cellularReturnType: 1
   cellularJitter: 1
-  domainWarp: 0
+  domainWarp: 1
   domainWarpType: 0
   domainWarpAmp: 1
   domainWarpFrequency: 0.01

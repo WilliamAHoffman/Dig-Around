@@ -4,18 +4,23 @@ using UnityEngine;
 [Serializable]
 public class NoiseTarget
 {
-    [SerializeField] NoiseSettings noise;
-    [SerializeField][Range(-1f,1f)] private float noiseTarget = 10;
-    [SerializeField] public float strength = 1;
+    [SerializeField] private NoiseSettings noise;
+    [SerializeField, Range(-1f, 1f)] private float noiseTarget = 0f;
+    [SerializeField, Min(0f)] private float strength = 1f;
+
+    public float Strength => strength;
+
+    public bool IsValid => noise != null && strength > 0f;
 
     public float GetStrength(int x, int y)
     {
-        float sample = noise.Sample(x,y); 
-        
-        float sampleTarget = noiseTarget;
+        if (noise == null || strength <= 0f)
+            return 0f;
 
-        float difference = Math.Abs(sample - sampleTarget);
+        float sample = noise.Sample(x, y);
+        float difference = Mathf.Abs(sample - noiseTarget);
+        float similarity = Mathf.Clamp01(1f - difference);
 
-        return (1 - difference) * strength;
+        return similarity * strength;
     }
 }

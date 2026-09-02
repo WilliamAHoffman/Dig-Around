@@ -1,23 +1,24 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(
     fileName = "Fractal Decorator",
-    menuName = "FractalGen/Decorator"
-)]
+    menuName = "FractalGen/Decorator")]
 public class FractalDecorator : ScriptableObject
 {
-    public List<DecorationLayer> decorationLayers;
+    [SerializeField] private List<DecorationRule> rules = new();
 
-
-    public MapCell PlaceLayers(MapCell result, Vector2Int location)
+    public void Apply(ref GenerationContext context)
     {
-        foreach (DecorationLayer decorationLayer in decorationLayers)
-        {
-            result = decorationLayer.ModifyCell(result, location);
-        }
+        if (rules == null)
+            return;
 
-        return result;
+        foreach (DecorationRule rule in rules)
+        {
+            if (rule == null)
+                continue;
+
+            rule.TryApply(ref context);
+        }
     }
 }

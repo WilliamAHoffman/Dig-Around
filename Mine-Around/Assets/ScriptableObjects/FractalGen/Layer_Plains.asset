@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
+  m_Name: Layer_Plains
+  m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
+  noise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+  subLayers:
+  - min: -1
+    max: 0
+    layer: {fileID: 11400000, guid: e90968fa781508549a9eeceef9efb7a3, type: 2}
+  baseDecor: {fileID: 11400000, guid: 8d6ef83524162cd47bdde942612c4f4f, type: 2}

@@ -13,7 +13,7 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private Tilemap floors;
 
     [Header("Generation")]
-    [SerializeField] private WorldGenerator generator;
+    [SerializeField] private FractalWorldGenerator generator;
 
     [Header("References")]
     [SerializeField] private GameController gameController;

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
+  m_Name: Layer_Height
+  m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
+  noise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+  subLayers:
+  - min: -1
+    max: -0.2
+    layer: {fileID: 11400000, guid: 35c8399ace7cecb47b5c6c5e23af78ac, type: 2}
+  - min: -0.2
+    max: -0.15
+    layer: {fileID: 11400000, guid: e90968fa781508549a9eeceef9efb7a3, type: 2}
+  - min: -0.15
+    max: 0.5
+    layer: {fileID: 11400000, guid: 773f9183be110624dbc44de3c327e2a6, type: 2}
+  - min: 0.5
+    max: 1
+    layer: {fileID: 11400000, guid: be6370202752cae488936dabd1a134cb, type: 2}
+  baseDecor: {fileID: 0}

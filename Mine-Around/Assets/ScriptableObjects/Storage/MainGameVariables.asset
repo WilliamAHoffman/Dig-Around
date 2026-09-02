@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameVariables
   worldSeed: 12112
   chunkSize: 16
-  worldFrequencyScale: 1
+  worldFrequencyScale: 2

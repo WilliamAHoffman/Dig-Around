@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public GameVariables GameVariables => gameController.GameVariables;
     public GameDatabase<BloxelBase> BloxelDatabase => gameController.BloxelDatabase;
 
-    public WorldGenerator worldGenerator;
+    public FractalWorldGenerator worldGenerator;
     private void Start()
     {
         SetUpGame();

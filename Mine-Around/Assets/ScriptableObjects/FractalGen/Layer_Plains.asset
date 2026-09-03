@@ -12,9 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
   m_Name: Layer_Plains
   m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
-  noise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+  noise: {fileID: 11400000, guid: 2482d21d7ca41ea449f51ffc95695699, type: 2}
   subLayers:
   - min: -1
-    max: 0
-    layer: {fileID: 11400000, guid: e90968fa781508549a9eeceef9efb7a3, type: 2}
-  baseDecor: {fileID: 11400000, guid: 8d6ef83524162cd47bdde942612c4f4f, type: 2}
+    max: -0.33
+    layer: {fileID: 11400000, guid: fcf09e1772cc916458518e23c9106c7b, type: 2}
+  - min: -0.33
+    max: 0.33
+    layer: {fileID: 11400000, guid: 2ed5c39335a8012428e16d9f0faa7f42, type: 2}
+  - min: 0.33
+    max: 1
+    layer: {fileID: 11400000, guid: 53fbac6a9a2b3ed43962f3fe6cc57732, type: 2}
+  baseDecor: {fileID: 0}

@@ -12,12 +12,12 @@ public class NoiseTarget
 
     public bool IsValid => noise != null && strength > 0f;
 
-    public float GetStrength(int x, int y)
+    public float GetStrength(Vector2Int location)
     {
         if (noise == null || strength <= 0f)
             return 0f;
 
-        float sample = noise.Sample(x, y);
+        float sample = noise.Sample(location);
         float difference = Mathf.Abs(sample - noiseTarget);
         float similarity = Mathf.Clamp01(1f - difference);
 

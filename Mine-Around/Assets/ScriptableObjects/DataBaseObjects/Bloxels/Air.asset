@@ -19,3 +19,4 @@ MonoBehaviour:
   wallProperties: {fileID: 11400000, guid: df70508a36bb41543b982047ceabc359, type: 2}
   mapColor: {r: 0.21568629, g: 0.21568629, b: 0.21568629, a: 0}
   isTransparent: 1
+  isInvisible: 1

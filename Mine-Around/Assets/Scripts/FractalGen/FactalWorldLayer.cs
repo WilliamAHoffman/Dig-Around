@@ -51,8 +51,7 @@ public class FactalWorldLayer : ScriptableObject
             return;
 
         float sample = noise.Sample(
-            context.Position.x,
-            context.Position.y);
+            context.Position);
 
         FactalWorldLayer selected = SelectSubLayer(sample);
 

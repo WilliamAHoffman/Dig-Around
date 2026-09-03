@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d81586fdb484b514bb98c18a15334d3d, type: 3}
-  m_Name: Decor_Plains
+  m_Name: Decor_Plains_Cold
   m_EditorClassIdentifier: Assembly-CSharp::FractalDecorator
   rules:
   - noiseRangeConditions: []
@@ -19,17 +19,17 @@ MonoBehaviour:
     existingWallConditions: []
     chanceConditions: []
     setTileActions:
-    - floor: {fileID: 11400000, guid: 646be976e440b814aaa0d949fd62d76f, type: 2}
+    - floor: {fileID: 11400000, guid: c56a68f041f744a44aa7e4941bf6650d, type: 2}
       wall: {fileID: 0}
-  - noiseRangeConditions: []
-    noiseSimilarityConditions: []
-    existingFloorConditions:
-    - requiredFloor: {fileID: 11400000, guid: 646be976e440b814aaa0d949fd62d76f, type: 2}
+  - noiseRangeConditions:
+    - noise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+      minValue: 0
+      maxValue: 0
       invert: 0
+    noiseSimilarityConditions: []
+    existingFloorConditions: []
     existingWallConditions: []
-    chanceConditions:
-    - probability: 0.1
-      salt: 0
+    chanceConditions: []
     setTileActions:
-    - floor: {fileID: 0}
-      wall: {fileID: 11400000, guid: 53a4c98ebc864f54da3a58bddf58ac55, type: 2}
+    - floor: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
+      wall: {fileID: 0}

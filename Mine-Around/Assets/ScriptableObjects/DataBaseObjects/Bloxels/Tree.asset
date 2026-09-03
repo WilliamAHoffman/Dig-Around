@@ -17,5 +17,6 @@ MonoBehaviour:
   rngOverride: {fileID: 0}
   floorProperties: {fileID: 0}
   wallProperties: {fileID: 11400000, guid: 7b438afe68a044c4b8662b91c37d1a81, type: 2}
-  mapColor: {r: 0, g: 1, b: 0.48096085, a: 1}
+  mapColor: {r: 0.13845804, g: 0.4490565, b: 0, a: 1}
   isTransparent: 1
+  isInvisible: 0

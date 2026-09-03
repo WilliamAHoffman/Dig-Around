@@ -101,7 +101,7 @@ public class WorldPreviewer : MonoBehaviour
 
                 floorPixels[index] = floor.MapColor;
                 wallPixels[index] = wall.MapColor;
-                combinedPixels[index] = wall.IsTransparent
+                combinedPixels[index] = wall.IsInvisible
                     ? floor.MapColor
                     : wall.MapColor;
             }

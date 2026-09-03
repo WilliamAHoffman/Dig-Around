@@ -10,14 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
-  m_Name: Layer_Beach
+  m_Name: Layer_Plains_Warm
   m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
-  noise: {fileID: 11400000, guid: 2482d21d7ca41ea449f51ffc95695699, type: 2}
-  subLayers:
-  - min: -1
-    max: -0.5
-    layer: {fileID: 11400000, guid: 8f08ac53811b46e4da44925a73677f4b, type: 2}
-  - min: -0.5
-    max: 1
-    layer: {fileID: 11400000, guid: ebc12879fcafdba4c8903f47ef6cb721, type: 2}
-  baseDecor: {fileID: 0}
+  noise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
+  subLayers: []
+  baseDecor: {fileID: 11400000, guid: 8d6ef83524162cd47bdde942612c4f4f, type: 2}

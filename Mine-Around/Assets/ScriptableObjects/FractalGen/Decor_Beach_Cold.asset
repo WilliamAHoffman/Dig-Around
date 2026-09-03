@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d81586fdb484b514bb98c18a15334d3d, type: 3}
-  m_Name: Decor_Beach
+  m_Name: Decor_Beach_Cold
   m_EditorClassIdentifier: Assembly-CSharp::FractalDecorator
   rules:
   - noiseRangeConditions: []
@@ -19,5 +19,5 @@ MonoBehaviour:
     existingWallConditions: []
     chanceConditions: []
     setTileActions:
-    - floor: {fileID: 11400000, guid: ac708c1745093604d8155e7b113de653, type: 2}
+    - floor: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
       wall: {fileID: 0}

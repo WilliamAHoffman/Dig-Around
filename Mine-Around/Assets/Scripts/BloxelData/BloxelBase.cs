@@ -15,9 +15,11 @@ public class BloxelBase : DatabaseAsset
     [Header("Rendering")]
     [SerializeField] private Color mapColor = Color.white;
     [SerializeField] private bool isTransparent;
+    [SerializeField] private bool isInvisible;
 
     public Color MapColor => mapColor;
     public bool IsTransparent => isTransparent;
+    public bool IsInvisible => isInvisible;
 
     public TileBase GetLayerTile(Vector2Int position, BloxelLayer bloxelLayer)
     {

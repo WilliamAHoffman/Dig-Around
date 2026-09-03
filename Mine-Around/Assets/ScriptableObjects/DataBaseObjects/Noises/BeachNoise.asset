@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSettings
   nameID: beach
   displayName: beach
-  rngOverride: {fileID: 0}
+  rngOverride: {fileID: 11400000, guid: a59c92efa223f7b40b990a5cb21d55a9, type: 2}
   gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   noiseType: 0
   frequency: 0.001

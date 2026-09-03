@@ -16,7 +16,7 @@ public class NoiseRangeCondition
 
         float min = Mathf.Min(minValue, maxValue);
         float max = Mathf.Max(minValue, maxValue);
-        float sample = noise.Sample(context.Position.x, context.Position.y);
+        float sample = noise.Sample(context.Position);
 
         bool inside = sample >= min && sample <= max;
         return invert ? !inside : inside;

@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f10d1cfd2834a240bbff2d7062e99ff, type: 3}
-  m_Name: MainGameVariables
-  m_EditorClassIdentifier: Assembly-CSharp::GameVariables
-  worldSeed: 12112
-  chunkSize: 16
-  worldFrequencyScale: 1
+  m_Script: {fileID: 11500000, guid: c5fbdd450e43bfb4db2d7290167635f0, type: 3}
+  m_Name: Beaches
+  m_EditorClassIdentifier: Assembly-CSharp::BasicSeed
+  seed: 122

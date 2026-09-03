@@ -22,7 +22,7 @@ public class NoiseSimilarityCondition
                 continue;
 
             totalWeight += target.Strength;
-            totalScore += target.GetStrength(context.Position.x, context.Position.y);
+            totalScore += target.GetStrength(context.Position);
         }
 
         if (totalWeight <= Mathf.Epsilon)

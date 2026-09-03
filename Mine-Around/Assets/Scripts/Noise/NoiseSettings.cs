@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 
 [CreateAssetMenu(fileName = "NoiseSettings", menuName = "WorldDataObject/NoiseSettings")]
 public class NoiseSettings : DatabaseAsset
@@ -50,6 +51,10 @@ public class NoiseSettings : DatabaseAsset
     [Min(0f)]
     [SerializeField] private float domainWarpLacunarity = 2f;
     [SerializeField] private float domainWarpGain = 0.5f;
+
+    [Header("Optimized Cache")]
+    private Vector2Int lastPos;
+    private float lastVal;
 
     /// <summary>
     /// Creates a FastNoiseLite instance configured for regular noise sampling.
@@ -103,7 +108,7 @@ public class NoiseSettings : DatabaseAsset
         noise.SetFractalGain(domainWarpGain);
     }
 
-    public float Sample(int worldX, int worldY)
+    public float Sample(Vector2Int location)
     {
 
         if (noise == null)
@@ -112,19 +117,27 @@ public class NoiseSettings : DatabaseAsset
             return 0f;
         }
 
-        float x = worldX + offsetX;
-        float y = worldY + offsetY;
+        if(lastPos == location)
+        {
+            return lastVal;
+        }
+        lastPos = location;
+
+        float x = location.x + offsetX;
+        float y = location.y + offsetY;
 
         if (domainWarp)
         {
             if (warpNoise == null)
             {
                 Debug.LogError($"NoiseSettings '{name}' has domain warp enabled but warpNoise was not created.", this);
-                return noise.GetNoise(x, y);
+                lastVal = noise.GetNoise(x, y);
+                return lastVal;
             }
 
             warpNoise.DomainWarp(ref x, ref y);
         }
-        return noise.GetNoise(x, y);
+        lastVal = noise.GetNoise(x, y);
+        return lastVal;
     }
 }

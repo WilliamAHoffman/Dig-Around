@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fddfb814f1146b4cacf529fb5340906, type: 3}
   m_Name: Snow
   m_EditorClassIdentifier: Assembly-CSharp::TileDataAsset
-  nameID: snow
-  displayName: Snow
+  nameID: ice
+  displayName: Ice
   rngOverride: {fileID: 0}
   floorProperties: {fileID: 11400000, guid: bb94e07102255b344b3a8eebec2b3f88, type: 2}
   wallProperties: {fileID: 11400000, guid: de90c9376f0b73449a30588e4a6abf42, type: 2}
-  mapColor: {r: 1, g: 1, b: 1, a: 1}
-  isTransparent: 0

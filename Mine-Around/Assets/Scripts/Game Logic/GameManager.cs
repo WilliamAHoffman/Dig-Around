@@ -26,15 +26,9 @@ public class GameManager : MonoBehaviour
     public void CreateWorld()
     {
 
-        Stopwatch stopwatch = new Stopwatch(); //debug
-        stopwatch.Start(); //debug
-
         SetUpGame();
         //ChunkManager.DeleteAllChunks();
         ChunkManager.AsyncCreateBox(new Vector2Int(-startSizeX, -startSizeY) + origin, new Vector2Int(startSizeX, startSizeY) + origin, renderStartChunks);
-
-        stopwatch.Stop(); //debug
-        UnityEngine.Debug.Log($"Creating the world took: {stopwatch.ElapsedMilliseconds} ms", this); //debug
     }
 
     public void SetUpGame()

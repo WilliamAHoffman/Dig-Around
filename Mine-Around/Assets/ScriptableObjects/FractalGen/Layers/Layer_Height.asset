@@ -15,15 +15,18 @@ MonoBehaviour:
   noise: {fileID: 11400000, guid: ee9c1be8b4094524f8f454f096ded737, type: 2}
   subLayers:
   - min: -1
-    max: -0.2
-    layer: {fileID: 11400000, guid: 35c8399ace7cecb47b5c6c5e23af78ac, type: 2}
-  - min: -0.2
-    max: -0.15
-    layer: {fileID: 11400000, guid: e90968fa781508549a9eeceef9efb7a3, type: 2}
-  - min: -0.15
     max: 0.3
-    layer: {fileID: 11400000, guid: 773f9183be110624dbc44de3c327e2a6, type: 2}
+    layer: {fileID: 11400000, guid: 35c8399ace7cecb47b5c6c5e23af78ac, type: 2}
   - min: 0.3
+    max: 0.35
+    layer: {fileID: 11400000, guid: e90968fa781508549a9eeceef9efb7a3, type: 2}
+  - min: 0.35
+    max: 0.6
+    layer: {fileID: 11400000, guid: 773f9183be110624dbc44de3c327e2a6, type: 2}
+  - min: 0.6
+    max: 1
+    layer: {fileID: 11400000, guid: 925e28a9e98c04a4b9e369941e60588f, type: 2}
+  - min: 0.65
     max: 1
     layer: {fileID: 11400000, guid: be6370202752cae488936dabd1a134cb, type: 2}
   baseDecor: {fileID: 11400000, guid: 6a04c335d32853b45bf74669e0e2ee91, type: 2}

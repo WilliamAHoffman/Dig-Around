@@ -12,14 +12,8 @@ public class BloxelBase : DatabaseAsset
     [SerializeField] private BloxelFloorProperties floorProperties;
     [SerializeField] private BloxelWallProperties wallProperties;
 
-    [Header("Rendering")]
-    [SerializeField] private Color mapColor = Color.white;
-    [SerializeField] private bool isTransparent;
-    [SerializeField] private bool isInvisible;
-
-    public Color MapColor => mapColor;
-    public bool IsTransparent => isTransparent;
-    public bool IsInvisible => isInvisible;
+    public BloxelWallProperties WallProperties => wallProperties;
+    public BloxelFloorProperties FloorProperties => floorProperties;
 
     public TileBase GetLayerTile(Vector2Int position, BloxelLayer bloxelLayer)
     {

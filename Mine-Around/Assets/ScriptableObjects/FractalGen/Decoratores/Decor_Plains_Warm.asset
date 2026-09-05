@@ -13,25 +13,17 @@ MonoBehaviour:
   m_Name: Decor_Plains_Warm
   m_EditorClassIdentifier: Assembly-CSharp::FractalDecorator
   rules:
-  - noiseRangeConditions: []
-    noiseSimilarityConditions: []
-    existingFloorConditions: []
-    existingWallConditions: []
-    chanceConditions: []
+  - conditions: []
     setTileActions:
     - floor: {fileID: 11400000, guid: 646be976e440b814aaa0d949fd62d76f, type: 2}
       wall: {fileID: 0}
-  - noiseRangeConditions: []
-    noiseSimilarityConditions: []
-    existingFloorConditions:
-    - requiredFloor: {fileID: 11400000, guid: 646be976e440b814aaa0d949fd62d76f, type: 2}
-      invert: 0
-    - requiredFloor: {fileID: 11400000, guid: ac708c1745093604d8155e7b113de653, type: 2}
-      invert: 1
-    existingWallConditions: []
-    chanceConditions:
-    - probability: 0.01
-      salt: 0
+  - conditions:
+    - {fileID: 11400000, guid: 7324f968ffb568b439e03dbff0712e05, type: 2}
+    setTileActions:
+    - floor: {fileID: 0}
+      wall: {fileID: 11400000, guid: 53a4c98ebc864f54da3a58bddf58ac55, type: 2}
+  - conditions:
+    - {fileID: 11400000, guid: f7fc0ea2a65046a4d898358a45d01159, type: 2}
     setTileActions:
     - floor: {fileID: 0}
       wall: {fileID: 11400000, guid: 53a4c98ebc864f54da3a58bddf58ac55, type: 2}

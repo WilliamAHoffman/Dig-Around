@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BloxelDatabase
   assets:
   - {fileID: 11400000, guid: b6bf1bbc0eadb3a4996b158c9c679152, type: 2}
+  - {fileID: 11400000, guid: 8a680a1ad3030aa498221c407026770d, type: 2}
   - {fileID: 11400000, guid: 1c20743269d37884ba4e7b84f1392697, type: 2}
   - {fileID: 11400000, guid: 4a7d28db7f51a284c981f51917920927, type: 2}
   - {fileID: 11400000, guid: 0a14b040c83ada04a906736079825e9b, type: 2}
   - {fileID: 11400000, guid: 646be976e440b814aaa0d949fd62d76f, type: 2}
-  - {fileID: 11400000, guid: ac708c1745093604d8155e7b113de653, type: 2}
   - {fileID: 11400000, guid: c56a68f041f744a44aa7e4941bf6650d, type: 2}
+  - {fileID: 11400000, guid: ac708c1745093604d8155e7b113de653, type: 2}
+  - {fileID: 11400000, guid: fe3c109d86afa0044b286c8dd500ddd3, type: 2}
   - {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
   - {fileID: 11400000, guid: 53a4c98ebc864f54da3a58bddf58ac55, type: 2}
   - {fileID: 11400000, guid: f7d4a659fd2be5d4bb136b58082ae54b, type: 2}

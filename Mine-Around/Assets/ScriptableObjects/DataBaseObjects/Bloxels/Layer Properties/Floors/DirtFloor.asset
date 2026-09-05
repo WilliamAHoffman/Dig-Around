@@ -21,3 +21,4 @@ MonoBehaviour:
     item: {fileID: 11400000, guid: 8059cf49350ff6b45b341d47cba6581c, type: 2}
   - weight: 5
     item: {fileID: 11400000, guid: 6c42304a5afa1644c8aca9e1b3812a21, type: 2}
+  mapColor: {r: 0.52156866, g: 0.29803923, b: 0.18823531, a: 1}

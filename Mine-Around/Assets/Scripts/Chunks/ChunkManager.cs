@@ -503,6 +503,12 @@ public class ChunkManager : MonoBehaviour
         return chunks.ContainsKey(chunkPosition);
     }
 
+    public bool HasChunkAtChunkLocation(
+        Vector2Int chunkLocation)
+    {
+        return chunks.ContainsKey(chunkLocation);
+    }
+
     public bool IsChunkGenerated(
         Vector2Int chunkPosition)
     {
@@ -675,7 +681,7 @@ public class ChunkManager : MonoBehaviour
                     wallTiles[index] =
                         wallData.GetLayerTile(worldPosition, BloxelLayer.Wall);
 
-                    if (wallData.IsTransparent &&
+                    if (wallData.WallProperties.IsTransparent &&
                         floorData != null)
                     {
                         floorTiles[index] =
@@ -869,7 +875,7 @@ public class ChunkManager : MonoBehaviour
         BloxelBase wall = GetBloxelDataAtLocation(position, BloxelLayer.Wall);
         if (wall)
         {
-            return wall.IsTransparent;
+            return wall.WallProperties.IsTransparent;
         }
 
         return true;

@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class ExistingWallCondition
+[CreateAssetMenu(
+    fileName = "Existing Wall Condition",
+    menuName = "FractalGen/Condition/Existing Wall Condition"
+)]public class ExistingWallCondition : GenerationCondition
 {
     [SerializeField] private BloxelBase requiredWall;
     [SerializeField] private bool invert;
 
-    public bool Evaluate(in GenerationContext context)
+    public override bool Evaluate(in GenerationContext context)
     {
         if (requiredWall == null)
             return false;

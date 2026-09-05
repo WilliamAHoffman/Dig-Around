@@ -10,17 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
-  m_Name: Layer_Plains
+  m_Name: Layer_Oceans
   m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
   noise: {fileID: 11400000, guid: 2482d21d7ca41ea449f51ffc95695699, type: 2}
   subLayers:
-  - min: -1
-    max: -0.33
-    layer: {fileID: 11400000, guid: fcf09e1772cc916458518e23c9106c7b, type: 2}
-  - min: -0.33
-    max: 0.33
-    layer: {fileID: 11400000, guid: 2ed5c39335a8012428e16d9f0faa7f42, type: 2}
-  - min: 0.33
+  - min: 0
+    max: 0.3
+    layer: {fileID: 11400000, guid: ef420bd719a8ca947ae34c9fe65b142c, type: 2}
+  - min: 0.3
     max: 1
-    layer: {fileID: 11400000, guid: 53fbac6a9a2b3ed43962f3fe6cc57732, type: 2}
+    layer: {fileID: 11400000, guid: e3d1a02c22d7b584ebe3e0b75f59fa56, type: 2}
   baseDecor: {fileID: 0}

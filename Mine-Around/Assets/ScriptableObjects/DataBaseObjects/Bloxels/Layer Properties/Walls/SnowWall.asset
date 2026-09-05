@@ -14,4 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BloxelWallProperties
   tiles:
   - weight: 100
-    item: {fileID: 11400000, guid: 39e8846834d6b5c46ab8f78947311a34, type: 2}
+    item: {fileID: 11400000, guid: 5fe54080b57910346935373044a0b268, type: 2}
+  mapColor: {r: 0.6784314, g: 0.5647059, b: 0.9490197, a: 1}
+  isTransparent: 0
+  isInvisible: 0

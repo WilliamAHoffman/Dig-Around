@@ -10,10 +10,10 @@ public class FactalWorldLayer : ScriptableObject
     [Serializable]
     public class SubLayerRange
     {
-        [SerializeField, Range(-1f, 1f)]
-        private float min = -1f;
+        [SerializeField, Range(0, 1f)]
+        private float min = 0;
 
-        [SerializeField, Range(-1f, 1f)]
+        [SerializeField, Range(0, 1f)]
         private float max = 1f;
 
         [SerializeField]
@@ -21,17 +21,11 @@ public class FactalWorldLayer : ScriptableObject
 
         public float Min => Mathf.Min(min, max);
         public float Max => Mathf.Max(min, max);
-        public float Center => (Min + Max) * 0.5f;
         public FactalWorldLayer Layer => layer;
 
         public bool Contains(float value)
         {
             return value >= Min && value <= Max;
-        }
-
-        public float DistanceFromCenter(float value)
-        {
-            return Mathf.Abs(value - Center);
         }
     }
 
@@ -53,16 +47,11 @@ public class FactalWorldLayer : ScriptableObject
         float sample = noise.Sample(
             context.Position);
 
-        FactalWorldLayer selected = SelectSubLayer(sample);
-
-        if (selected != null)
-            selected.Generate(ref context);
+        GenerateSubLayers(sample, ref context);
     }
 
-    private FactalWorldLayer SelectSubLayer(float sample)
+    private void GenerateSubLayers(float sample, ref GenerationContext generationContext)
     {
-        FactalWorldLayer selected = null;
-        float greatestDistanceFromCenter = float.NegativeInfinity;
 
         for (int i = 0; i < subLayers.Count; i++)
         {
@@ -74,16 +63,8 @@ public class FactalWorldLayer : ScriptableObject
             if (!entry.Contains(sample))
                 continue;
 
-            float distanceFromCenter = entry.DistanceFromCenter(sample);
-
             // Strictly greater preserves Inspector order when two matches tie.
-            if (distanceFromCenter > greatestDistanceFromCenter)
-            {
-                greatestDistanceFromCenter = distanceFromCenter;
-                selected = entry.Layer;
-            }
+            entry.Layer.Generate(ref generationContext);
         }
-
-        return selected;
     }
 }

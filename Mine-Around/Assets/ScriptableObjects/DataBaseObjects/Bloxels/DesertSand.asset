@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fddfb814f1146b4cacf529fb5340906, type: 3}
   m_Name: DesertSand
   m_EditorClassIdentifier: Assembly-CSharp::TileDataAsset
-  nameID: desertsand
+  nameID: desert_sand
   displayName: Desert Sand
   rngOverride: {fileID: 0}
   floorProperties: {fileID: 11400000, guid: 27881041e2837d847aa441cba6da6eee, type: 2}
   wallProperties: {fileID: 0}
-  mapColor: {r: 1, g: 0.6487925, b: 0, a: 1}
-  isTransparent: 0

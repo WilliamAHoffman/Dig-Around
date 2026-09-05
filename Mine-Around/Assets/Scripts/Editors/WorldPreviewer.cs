@@ -34,6 +34,14 @@ public class WorldPreviewer : MonoBehaviour
 
         string path = Path.Combine(folder, filename + ".png");
 
+        int counter = 1;
+
+        while (File.Exists(path))
+        {
+            path = Path.Combine(folder, filename + "_" + counter + ".png");
+            counter++;
+        }
+
         File.WriteAllBytes(path, png);
 
         UnityEngine.Debug.Log($"Saved texture to: {path}");
@@ -99,11 +107,11 @@ public class WorldPreviewer : MonoBehaviour
 
                 int index = y * width + x;
 
-                floorPixels[index] = floor.MapColor;
-                wallPixels[index] = wall.MapColor;
-                combinedPixels[index] = wall.IsInvisible
-                    ? floor.MapColor
-                    : wall.MapColor;
+                floorPixels[index] = floor.FloorProperties.MapColor;
+                wallPixels[index] = wall.WallProperties.MapColor;
+                combinedPixels[index] = wall.WallProperties.IsInvisible
+                    ? floor.FloorProperties.MapColor
+                    : wall.WallProperties.MapColor;
             }
         }
 

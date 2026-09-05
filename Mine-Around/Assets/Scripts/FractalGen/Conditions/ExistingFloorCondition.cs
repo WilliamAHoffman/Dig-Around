@@ -1,13 +1,16 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class ExistingFloorCondition
+[CreateAssetMenu(
+    fileName = "Existing Floor Condition",
+    menuName = "FractalGen/Condition/Existing Floor Condition"
+)]
+public class ExistingFloorCondition : GenerationCondition
 {
     [SerializeField] private BloxelBase requiredFloor;
     [SerializeField] private bool invert;
 
-    public bool Evaluate(in GenerationContext context)
+    public override bool Evaluate(in GenerationContext context)
     {
         if (requiredFloor == null)
             return false;

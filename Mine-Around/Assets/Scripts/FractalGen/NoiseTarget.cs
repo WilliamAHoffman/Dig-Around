@@ -5,7 +5,7 @@ using UnityEngine;
 public class NoiseTarget
 {
     [SerializeField] private NoiseSettings noise;
-    [SerializeField, Range(-1f, 1f)] private float noiseTarget = 0f;
+    [SerializeField, Range(0, 1f)] private float noiseTarget = 0f;
     [SerializeField, Min(0f)] private float strength = 1f;
 
     public float Strength => strength;

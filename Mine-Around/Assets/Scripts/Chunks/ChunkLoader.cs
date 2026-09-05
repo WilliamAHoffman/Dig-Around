@@ -182,7 +182,10 @@ public class ChunkLoader : MonoBehaviour
         {
             if (trackedChunks.Contains(chunkPosition))
             {
-                continue;
+                if (ChunkManager.IsChunkRendered(chunkPosition))
+                {
+                    continue;
+                }
             }
 
             chunksToLoad.Add(chunkPosition);

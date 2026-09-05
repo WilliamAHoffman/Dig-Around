@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d81586fdb484b514bb98c18a15334d3d, type: 3}
-  m_Name: Decor_Ocean
+  m_Name: Decor_Beach_Cold
   m_EditorClassIdentifier: Assembly-CSharp::FractalDecorator
   rules:
-  - noiseRangeConditions: []
-    noiseSimilarityConditions: []
-    existingFloorConditions: []
-    existingWallConditions: []
-    chanceConditions: []
+  - conditions: []
     setTileActions:
-    - floor: {fileID: 11400000, guid: f7d4a659fd2be5d4bb136b58082ae54b, type: 2}
+    - floor: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
+      wall: {fileID: 0}
+  - conditions:
+    - {fileID: 11400000, guid: f7fc0ea2a65046a4d898358a45d01159, type: 2}
+    setTileActions:
+    - floor: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
       wall: {fileID: 0}

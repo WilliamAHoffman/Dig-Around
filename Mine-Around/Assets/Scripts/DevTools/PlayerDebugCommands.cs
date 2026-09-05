@@ -262,7 +262,7 @@ public sealed class PlayerDebugCommands : MonoBehaviour
         InputAction.CallbackContext context
     )
     {
-        if (Mouse.current == null)
+        if (Mouse.current == null || editorOpened)
         {
             return;
         }

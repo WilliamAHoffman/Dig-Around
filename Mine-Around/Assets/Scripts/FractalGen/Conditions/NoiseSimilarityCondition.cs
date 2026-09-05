@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class NoiseSimilarityCondition
+[CreateAssetMenu(
+    fileName = "Noise Similarity Condition",
+    menuName = "FractalGen/Condition/Noise Similarity Condition"
+)]
+public class NoiseSimilarityCondition : GenerationCondition
 {
     [SerializeField] private List<NoiseTarget> targets = new();
     [SerializeField, Range(0f, 1f)] private float requiredSimilarity = 0.5f;
 
-    public bool Evaluate(in GenerationContext context)
+    public override bool Evaluate(in GenerationContext context)
     {
         if (targets == null || targets.Count == 0)
             return false;

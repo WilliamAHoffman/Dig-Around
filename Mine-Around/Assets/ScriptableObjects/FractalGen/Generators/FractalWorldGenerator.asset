@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0786b2c09df9414ca1ecb60e2959a29, type: 3}
   m_Name: FractalWorldGenerator
   m_EditorClassIdentifier: Assembly-CSharp::FractalWorldGenerator
-  seed: 444
+  gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
   worldLayers:
   - {fileID: 11400000, guid: 169107c7444c4fe4590cd6dc63166ac3, type: 2}
   bloxelDataBase: {fileID: 11400000, guid: ba1402023b5d52f4ca81cf6b90867c3c, type: 2}

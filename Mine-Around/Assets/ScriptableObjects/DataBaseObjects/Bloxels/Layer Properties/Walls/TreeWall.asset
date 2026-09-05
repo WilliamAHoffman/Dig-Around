@@ -15,3 +15,6 @@ MonoBehaviour:
   tiles:
   - weight: 100
     item: {fileID: 11400000, guid: 0229074c75172074d91afa3833dbeb99, type: 2}
+  mapColor: {r: 0.2392157, g: 0.39607847, b: 0.15294118, a: 1}
+  isTransparent: 1
+  isInvisible: 0

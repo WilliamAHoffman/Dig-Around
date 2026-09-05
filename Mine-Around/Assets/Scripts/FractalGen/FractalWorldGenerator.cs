@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 
 [CreateAssetMenu(
@@ -7,7 +8,8 @@ using UnityEngine;
 public class FractalWorldGenerator : ScriptableObject
 {
     [Header("Generation")]
-    [SerializeField] private int seed = 12345;
+    [SerializeField] private GameVariables gameVariables;
+    private int Seed => gameVariables.worldSeed;
 
     [Header("Layers")]
     [SerializeField] private List<FactalWorldLayer> worldLayers = new();
@@ -59,7 +61,7 @@ public class FractalWorldGenerator : ScriptableObject
     private MapCell GenerateLocation(Vector2Int worldPosition, int defaultTileID)
     {
         MapCell cell = new(defaultTileID, defaultTileID);
-        GenerationContext context = new(worldPosition, cell, seed);
+        GenerationContext context = new(worldPosition, cell, Seed);
 
         if (worldLayers == null)
             return context.Cell;

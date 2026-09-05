@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
-  m_Name: Layer_Ocean
+  m_Name: Layer_Mountain_Floors
   m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
   noise: {fileID: 0}
   subLayers: []
-  baseDecor: {fileID: 11400000, guid: 6a04c335d32853b45bf74669e0e2ee91, type: 2}
+  baseDecor: {fileID: 11400000, guid: 93469a0ae9419c1419ae39b940877a90, type: 2}

@@ -131,13 +131,13 @@ public class NoiseSettings : DatabaseAsset
             if (warpNoise == null)
             {
                 Debug.LogError($"NoiseSettings '{name}' has domain warp enabled but warpNoise was not created.", this);
-                lastVal = noise.GetNoise(x, y);
+                lastVal = (noise.GetNoise(x, y) + 1)/2;
                 return lastVal;
             }
 
             warpNoise.DomainWarp(ref x, ref y);
         }
-        lastVal = noise.GetNoise(x, y);
+        lastVal = (noise.GetNoise(x, y) + 1)/2;
         return lastVal;
     }
 }

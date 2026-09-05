@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f10d1cfd2834a240bbff2d7062e99ff, type: 3}
   m_Name: MainGameVariables
   m_EditorClassIdentifier: Assembly-CSharp::GameVariables
-  worldSeed: 12112
+  worldSeed: 599942550
   chunkSize: 16
-  worldFrequencyScale: 1
+  worldFrequencyScale: 2

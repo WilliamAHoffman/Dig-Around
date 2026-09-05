@@ -5,4 +5,6 @@ using UnityEngine.Tilemaps;
 public abstract class BloxelLayerProperties : ScriptableObject
 {
     public List<WeightedItem<TileBase>> tiles;
+    [SerializeField] private Color mapColor = Color.white;
+    public Color MapColor => mapColor;
 }

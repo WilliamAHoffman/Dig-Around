@@ -13,6 +13,7 @@ public class WorldPreviewer : MonoBehaviour
 
     public RawImage uiPreviewDisplayFloors;
     private Texture2D previewTextureFloors;
+    [SerializeField] private bool onlyShowCombinedImage;
 
     [SerializeField] private int startSizeX;
     [SerializeField] private int startSizeY;
@@ -115,37 +116,28 @@ public class WorldPreviewer : MonoBehaviour
             }
         }
 
-        previewTexture.SetPixels(combinedPixels);
-        previewTexture.Apply();
-
-        previewTextureWalls.SetPixels(wallPixels);
-        previewTextureWalls.Apply();
-
-        previewTextureFloors.SetPixels(floorPixels);
-        previewTextureFloors.Apply();
+        SavePixels(combinedPixels, "Combined", previewTexture);
+        if (!onlyShowCombinedImage)
+        {
+            SavePixels(wallPixels, "wall", previewTextureWalls);
+            SavePixels(floorPixels, "wall", previewTextureFloors);
+        }
 
         if (uiPreviewDisplay != null)
         {
             uiPreviewDisplay.texture = previewTexture;
         }
 
-        if (uiPreviewDisplayWalls != null)
-        {
-            uiPreviewDisplayWalls.texture = previewTextureWalls;
-        }
-
-        if (uiPreviewDisplayFloors != null)
-        {
-            uiPreviewDisplayFloors.texture = previewTextureFloors;
-        }
-
-        SaveTexture(previewTexture, "combined");
-        SaveTexture(previewTextureWalls, "walls");
-        SaveTexture(previewTextureFloors, "floors");
-
         stopwatch.Stop(); //debug
         UnityEngine.Debug.Log($"Previewing the world took: {stopwatch.ElapsedMilliseconds} ms", this); //debug
 
         ChunkManager.DeleteAllChunks();
+    }
+
+    private void SavePixels(Color[] pixels, string name, Texture2D preview)
+    {
+        preview.SetPixels(pixels);
+        preview.Apply();
+        SaveTexture(preview, name);
     }
 }

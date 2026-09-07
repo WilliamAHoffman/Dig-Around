@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b15c12588e07a3b4faff1d8b891db942, type: 3}
+  m_Name: Layer_Rivers
+  m_EditorClassIdentifier: Assembly-CSharp::FactalWorldLayer
+  noise: {fileID: 11400000, guid: 26255c3d2932d4141b3cf910f134c004, type: 2}
+  subLayers:
+  - min: 0.45
+    max: 0.55
+    layer: {fileID: 11400000, guid: e90968fa781508549a9eeceef9efb7a3, type: 2}
+  - min: 0.48
+    max: 0.52
+    layer: {fileID: 11400000, guid: 35c8399ace7cecb47b5c6c5e23af78ac, type: 2}
+  baseDecor: {fileID: 0}

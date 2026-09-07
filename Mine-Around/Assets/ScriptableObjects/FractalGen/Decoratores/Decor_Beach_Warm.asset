@@ -13,11 +13,7 @@ MonoBehaviour:
   m_Name: Decor_Beach_Warm
   m_EditorClassIdentifier: Assembly-CSharp::FractalDecorator
   rules:
-  - noiseRangeConditions: []
-    noiseSimilarityConditions: []
-    existingFloorConditions: []
-    existingWallConditions: []
-    chanceConditions: []
+  - conditions: []
     setTileActions:
     - floor: {fileID: 11400000, guid: ac708c1745093604d8155e7b113de653, type: 2}
-      wall: {fileID: 0}
+      wall: {fileID: 11400000, guid: b6bf1bbc0eadb3a4996b158c9c679152, type: 2}

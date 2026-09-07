@@ -16,7 +16,7 @@ MonoBehaviour:
   - conditions: []
     setTileActions:
     - floor: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
-      wall: {fileID: 0}
+      wall: {fileID: 11400000, guid: b6bf1bbc0eadb3a4996b158c9c679152, type: 2}
   - conditions:
     - {fileID: 11400000, guid: f7fc0ea2a65046a4d898358a45d01159, type: 2}
     setTileActions:

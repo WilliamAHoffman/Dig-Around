@@ -26,8 +26,7 @@ public class BloxelBase : DatabaseAsset
 
         int randomSeed = GameRandomness.Hash(GetObjectSeed(), position.x, position.y);
 
-        TileBase selected = WeightedRandomSelector.GetWeightedRandom<TileBase>(
-            properties.tiles,
+        TileBase selected = properties.tiles.SelectItem(
             randomSeed
         );
 

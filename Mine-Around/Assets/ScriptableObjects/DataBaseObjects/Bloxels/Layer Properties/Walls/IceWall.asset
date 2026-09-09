@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: IceWall
   m_EditorClassIdentifier: Assembly-CSharp::BloxelWallProperties
   tiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: 75355c07a1579f2419a6b2d356ee9f08, type: 2}
+    items:
+    - weight: 0
+      item: {fileID: 11400000, guid: 5fe54080b57910346935373044a0b268, type: 2}
   mapColor: {r: 0.52156866, g: 0.43921572, b: 0.6627451, a: 1}
   isTransparent: 0
   isInvisible: 0

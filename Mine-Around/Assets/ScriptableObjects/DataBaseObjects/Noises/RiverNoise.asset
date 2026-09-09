@@ -16,23 +16,23 @@ MonoBehaviour:
   displayName: river
   rngOverride: {fileID: 0}
   gameVariables: {fileID: 11400000, guid: 9430c2865e2d67b4eb9aecb8b977de50, type: 2}
-  noiseType: 0
-  frequency: 0.001
-  offsetX: -4244
-  offsetY: -4243
-  fractalType: 1
-  fractalOctaves: 5
-  fractalLacunarity: 3
-  fractalGain: 0.5
+  noiseType: 1
+  frequency: 0.01
+  offsetX: 3880
+  offsetY: 3881
+  fractalType: 2
+  fractalOctaves: 1
+  fractalLacunarity: 1
+  fractalGain: 1
   fractalWeightedStrength: 0
-  fractalPingPongStrength: 2
-  cellularDistanceFunction: 3
+  fractalPingPongStrength: 1
+  cellularDistanceFunction: 1
   cellularReturnType: 1
   cellularJitter: 1
   domainWarp: 1
-  domainWarpType: 0
-  domainWarpAmp: 1
-  domainWarpFrequency: 0.01
+  domainWarpType: 2
+  domainWarpAmp: 10
+  domainWarpFrequency: 0.05
   domainWarpFractal: 0
   domainWarpOctaves: 3
   domainWarpLacunarity: 2

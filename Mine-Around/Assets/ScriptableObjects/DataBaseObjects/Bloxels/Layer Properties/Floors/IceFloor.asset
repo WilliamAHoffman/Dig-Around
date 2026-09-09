@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: IceFloor
   m_EditorClassIdentifier: Assembly-CSharp::BloxelFloorProperties
   tiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: 39e8846834d6b5c46ab8f78947311a34, type: 2}
+    items:
+    - weight: 1
+      item: {fileID: 11400000, guid: 39e8846834d6b5c46ab8f78947311a34, type: 2}
   mapColor: {r: 0.3137255, g: 0.5058824, b: 0.80392164, a: 1}

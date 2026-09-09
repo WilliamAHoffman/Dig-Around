@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: AirFloor
   m_EditorClassIdentifier: Assembly-CSharp::BloxelFloorProperties
   tiles:
-  - weight: 1
-    item: {fileID: 0}
+    items:
+    - weight: 0
+      item: {fileID: 0}
   mapColor: {r: 1, g: 1, b: 1, a: 0}

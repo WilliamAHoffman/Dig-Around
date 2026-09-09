@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FractalDecorator
   rules:
   - conditions: []
-    setTileActions: []
-  - conditions: []
     setTileActions:
     - floor: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}
       wall: {fileID: 11400000, guid: e162dca287288e246a515c486d5dd85d, type: 2}

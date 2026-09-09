@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: ColdTreeWall
   m_EditorClassIdentifier: Assembly-CSharp::BloxelWallProperties
   tiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: 85383baceabad76429d2f15ae285d5fe, type: 2}
+    items:
+    - weight: 0
+      item: {fileID: 11400000, guid: 85383baceabad76429d2f15ae285d5fe, type: 2}
   mapColor: {r: 0.4784314, g: 0.5411765, b: 0.5019608, a: 1}
   isTransparent: 1
   isInvisible: 0

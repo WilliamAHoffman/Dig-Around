@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: GrassFloor
   m_EditorClassIdentifier: Assembly-CSharp::BloxelFloorProperties
   tiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: ebe1da58a7dccca4eb66c1041d8e3f53, type: 2}
-  - weight: 5
-    item: {fileID: 11400000, guid: c376432b5fdd9af4094ce9864802ac45, type: 2}
-  - weight: 5
-    item: {fileID: 11400000, guid: 41be1aa5bccabc34a8c9f1cca396897a, type: 2}
-  - weight: 5
-    item: {fileID: 11400000, guid: 1579ab17424cb574e8a4d29ac1000ce9, type: 2}
+    items:
+    - weight: 10
+      item: {fileID: 11400000, guid: ebe1da58a7dccca4eb66c1041d8e3f53, type: 2}
+    - weight: 1
+      item: {fileID: 11400000, guid: c376432b5fdd9af4094ce9864802ac45, type: 2}
+    - weight: 1
+      item: {fileID: 11400000, guid: 41be1aa5bccabc34a8c9f1cca396897a, type: 2}
+    - weight: 1
+      item: {fileID: 11400000, guid: 1579ab17424cb574e8a4d29ac1000ce9, type: 2}
   mapColor: {r: 0.427451, g: 0.6666667, b: 0.17254902, a: 1}

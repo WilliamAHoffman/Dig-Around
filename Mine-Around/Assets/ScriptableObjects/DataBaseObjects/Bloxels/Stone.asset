@@ -16,6 +16,4 @@ MonoBehaviour:
   displayName: Stone
   rngOverride: {fileID: 0}
   floorProperties: {fileID: 11400000, guid: e7795dd76be19784da2e6b49c54224c2, type: 2}
-  wallProperties: {fileID: 11400000, guid: 7ad0b3c3a5ab7194d8833af6e246fe32, type: 2}
-  mapColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
-  isTransparent: 0
+  wallProperties: {fileID: 11400000, guid: de90c9376f0b73449a30588e4a6abf42, type: 2}

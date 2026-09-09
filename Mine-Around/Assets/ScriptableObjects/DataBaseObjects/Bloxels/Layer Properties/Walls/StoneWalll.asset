@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41d7ffe847bb27043b3b7351605c1593, type: 3}
+  m_Name: StoneWalll
+  m_EditorClassIdentifier: Assembly-CSharp::BloxelWallProperties
+  tiles:
+    items:
+    - weight: 10
+      item: {fileID: 11400000, guid: c54ee8b1266076940923937d28f87ce0, type: 2}
+    - weight: 1
+      item: {fileID: 11400000, guid: 1c9b7e75f1258d143909b0f52426184d, type: 2}
+    - weight: 1
+      item: {fileID: 11400000, guid: 797307494505b8d459b61f3d9dfc3639, type: 2}
+    - weight: 1
+      item: {fileID: 11400000, guid: a46f47236928dc1409e159965d42862e, type: 2}
+  mapColor: {r: 0.26666668, g: 0.14117648, b: 0.20392159, a: 1}
+  isTransparent: 0
+  isInvisible: 0

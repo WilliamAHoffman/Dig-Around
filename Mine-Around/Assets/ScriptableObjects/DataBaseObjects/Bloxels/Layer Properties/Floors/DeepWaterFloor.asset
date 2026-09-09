@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: DeepWaterFloor
   m_EditorClassIdentifier: Assembly-CSharp::BloxelFloorProperties
   tiles:
-  - weight: 100
-    item: {fileID: 11400000, guid: 466fab970a130604592c6d84ac593a51, type: 2}
+    items:
+    - weight: 0
+      item: {fileID: 11400000, guid: 466fab970a130604592c6d84ac593a51, type: 2}
   mapColor: {r: 0.18823531, g: 0.20392159, b: 0.427451, a: 1}
